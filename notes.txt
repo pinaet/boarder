@@ -4,3 +4,4 @@ php artisan breeze:install vue
 npm run dev
 php artisan migrate
 php artisan make:model -mrc Chirp
+npm install dayjs
