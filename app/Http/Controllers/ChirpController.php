@@ -38,7 +38,7 @@ class ChirpController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {dd($request);
+    {//dd($request);
         $validated = $request->validate([
             'message' => 'required|string|max:255',
         ]);

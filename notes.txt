@@ -8,3 +8,6 @@ php artisan make:model -mrc Chirp
 npm install dayjs
 npx vite --port=4000
 php artisan make:policy ChirpPolicy --model=Chirp
+php artisan make:notification NewChirp
+php artisan make:event ChirpCreated
+php artisan make:listener SendChirpCreatedNotifications --event=ChirpCreated
