@@ -1,7 +1,10 @@
 composer create-project laravel/laravel chirper
 composer require laravel/breeze --dev
 php artisan breeze:install vue
+php artisan serve
 npm run dev
 php artisan migrate
 php artisan make:model -mrc Chirp
 npm install dayjs
+npx vite --port=4000
+php artisan make:policy ChirpPolicy --model=Chirp
