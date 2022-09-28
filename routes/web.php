@@ -27,6 +27,15 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/Error', function () {
+    return Inertia::render('Login/Error', [
+        'title' => 'Login Error',
+        'message' => 'Login Failed..',
+        'url' => url('/'),
+        'type' => 'danger'
+    ]);
+});
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

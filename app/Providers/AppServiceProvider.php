@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         Inertia::share('appUrl', env('APP_URL'));
-        // Inertia::share('csrfToken', csrf_token());
+        Inertia::share('appName', env('APP_NAME'));
         // I'm using config, but your could use env
 
     }

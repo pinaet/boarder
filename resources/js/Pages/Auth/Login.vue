@@ -20,7 +20,7 @@ defineProps({
 //     remember: false
 // });
 const form = useForm({
-    email: 'test',
+    email: '',
     password: '',
     processing: false,
 });
@@ -59,8 +59,8 @@ const submit = () => {
                 <form @submit.prevent="submit">
                     
                     <div class="flex w-[326px] flex-col items-start gap-[15px]">
-                        <BAInput id="email" :value="form.email"  label="Email" type="text" autocomplete @changeUsername="form.email=$event" />
-                        <BAInput id="password" :value="form.password" label="Password" type="password" form="true" @changeUsername="form.password=$event" />
+                        <BAInput id="email" :value="form.email"  label="Email" type="text" required="true" @changeUsername="form.email=$event" />
+                        <BAInput id="password" :value="form.password" label="Password" type="password" required="true" form="true" @changeUsername="form.password=$event" />
                     </div>
                     <button :class="{ 'opacity-25': form.processing }" :disabled="form.processing" class="hover:opacity-95 mt-7 flex items-start gap-2.5 rounded-[5px] font-bold border border-solid border-[rgba(154,137,94,1)] bg-[rgba(163,145,99,1)] pl-[141px] pr-[141px] pt-[15px] pb-[15px] text-left text-base text-white">
                         <p >Login</p>

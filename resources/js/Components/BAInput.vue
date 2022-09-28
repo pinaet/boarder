@@ -11,10 +11,11 @@
             label: String,
             type: String,
             form: String,
+            required: String,
         },
         methods: {
             changeUsername() {
-                console.log( this.value )
+                // console.log( this.value )
                 this.$emit('changeUsername', this.value )
             }
         }
@@ -27,7 +28,7 @@
             <div class="absolute inset-x-0 bottom-0 top-[15.79%] rounded-[5px] border border-solid  border-[rgba(189,189,189,1)] bg-[rgba(248,248,248,1)]" />
         </div>
         <div class="inline-flex text-base font-bold text-[rgba(79,79,79,1)]">
-            <input class="absolute border-none top-[9px] bg-inherit w-full border-1 h-[48px] rounded-[5px]" :type="type" v-model="value" @change="changeUsername()" :autocomplete="form=='true'? true : false "/>
+            <input class="absolute border-none top-[9px] bg-inherit w-full border-1 h-[48px] rounded-[5px]" :type="type" v-model="value" @change="changeUsername()" :autocomplete="form=='true'? true : false " :required="required=='true'? true : false "/>
         </div>
         <div class="inline-flex text-sm font-normal text-[rgba(130,130,130,1)]">
             <div class="absolute left-2.5 -top-px flex items-start gap-2.5 bg-white px-px py-py">
