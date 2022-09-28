@@ -3,7 +3,7 @@ import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import InputBA from '@/Components/InputBA.vue';
+import BAInput from '@/Components/BAInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/inertia-vue3';
@@ -49,18 +49,18 @@ const submit = () => {
             {{ status }}
         </div>
         
-        <div class=" font-['Arial'] left-[calc(50%_-_493px_+_-10px)] flex mt-0 sm:mt-4 mb-4 items-start rounded-[10px] bg-gray-300 drop-shadow-lg">
+        <div class=" font-['Arial'] left-[calc(50%_-_493px_+_-10px)] flex mt-0 sm:mt-6 mb-4 items-start rounded-[10px] bg-gray-300 drop-shadow-lg">
             <div class="h-[550px] w-[500px] rounded-tl-[10px] rounded-bl-[10px] hidden sm:block [background:url('images/bh-gathering.jpg')_no-repeat_right/_cover]" />
             <div class="flex flex-col items-center gap-[20px] rounded-tr-[10px] rounded-br-[10px] rounded-tl-[10px] rounded-bl-[10px] sm:rounded-tl-none sm:rounded-bl-none bg-white px-12 sm:px-20 pt-[40px] pb-[40px]">
                 <div class="flex w-[293px] flex-col items-center gap-[45px] text-center text-2xl text-[rgba(51,51,51,1)]">
                     <div class="h-40 w-40 [background:url('images/HIS_Bangkok_VERTICAL_ENG_BLUE_square.png')_center_/_cover]" />
-                    <p class="font-bold">Boarder Attendance {{form.email}}</p>
+                    <p class="font-bold">Boarder Attendance</p>
                 </div>
                 <form @submit.prevent="submit">
                     
                     <div class="flex w-[326px] flex-col items-start gap-[15px]">
-                        <InputBA id="email" :value="form.email"  label="Email" type="text" autocomplete @changeUsername="form.email=$event" />
-                        <InputBA id="password" :value="form.password" label="Password" type="password" form="true" @changeUsername="form.password=$event" />
+                        <BAInput id="email" :value="form.email"  label="Email" type="text" autocomplete @changeUsername="form.email=$event" />
+                        <BAInput id="password" :value="form.password" label="Password" type="password" form="true" @changeUsername="form.password=$event" />
                     </div>
                     <button :class="{ 'opacity-25': form.processing }" :disabled="form.processing" class="hover:opacity-95 mt-7 flex items-start gap-2.5 rounded-[5px] font-bold border border-solid border-[rgba(154,137,94,1)] bg-[rgba(163,145,99,1)] pl-[141px] pr-[141px] pt-[15px] pb-[15px] text-left text-base text-white">
                         <p >Login</p>
