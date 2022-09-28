@@ -28,7 +28,9 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": ["app/Overrides/Response.php"],
+        "exclude-from-classmap": ["vendor/inertiajs/inertial-laravel/src/Response.php"]
     },
     "autoload-dev": {
         "psr-4": {

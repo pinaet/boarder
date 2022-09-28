@@ -31,11 +31,12 @@ class AuthenticatedSessionController extends Controller
      * @param  \App\Http\Requests\Auth\LoginRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(LoginRequest $request)
+    public function store(Request $request)
     {
-        $request->authenticate();
-
-        $request->session()->regenerate();
+        // LoginRequest $request
+        // $request->authenticate();
+        // $request->session()->regenerate();
+        dd($request);
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
@@ -53,7 +54,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
-
-        return redirect('/');
+        
+        return redirect( url('/').'/' );
     }
 }

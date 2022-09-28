@@ -17,6 +17,8 @@ use App\Http\Controllers\ChirpController;
 */
 
 Route::get('/', function () {
+    return redirect('/login');
+    // dd('test');
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -32,5 +34,9 @@ Route::get('/dashboard', function () {
 Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
+
+// Route::post('/chirps/{chirp}', ChirpController::class, 'update')->name('chirps.p-update');
+
+Route::inertia('/about', 'AboutComponent');
 
 require __DIR__.'/auth.php';

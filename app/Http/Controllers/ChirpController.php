@@ -38,7 +38,7 @@ class ChirpController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {//dd($request);
+    {
         $validated = $request->validate([
             'message' => 'required|string|max:255',
         ]);
@@ -86,8 +86,8 @@ class ChirpController extends Controller
         ]);
  
         $chirp->update($validated);
- 
-        return redirect(route('chirps.index'));
+
+        return redirect()->route('chirps.index');
     }
 
     /**
@@ -101,6 +101,8 @@ class ChirpController extends Controller
         $this->authorize('delete', $chirp);
  
         $chirp->delete();
+
+        // return redirect()->route('chirps.index');
  
         return redirect(route('chirps.index'));
     }

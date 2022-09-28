@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Inertia\Inertia;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        Inertia::share('appUrl', env('APP_URL'));
+        // Inertia::share('csrfToken', csrf_token());
+        // I'm using config, but your could use env
+
     }
 
     /**
