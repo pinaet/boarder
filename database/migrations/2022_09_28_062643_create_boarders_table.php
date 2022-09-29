@@ -15,6 +15,12 @@ return new class extends Migration
     {
         Schema::create('boarders', function (Blueprint $table) {
             $table->id();
+            $table->string('pupil_id')->unique();
+            $table->foreignId('building_id')->constrained();
+            $table->string('offsite_permission')->nullable();
+            $table->string('telephone')->nullable(); //m,f
+            $table->string('status')->nullable(); //Y5,Y6
+            $table->foreignId('updated_by')->references('id')->on('users');
             $table->timestamps();
         });
     }
@@ -27,5 +33,11 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('boarders');
+        // Schema::table('boarders', function (Blueprint $table) {
+        //     $table->dropForeign([
+        //         'building_id',
+        //         'updated_by',
+        //     ]);
+        // });
     }
 };

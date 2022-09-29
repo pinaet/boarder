@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Role;
 use App\Models\Chirp;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -46,5 +47,15 @@ class User extends Authenticatable
     public function chirps()
     {
         return $this->hasMany(Chirp::class);
+    }
+
+    public function role()
+    {
+        return $this->hasOne(Role::class);
+    }
+
+    public function allowed()
+    {
+        return $this->hasOne(AllowedUser::class, 'email');
     }
 }

@@ -1,8 +1,10 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -22,6 +24,8 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+
+        $this->generate();
     }
 
     /**
@@ -32,5 +36,14 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('users');
+    }
+
+    
+    public function generate()
+    {
+        $attributes['name']     = 'Pinaet Poonsarakhun';        
+        $attributes['email']    = 'naet_ph@harrowschool.ac.th';                         
+        $attributes['password'] = Str::random(32);
+        User::create($attributes);     
     }
 };

@@ -13,8 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('permissions', function (Blueprint $table) {
+        $this->down();
+        
+        Schema::create('archived_boarders', function (Blueprint $table) {
             $table->id();
+            $table->string('pupil_id')->unique();
+            $table->date('until')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('archived_boarders');
     }
 };

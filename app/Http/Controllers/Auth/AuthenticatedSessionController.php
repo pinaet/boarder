@@ -54,9 +54,17 @@ class AuthenticatedSessionController extends Controller
             $server = env('LDAP_IP','203.156.141.222');
 
             // connect to active directory
-            $ad = ldap_connect($server);
+            if( env('LDAP_SKIP')==true )
+                $ad = true;
+            else
+                $ad = ldap_connect($server);
+                
             if($ad) {
-                $b = @ldap_bind($ad, $email, $pass);
+                if( env('LDAP_SKIP')==true )
+                    $b = true;
+                else
+                    $b = @ldap_bind($ad, $email, $pass);
+
                 $pass = Str::random(32);
 
                 if($b) {

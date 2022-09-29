@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ChirpController;
+use App\Http\Controllers\TestsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,8 +45,8 @@ Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 
-// Route::post('/chirps/{chirp}', ChirpController::class, 'update')->name('chirps.p-update');
-
 Route::inertia('/about', 'AboutComponent');
+
+Route::get('/test', [TestsController::class, 'index'] );
 
 require __DIR__.'/auth.php';
