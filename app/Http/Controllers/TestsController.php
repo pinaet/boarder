@@ -2,23 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TestsController extends Controller
 {
     public function index()
     {
+        $user = User::find(1);
+        $role = $user->role;
+        dd($user,$user->role,$role[0]->permission_contents);
         
-        $contents = array(
-            'Bradbys',
-            'Junior Girls',
-            'The Grove',
-            'West Acre',
-        );
-
-        foreach ($contents as $content) {
-            $my_array = ['permission_content_name'=>$content];
-        }
-        dd($my_array);
+        $role = Role::find(1);
+        dd($role,$role->permission_contents);
     }
 }

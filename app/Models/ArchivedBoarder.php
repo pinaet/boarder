@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class ArchivedBoarder extends Model
 {
     use HasFactory;
+
+    protected $guarded = [];
 }

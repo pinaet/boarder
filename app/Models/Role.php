@@ -16,7 +16,14 @@ class Role extends Model
 
     public function permission_contents()
     {
-        return $this->hasManyThrough(PermissionContent::class, RolePermission::class);
+        return $this->hasManyThrough(
+            PermissionContent::class, 
+            RolePermission::class,
+            'role_id',
+            'id',
+            'id',
+            'permission_content_id'
+        );
     }
 
     public function user()
