@@ -16,7 +16,7 @@ const showingNavigationDropdown = ref(false);
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
+                    <div class="flex justify-between h-14">
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
@@ -25,15 +25,21 @@ const showingNavigationDropdown = ref(false);
                                 </Link>
                             </div>
 
+                            <div class="shrink-0 flex items-center font-bold">
+                                <span class="text-harrow-blue-100 ml-10 mr-2">BOARDER</span> <span class="text-harrow-gold-100">ATTENDANCE</span>
+                            </div>
+
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                    Registration
                                 </NavLink>
                             </div>
-                            <NavLink :href="route('chirps.index')" :active="route().current('chirps.index')">
-                                Settings
-                            </NavLink>
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <NavLink :href="route('chirps.index')" :active="route().current('chirps.index')">
+                                    Settings
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -77,10 +83,10 @@ const showingNavigationDropdown = ref(false);
                 <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Dashboard
+                            Registration
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('chirps.index')" :active="route().current('chirps.index')">
-                            Chirps
+                            Settings
                         </ResponsiveNavLink>
                     </div>
 
@@ -102,7 +108,7 @@ const showingNavigationDropdown = ref(false);
 
             <!-- Page Heading -->
             <header class="bg-white shadow" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
             </header>

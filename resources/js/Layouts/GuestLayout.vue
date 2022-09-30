@@ -5,9 +5,9 @@ const appUrl = usePage().props.value.appUrl
 </script>
 
 <template>
-    <div class="min-h-screen h-[720px] w-auto flex flex-col items-center pt-6 sm:pt-0 bg-harrow-blue-100 [background:url('images/gray-geometric-pattern.jpg')_center_/_cover]">
+    <div class="min-h-screen h-[720px] w-auto flex flex-col items-center pt-6 sm:pt-0 bg-harrow-blue-100 [background:url('/images/gray-geometric-pattern.jpg')_center_/_cover]">
         <Head>
-            <link rel="icon" type="image/x-icon" :href="appUrl+'/images/HIS_Bangkok_VERTICAL_ENG_BLUE_square.png'" />
+            <link rel="icon" type="image/x-icon" href="/images/HIS_Bangkok_VERTICAL_ENG_BLUE_square.png" />
         </Head>
         <slot />
 

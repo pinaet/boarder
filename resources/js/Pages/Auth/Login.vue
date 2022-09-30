@@ -50,10 +50,10 @@ const submit = () => {
         </div>
         
         <div class=" font-['Arial'] left-[calc(50%_-_493px_+_-10px)] flex mt-0 sm:mt-6 mb-4 items-start rounded-[10px] bg-gray-300 drop-shadow-lg">
-            <div class="h-[550px] w-[500px] rounded-tl-[10px] rounded-bl-[10px] hidden sm:block [background:url('images/bh-gathering.jpg')_no-repeat_right/_cover]" />
+            <div class="h-[550px] w-[500px] rounded-tl-[10px] rounded-bl-[10px] hidden sm:block [background:url('/images/bh-gathering.jpg')_no-repeat_right/_cover]" />
             <div class="flex flex-col items-center gap-[20px] rounded-tr-[10px] rounded-br-[10px] rounded-tl-[10px] rounded-bl-[10px] sm:rounded-tl-none sm:rounded-bl-none bg-white px-12 sm:px-20 pt-[40px] pb-[40px]">
                 <div class="flex w-[293px] flex-col items-center gap-[45px] text-center text-2xl text-[rgba(51,51,51,1)]">
-                    <div class="h-40 w-40 [background:url('images/HIS_Bangkok_VERTICAL_ENG_BLUE_square.png')_center_/_cover]" />
+                    <div class="h-40 w-40 [background:url('/images/HIS_Bangkok_VERTICAL_ENG_BLUE_square.png')_center_/_cover]" />
                     <p class="font-bold">Boarder Attendance</p>
                 </div>
                 <form @submit.prevent="submit">
