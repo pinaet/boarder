@@ -33,6 +33,9 @@ switch( mine.type )
     case 'success': 
         mine.class = " border-green-200 bg-green-100 "        
         break;
+    case 'warning': 
+        mine.class = " border-orange-200 bg-orange-100 "        
+        break;
     default:
         mine.class = " border-gray-200 bg-gray-100 "
         break;

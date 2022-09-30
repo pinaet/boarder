@@ -32,7 +32,7 @@ const showingNavigationDropdown = ref(false);
                                 </NavLink>
                             </div>
                             <NavLink :href="route('chirps.index')" :active="route().current('chirps.index')">
-                                Chirps
+                                Settings
                             </NavLink>
                         </div>
 

@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\RouteServiceProvider;
+use App\Models\User;
+use Inertia\Inertia;
+use App\Models\AllowedUser;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use Illuminate\Support\Str;
+use App\Providers\RouteServiceProvider;
+use App\Http\Requests\Auth\LoginRequest;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -69,21 +71,12 @@ class AuthenticatedSessionController extends Controller
 
                 if($b) {
                     $getAccess   = false;
-                    $staff       = (new Staff)->getCurrentStaff();
-                    foreach( $staff as $person ){
-                        if( $person->Email==$email ){
+
+                    $allowed_users       = AllowedUser::all();
+                    foreach( $allowed_users as $person ){
+                        if( $person->email==$email ){
                             $getAccess   = true;
                             break;
-                        }
-                    }
-
-                    if(!$getAccess){
-
-                        $sql = "select user_id from OSUser where user_id = '".$username."';";
-                        $rows = DB::connection('staff-portal-bk')->select( $sql );
-
-                        if( count( $rows ) > 0){
-                            $getAccess = true;
                         }
                     }
 
@@ -98,56 +91,30 @@ class AuthenticatedSessionController extends Controller
                             }
                         }
 
-                        if( $user )
+                        if( !$user )
                         {
-                            $session_info['user']=$username;
-                            $session_info['current_user'] = $username;
-                            $session_info['user_role']=$user->user_role;
-                            $session_info['user_name']= $user->username;
-                            $session_info['password']= bcrypt( $pass );
-                            $session_info['last_login']= date('M d Y g:i A');
-                            Session::put($session_info);
-                            Auth::login( $user );
-                        }
-                        else {
                             request()['email']    = $email;
                             request()['username'] = $username;
                             request()['password'] = bcrypt( $pass );
-
-                            $session_info['user']=$username;
-                            $session_info['current_user'] = $username;
-                            $session_info['user_role']='';
-                            $session_info['user_name']= $username;
-                            $session_info['password']= bcrypt( $pass );
-                            $session_info['last_login']= date('M d Y g:i A');
-                            Auth::login( $user = User::create(request()->all()) );
-                            Session::put($session_info);
+                            $user = User::create(request()->all());
                         }
 
-                        if( session()->has( 'url.intended' ) )
-                        {
-                            $intended_url =  session('url.intended' );
-                            session()->forget( 'url.intended' );
+                        Auth::login( $user );
 
-                            $base_url     =  url('/');
-                            $sub_url      =  substr( $intended_url, 0, strlen($base_url) );
-
-                            if( $base_url==$sub_url ){
-                                return redirect( $intended_url );
-                            }
-                        }
-
-                        return redirect('home');
-
-                    }else{
+                        return redirect()->intended(RouteServiceProvider::HOME);
+                    }
+                    else
+                    {
                         $message = "
                         Sorry, you don't have permission. Please contact ICT!!!
                         ";
 
-                        return view( 'login_error', [
-                            'message' => $message,
-                            'username' => $username
-                        ] );
+                        return Inertia::render('Login/Error', [
+                            'title' => 'Login Error',
+                            'message' => $message ,
+                            'url' => url('/login'),
+                            'type' => 'danger'
+                        ]);
                     }
 
                 } else {
@@ -164,20 +131,27 @@ class AuthenticatedSessionController extends Controller
                 }
             } else {
                 $message = "
-                Connect not connect to {$server}
+                Connect not connect to {$server}...
                 ";
 
-                return view( 'login_error', compact('message') );
+                return Inertia::render('Login/Error', [
+                    'title' => 'Login Error',
+                    'message' => $message ,
+                    'url' => url('/login'),
+                    'type' => 'danger'
+                ]);
             }
         }else{
             $message = "
-            You neglected to fill out the
-            <b><font color='red' >Username</font></b> or
-            <b><font color='red' >Password</font></b> <br>
-            Please use the back button to fill in reqired info.
+            You neglected to fill out the Username or Password...
             ";
 
-            return view( 'login_error', compact('message') );
+            return Inertia::render('Login/Error', [
+                'title' => 'Login Error',
+                'message' => $message ,
+                'url' => url('/login'),
+                'type' => 'danger'
+            ]);
         }
 
 

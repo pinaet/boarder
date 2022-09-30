@@ -19,6 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('username');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
@@ -42,7 +43,8 @@ return new class extends Migration
     public function generate()
     {
         $attributes['name']     = 'Pinaet Poonsarakhun';        
-        $attributes['email']    = 'naet_ph@harrowschool.ac.th';                         
+        $attributes['email']    = 'naet_ph@harrowschool.ac.th';    
+        $attributes['username'] = 'naet_ph';
         $attributes['password'] = Str::random(32);
         User::create($attributes);     
     }

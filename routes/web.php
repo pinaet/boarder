@@ -33,7 +33,7 @@ Route::get('/Error', function () {
         'title' => 'Login Error',
         'message' => 'Login Failed..',
         'url' => url('/'),
-        'type' => 'danger'
+        'type' => 'warning'
     ]);
 });
 
