@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
     server: { 
-        https: true, 
+        https: false, 
         host: 'localhost', 
     },
     plugins: [

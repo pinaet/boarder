@@ -41,12 +41,12 @@ switch( mine.type )
         break;
 }
 
-console.log( props.title )
-console.log( props.message )
-console.log( props.url )
+// console.log( props.title )
+// console.log( props.message )
+// console.log( props.url )
 
 const redirect = function(){
-    console.log( 'mine' + mine.title )
+    // console.log( 'mine' + mine.title )
     clearInterval( myInterval );
     Inertia.get( props.url )
 }
@@ -108,7 +108,7 @@ onMounted(() => {
                         class="
                             h-40
                             w-40
-                            [background:url('images/HIS_Bangkok_VERTICAL_ENG_BLUE_square.png')_center_/_cover]
+                            [background:url('/images/HIS_Bangkok_VERTICAL_ENG_BLUE_square.png')_center_/_cover]
                         "
                     />
                     <p class="font-bold">Boarder Attendance</p>

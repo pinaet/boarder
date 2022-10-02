@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\TestsController;
+use App\Http\Controllers\BoarderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,9 +38,7 @@ Route::get('/Error', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get( '/dashboard', [BoarderController::class, 'dashboard'] )->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy'])

@@ -26,7 +26,7 @@ const form = useForm({
 });
 
 const submit = () => {        
-    Inertia.post( usePage().props.value.appUrl+'/login', {
+    Inertia.post( '/login', {
         email: form.email,
         password: form.password,
     })
