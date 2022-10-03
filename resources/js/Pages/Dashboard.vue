@@ -7,11 +7,20 @@ import { Head } from '@inertiajs/inertia-vue3';
     <Head title="Registration" />
 
     <AuthenticatedLayout>
-        <template #header>
+        <!-- <template #header>
             <h4 class="font-semibold text-xl text-gray-800 leading-tight">
                 Registration
             </h4>
-        </template>
+        </template> -->
+        
+        <!-- Page Heading -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <h4 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Registration
+                </h4>
+            </div>
+        </header>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

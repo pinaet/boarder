@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        $this->down();
-        
-        Schema::create('archived_boarders', function (Blueprint $table) {
-            $table->string('pupil_id')->unique();
-            $table->date('until')->nullable();
+        Schema::create('settings', function (Blueprint $table) {
+            $table->id();
+            $table->string('config_name')->unique();
+            $table->string('config_value')->unique();
+            $table->foreignId('updated_by')->references('id')->on('users');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('archived_boarders');
+        Schema::dropIfExists('settings');
     }
 };

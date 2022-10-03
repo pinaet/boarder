@@ -43,25 +43,25 @@ return new class extends Migration
     {
         $attributes['building_name']     = 'Bradbys';       
         $attributes['description']       = 'Bradbys';   
-        $attributes['member_gender']     = 'm';       
-        $attributes['member_year_group'] = 'Y5,Y6,Y7,Y8,Y9';
+        $attributes['member_gender']     = 'M';       
+        $attributes['member_year_group'] = 'Y4,Y5,Y6,Y7,Y8,Y9';
         Building::create($attributes);
         
         $attributes['building_name']     = 'Junior Girls';       
         $attributes['description']       = 'Junior Girls';   
-        $attributes['member_gender']     = 'f';       
-        $attributes['member_year_group'] = 'Y5,Y6,Y7,Y8,Y9';
+        $attributes['member_gender']     = 'F';       
+        $attributes['member_year_group'] = 'Y4,Y5,Y6,Y7,Y8,Y9';
         Building::create($attributes);
         
         $attributes['building_name']     = 'The Grove';       
         $attributes['description']       = 'The Grove';   
-        $attributes['member_gender']     = 'm';       
+        $attributes['member_gender']     = 'M';       
         $attributes['member_year_group'] = '10,11,12,13';
         Building::create($attributes);
         
         $attributes['building_name']     = 'West Acre';       
         $attributes['description']       = 'West Acre';   
-        $attributes['member_gender']     = 'f';       
+        $attributes['member_gender']     = 'F';       
         $attributes['member_year_group'] = '10,11,12,13';
         Building::create($attributes);
     }

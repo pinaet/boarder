@@ -93,6 +93,21 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'mis' => [
+            'driver' => 'sqlsrv',
+            'url' => env('MIS_DATABASE_URL'),
+            'host' => env('MIS_DB_HOST', 'localhost'),
+            'port' => env('MIS_DB_PORT', '1433'),
+            'database' => env('MIS_DB_DATABASE', 'forge'),
+            'username' => env('MIS_DB_USERNAME', 'forge'),
+            'password' => env('MIS_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
+            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+        ],
+
     ],
 
     /*

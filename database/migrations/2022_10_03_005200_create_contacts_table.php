@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\AllowedUser;
+use App\Http\Controllers\SyncController;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,10 +14,13 @@ return new class extends Migration
      */
     public function up()
     {
-        $this->down();
-        
-        Schema::create('allowed_users', function (Blueprint $table) {
-            $table->string('email')->unique();
+        Schema::create('contacts', function (Blueprint $table) {
+            $table->string('contact_id')->unique();
+            $table->string('pupil_id');
+            $table->string('relationship');
+            $table->string('contact_name');
+            $table->string('email')->nullable();
+            $table->string('contact_no')->nullable();
             $table->timestamps();
         });
 
@@ -31,19 +34,12 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('allowed_users');
+        Schema::dropIfExists('contacts');
     }
 
 
     public function generate()
     {
-        $emails = array(
-            'naet_ph@harrowschool.ac.th',
-            'korn_ph@harrowschool.ac.th',
-            'jane_th@harrowschool.ac.th'
-        );
-        foreach( $emails as $email) {
-            AllowedUser::create(['email'=>$email]);
-        }
+        (new SyncController)->syncContacts();
     }
 };
