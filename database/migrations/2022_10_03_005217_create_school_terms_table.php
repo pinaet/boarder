@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Http\Controllers\SyncController;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -21,6 +22,8 @@ return new class extends Migration
             $table->date('end_date');
             $table->timestamps();
         });
+
+        $this->generate();
     }
 
     /**
@@ -31,5 +34,11 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('school_terms');
+    }
+
+
+    public function generate()
+    {
+        (new SyncController)->syncSchoolTerms();
     }
 };

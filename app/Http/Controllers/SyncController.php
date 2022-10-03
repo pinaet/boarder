@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Boarder;
 use App\Models\Building;
 use App\Models\Contact;
+use App\Models\SchoolTerm;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -98,7 +99,7 @@ class SyncController extends Controller
         {
             //find building_id -year_grup,gender,
             $current_boarder = Boarder::where('pupil_id',$boarder->PupilID);
-            if(!$current_boarder)
+            if( $current_boarder->count()==0 )
             {
                 $building_id = 0;
                 foreach( $buildings as $building )
@@ -134,7 +135,7 @@ class SyncController extends Controller
                 DB::beginTransaction ();
                 try { 
                     Boarder::create($attributes);
-                    DB::commit ();
+                    DB::commit();
                 } catch (Exception $e) {
                     DB::rollBack ();
                     dd($attributes,$e);
@@ -160,7 +161,7 @@ class SyncController extends Controller
                 DB::beginTransaction ();
                 try {
                     $current_boarder->update($attributes);
-                    DB::commit ();
+                    DB::commit();
                 } catch (Exception $e) {
                     DB::rollBack ();
                     dd($attributes,$e);
@@ -217,7 +218,7 @@ class SyncController extends Controller
                 LEFT JOIN LookupDetails lRelationshipToPupil ON lRelationshipToPupil.LookupDetailsID=PC.RelationshipToPupil AND lRelationshipToPupil.LookupID='2100'
             ) A
             WHERE
-                BoarderStatus IN ('Weekly Boarder','Full Boarder')
+                BoarderStatus IN ('Weekly Boarder','Full Boarder') AND ContactID IS NOT NULL
             ORDER BY
                 A.PupilID
         ";
@@ -235,7 +236,7 @@ class SyncController extends Controller
                 'email'        => $contact->EmailID,
                 'contact_no'   => $contact->TelephoneNumber,
             );          
-            if(!$current_contact)
+            if( $current_contact->count()==0 )
             {
                 //create
                 DB::beginTransaction();
@@ -263,6 +264,38 @@ class SyncController extends Controller
 
     public function syncSchoolTerms()
     {
+        //School Terms
+        SchoolTerm::truncate();
+        $sql = "
+            SELECT 
+                SchoolYear, 
+                Name Term, 
+                StartDate,
+                EndDate	
+            FROM 
+                SchoolTerms
+        ";
+        $school_terms = DB::connection('mis')->select( $sql );
+        
+        foreach($school_terms as $school_term)
+        {
+            //find school_term
+            $attributes = array(
+                'academic_year' => $school_term->SchoolYear,
+                'term'          => $school_term->Term,
+                'start_date'    => $school_term->StartDate,
+                'end_date'      => $school_term->EndDate,
+            );  
 
+            //create
+            DB::beginTransaction();
+            try {
+                SchoolTerm::create($attributes);
+                DB::commit ();
+            } catch (Exception $e) {
+                DB::rollBack ();
+                dd($attributes,$e);
+            }
+        }
     }
 }
