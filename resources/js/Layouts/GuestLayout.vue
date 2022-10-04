@@ -1,7 +1,6 @@
 <script setup>
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import { Head, Link, usePage } from '@inertiajs/inertia-vue3';
-const appUrl = usePage().props.value.appUrl
+import { Head, Link } from '@inertiajs/inertia-vue3';
 </script>
 
 <template>
