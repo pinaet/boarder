@@ -97,6 +97,13 @@ class SyncController extends Controller
         $building = $buildings[0];
         foreach($boarders as $boarder)
         {
+            $photo = '';
+            if( env('DB_CONNECTION')=='sqlsrv' ){
+                $photo = DB::raw('CONVERT(VARBINARY(MAX), 0x' . bin2hex($boarder->Photo) . ')'); //To get the value out of the database use hex2bin($attachment)
+            }
+            else{
+                $photo = $boarder->Photo;
+            }
             //find building_id -year_grup,gender,
             $current_boarder = Boarder::where('pupil_id',$boarder->PupilID);
             if( $current_boarder->count()==0 )
@@ -128,7 +135,7 @@ class SyncController extends Controller
                     'form'               => $boarder->Form,
                     'gender'             => $boarder->Gender,
                     'boarder_type'       => $boarder->BoarderStatus,
-                    'photo'              => DB::raw('CONVERT(VARBINARY(MAX), 0x' . bin2hex($boarder->Photo) . ')'), //To get the value out of the database use hex2bin($attachment)
+                    'photo'              => $photo, 
                     'status'             => $boarder->StudentStatus,
                     'updated_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
                 );
@@ -154,7 +161,7 @@ class SyncController extends Controller
                     'form'               => $boarder->Form,
                     'gender'             => $boarder->Gender,
                     'boarder_type'       => $boarder->BoarderStatus,
-                    'photo'              => DB::raw('CONVERT(VARBINARY(MAX), 0x' . bin2hex($boarder->Photo) . ')'), //To get the value out of the database use hex2bin($attachment)
+                    'photo'              => $photo,
                     'status'             => $boarder->StudentStatus,
                     'updated_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
                 );
