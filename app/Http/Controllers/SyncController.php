@@ -128,7 +128,7 @@ class SyncController extends Controller
                     'form'               => $boarder->Form,
                     'gender'             => $boarder->Gender,
                     'boarder_type'       => $boarder->BoarderStatus,
-                    'photo'              => $boarder->Photo,
+                    'photo'              => DB::raw('CONVERT(VARBINARY(MAX), 0x' . bin2hex($boarder->Photo) . ')'), //To get the value out of the database use hex2bin($attachment)
                     'status'             => $boarder->StudentStatus,
                     'updated_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
                 );
@@ -154,7 +154,7 @@ class SyncController extends Controller
                     'form'               => $boarder->Form,
                     'gender'             => $boarder->Gender,
                     'boarder_type'       => $boarder->BoarderStatus,
-                    'photo'              => $boarder->Photo,
+                    'photo'              => DB::raw('CONVERT(VARBINARY(MAX), 0x' . bin2hex($boarder->Photo) . ')'), //To get the value out of the database use hex2bin($attachment)
                     'status'             => $boarder->StudentStatus,
                     'updated_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
                 );

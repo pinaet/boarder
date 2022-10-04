@@ -34,7 +34,14 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        $this->generate();
+        DB::beginTransaction();
+        try {
+            $this->generate();
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            dd($e);
+        }
     }
 
     /**
