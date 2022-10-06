@@ -17,6 +17,7 @@
             changeVal() {
                 this.innerState = !this.innerState
                 console.log( this.innerState )
+                this.$emit('changeVal', this.innerState )
             }
         },
     }
@@ -26,7 +27,7 @@
     <div class="flex ">
         <div class="flex">
             <div class="p-0 mt-[12px] mx-2 ">
-                <button @click="changeVal()" class="px-[1px] w-10 h-5 shadow-inner rounded-full border" :class="innerState==true ? 'bg-harrow-gold-100 text-right' : 'bg-gray-300 text-left'">
+                <button @click="changeVal()" class="px-[1px] w-9 h-5 shadow-inner rounded-full border" :class="innerState==true ? 'bg-harrow-gold-100 text-right' : 'bg-gray-300 text-left'">
                     <button class="w-4 h-4 shadow-md rounded-full bg-white">
                     </button>
                 </button>

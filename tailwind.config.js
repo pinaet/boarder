@@ -40,6 +40,17 @@ module.exports = {
                 'harrow-gold-60':'#c8bda1',
                 'harrow-gold-50':'#d1c8b1',   
                 'harrow-gold-20':'#ede9e0',   
+
+                'info-gray-1': '#828282',
+                'info-gray-2': '#4F4F4F',
+                'info-gray-3': '#333333',
+
+                'fill-gray-1': '#F8F8F8',
+                'fill-gray-2': '#F2F2F2',
+                'fill-gray-3': '#E0E0E0',
+
+                'stroke-gray-1': '#E0E0E0',
+                'stroke-gray-2': '#BDBDBD',
             },
         },
         screens: {
