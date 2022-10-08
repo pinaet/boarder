@@ -27,6 +27,9 @@ class BoarderController extends Controller
                 $sData = base64_encode( $boarder->photo );
             }
             $boarder->photo = $sData;
+            $boarder->{'building_name'} = $boarder->building->building_name;
+            $boarder->{'contacts'} = $boarder->contacts;
+            // dd($boarder->contacts,$boarder->building->building_name,$boarder);
         }
         return Inertia::render('Dashboard', [
             'boarders' => $boarders

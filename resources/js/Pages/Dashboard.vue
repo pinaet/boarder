@@ -77,7 +77,7 @@ const props = defineProps(['boarders']);
 
         <!-- Boarder Columns -->
         <div class="flex flex-col h-[73vh] max-w-7xl mx-auto sm:pl-6 sm:pr-6 lg:pl-8 ">
-            <div class="w-full flex-grow overflow-auto rounded" :class="on_mis_data ? 'border  border-harrow-gold-100' : ''">
+            <div class="w-full flex-grow overflow-auto rounded" :class="on_mis_data ? '  border-harrow-gold-100' : ''">
                 <table class="relative table-fixed border-collapse " :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
                     <thead class="sticky top-0 z-10">
                         <tr class="h-[31px] text-sm text-info-gray-1 flex" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
@@ -159,7 +159,7 @@ const props = defineProps(['boarders']);
                                 </div>
                             </td>
                             <td class="w-[114px] sticky left-[232px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-fill-gray-1">
-                                {{boarder.building_id}}
+                                {{boarder.building_name}}
                             </td>
                             <td class="w-[78px] sticky left-[346px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-fill-gray-1  border-r">
                                 {{boarder.boarder_type}}

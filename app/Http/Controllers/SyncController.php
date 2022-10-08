@@ -238,8 +238,8 @@ class SyncController extends Controller
             $attributes = array(
                 'contact_id'   => $contact->ContactID,
                 'pupil_id'     => $contact->PupilID,
-                'relationship' => $contact->ContactName,
-                'contact_name' => $contact->RelationshipToPupil,
+                'relationship' => $contact->RelationshipToPupil,
+                'contact_name' => $contact->ContactName,
                 'email'        => $contact->EmailID,
                 'contact_no'   => $contact->TelephoneNumber,
             );          
