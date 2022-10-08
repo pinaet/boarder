@@ -51,6 +51,10 @@ module.exports = {
 
                 'stroke-gray-1': '#E0E0E0',
                 'stroke-gray-2': '#BDBDBD',
+
+                'note-gray-1': '#D9D9D9',
+                'note-gray-2': '#BDBDBD',
+                'note-gray-3': '#4F4F4F',
             },
         },
         screens: {

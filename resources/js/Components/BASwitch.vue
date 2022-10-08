@@ -1,38 +1,29 @@
-<script>
+<script setup>
     import { toRefs, ref, watch } from 'vue'
 
-    export default {
-        props: ['state', 'label'],
-        setup(props) {
-            const { state }  = toRefs(props)
-            const innerState = ref('');
-            
-            watch(state, (x) => {
-                innerState.value = x;
-            });
+    const props = defineProps({
+        isOn: Boolean,
+        label: String,
+    })
 
-            return { innerState }
-        },
-        methods: {
-            changeVal() {
-                this.innerState = !this.innerState
-                console.log( this.innerState )
-                this.$emit('changeVal', this.innerState )
-            }
-        },
+    const emit = defineEmits([
+        'toggle'
+    ])
+
+    function update(value){
+        emit('toggle',!value)
     }
 </script>
 
+
 <template>
-    <div class="flex ">
-        <div class="flex">
-            <div class="p-0 mt-[12px] mx-2 ">
-                <button @click="changeVal()" class="px-[1px] w-9 h-5 shadow-inner rounded-full border" :class="innerState==true ? 'bg-harrow-gold-100 text-right' : 'bg-gray-300 text-left'">
-                    <button class="w-4 h-4 shadow-md rounded-full bg-white">
-                    </button>
+    <div class="flex justify-center items-center h-full">
+        <div class="mr-2">
+            <button @click="update(isOn)" class="px-[2px] flex items-center w-9 h-5 shadow-inner rounded-full " :class="isOn==true ? 'bg-harrow-gold-100 justify-end' : 'bg-gray-300 justify-start'">
+                <button class="w-4 h-4 shadow-md rounded-full bg-white">
                 </button>
-            </div>
+            </button>
         </div>
-        <div class="text-gray-400 text-sm leading-loose pt-[8px]">{{label}}</div>
-    </div>
+        <div class="text-gray-400 text-sm">{{label}}</div>
+    </div>    
 </template>
