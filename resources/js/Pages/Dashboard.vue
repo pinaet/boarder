@@ -1,15 +1,19 @@
 <script setup>
-import { ref, toRef } from 'vue'
+import { ref } from 'vue'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import BaSwitch from '@/Components/BASwitch.vue';
 import BAHeaderA from '@/Components/BAHeaderA.vue';
 import BAHeaderB from '@/Components/BAHeaderB.vue';
 import BARegister from '@/Components/BARegister.vue';
 import BAAttendMIS from '@/Components/BAAttendMIS.vue';
-import { Head } from '@inertiajs/inertia-vue3';
+import { useForm, Head } from '@inertiajs/inertia-vue3';
 
 const on_weekly = ref(false)
 const on_mis_data = ref(false)
+
+const props = defineProps(['boarders']);
+
+    // console.log( props.boarder.year_group )
 
 </script>
 
@@ -75,15 +79,15 @@ const on_mis_data = ref(false)
         <div class="flex flex-col h-[73vh] max-w-7xl mx-auto sm:pl-6 sm:pr-6 lg:pl-8 ">
             <div class="w-full flex-grow overflow-auto rounded" :class="on_mis_data ? 'border  border-harrow-gold-100' : ''">
                 <table class="relative table-fixed border-collapse " :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
-                    <thead>
-                        <tr class="h-[31px] sticky top-0 z-10 text-sm text-info-gray-1 flex" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
-                            <th colspan="3"  class="w-[424px] sticky left-0 z-20 font-normal bg-fill-gray-1 border border-stroke-gray-1 flex justify-center items-center">
+                    <thead class="sticky top-0 z-10">
+                        <tr class="h-[31px] text-sm text-info-gray-1 flex" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
+                            <th colspan="3"  class="w-[424px] sticky top-0 left-0 z-40 font-normal text-center bg-fill-gray-1 border border-stroke-gray-1 flex justify-center items-center">
                                 7 Boarders
                             </th>
-                            <th colspan="12" class=" font-normal bg-fill-gray-3 border border-stroke-gray-2 flex justify-center items-center"  :class="on_mis_data? 'w-[528px]': 'w-[328px]'">
+                            <th colspan="12" class="sticky top-0 font-normal text-center bg-fill-gray-3 border border-stroke-gray-2 flex justify-center items-center"  :class="on_mis_data? 'w-[528px]': 'w-[328px]'">
                                 Monday ( 3 Oct 2022 )
                             </th>
-                            <th colspan="12" class=" font-normal bg-fill-gray-2 border border-stroke-gray-2 flex justify-center items-center"  :class="on_mis_data? 'w-[528px]': 'w-[328px]'">
+                            <th colspan="12" class="sticky top-0 font-normal text-center bg-fill-gray-2 border border-stroke-gray-2 flex justify-center items-center"  :class="on_mis_data? 'w-[528px]': 'w-[328px]'">
                                 Tuesday ( 4 Oct 2022 )
                             </th>
                         </tr>
@@ -141,79 +145,24 @@ const on_mis_data = ref(false)
 
 
                         <!-- Data -->
-                        <tr class="sticky inline-flex border-b h-[66px]" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
-                            <td class="w-[232px] sticky left-0 z-20 pt-1 text-sm text-center text-info-gray-2 border-l bg-fill-gray-1">  
-                                <div class="" >
-                                    <div class="p-2.5 pr-0 flex">
-                                        <div class="w-10 h-10 bg-slate-300 rounded-full mr-2.5">P</div>
-                                        <div class="text-left flex-col">
-                                            <div class="font-bold">Pinaet Poonsarakhun</div>
-                                            <div class="text-info-gray-1">Y10, C10, Female</div>
-                                        </div>
-                                        <button>
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 ml-2.5 p-0"><path fill="#a39163" d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM325.8 139.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-21.4 21.4-71-71 21.4-21.4c15.6-15.6 40.9-15.6 56.6 0zM119.9 289L225.1 183.8l71 71L190.9 359.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z"/></svg>
-                                        </button>
+                        <tr v-for="boarder in boarders" :key="boarder.pupil_id" class="sticky inline-flex border-b h-[66px]" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
+                            <td class="w-[232px] sticky left-0 z-20 pt-1 text-sm text-info-gray-2 border-l bg-fill-gray-1">  
+                                <div class="p-2.5 pr-0 flex justify-center items-center">
+                                    <img class="object-cover object-top w-10 h-10 bg-slate-300 rounded-full mr-2.5 " :src="'data:image/png;base64,' +  boarder.photo" />
+                                    <div class="text-left flex-col w-[145px]">
+                                        <div class="font-bold truncate">{{boarder.prefered_forename+' '+boarder.surname}}</div>
+                                        <div class="text-info-gray-1">{{boarder.year_group}}, {{boarder.form}}, {{boarder.gender=='M'?'Male':'Female'}}</div>
                                     </div>
+                                    <button>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 ml-1 p-0"><path fill="#a39163" d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM325.8 139.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-21.4 21.4-71-71 21.4-21.4c15.6-15.6 40.9-15.6 56.6 0zM119.9 289L225.1 183.8l71 71L190.9 359.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z"/></svg>
+                                    </button>
                                 </div>
                             </td>
-                            <td class="w-[114px] sticky left-[232px] z-20 pt-1 text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1">
-                                West Acre
+                            <td class="w-[114px] sticky left-[232px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-fill-gray-1">
+                                {{boarder.building_id}}
                             </td>
-                            <td class="w-[78px] sticky left-[346px] z-20 pt-1 text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1  border-r">
-                                Full
-                            </td>
-
-
-                            <BARegister></BARegister>
-                            <BARegister></BARegister>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BARegister></BARegister>
-                            <BARegister></BARegister>
-
-
-                            <BARegister></BARegister>
-                            <BARegister></BARegister>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BARegister></BARegister>
-                            <BARegister class="border-r"></BARegister>
-
-                        </tr>
-
-                        
-                        <tr class="sticky inline-flex border-b h-[66px]" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
-                            <td class="w-[232px] sticky left-0 z-20 pt-1 text-sm text-center text-info-gray-2 border-l bg-fill-gray-1">  
-                                <div class="" >
-                                    <div class="p-2.5 pr-0 flex">
-                                        <img class="w-10 h-10 rounded-full mr-2.5" src="/images/A218018__Naet Poonsarakhun.jpg" />
-                                        <div class="text-left flex-col">
-                                            <div class="font-bold">Pinaet Poonsarakhun</div>
-                                            <div class="text-info-gray-1">Y10, C10, Female</div>
-                                        </div>
-                                        <button>
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 ml-2.5 p-0"><path fill="#a39163" d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM325.8 139.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-21.4 21.4-71-71 21.4-21.4c15.6-15.6 40.9-15.6 56.6 0zM119.9 289L225.1 183.8l71 71L190.9 359.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z"/></svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="w-[114px] sticky left-[232px] z-20 pt-1 text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1">
-                                West Acre
-                            </td>
-                            <td class="w-[78px] sticky left-[346px] z-20 pt-1 text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1  border-r">
-                                Full
+                            <td class="w-[78px] sticky left-[346px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-fill-gray-1  border-r">
+                                {{boarder.boarder_type}}
                             </td>
 
 
@@ -251,15 +200,5 @@ const on_mis_data = ref(false)
             </div>
             
         </div>
-
-        <!-- <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        You're logged in!
-                    </div>
-                </div>
-            </div>
-        </div> -->
     </AuthenticatedLayout>
 </template>

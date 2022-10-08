@@ -3,12 +3,33 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
+use App\Models\Boarder;
 use Illuminate\Http\Request;
 
 class BoarderController extends Controller
 {
     public function dashboard()
     {
-        return Inertia::render('Dashboard');
+        $boarders = Boarder::all()->take(10);
+        // $boarder = Boarder::where('pupil_id','2279')->first(); //dd($boarders,$boarder);
+        foreach( $boarders as $boarder )
+        {
+            // dd($boarder->contacts,$boarder->building->building_name,$boarder);
+            if( env('DB_CONNECTION')=='sqlsrv' ){
+                // $photo = DB::raw('CONVERT(VARBINARY(MAX), 0x' . bin2hex($boarder->Photo) . ')'); //To get the value out of the database use hex2bin($attachment)
+                // $boarder->Photo    = '0x' . bin2hex($boarder->Photo);    
+                $string     = str_replace(' ','', $boarder->photo);
+                $sData      = $string;
+                $sData      = substr( $sData, 2, strlen( $sData ) -2 );
+                $sData      = base64_encode( pack("H*", $sData) );
+            }
+            else{
+                $sData = base64_encode( $boarder->photo );
+            }
+            $boarder->photo = $sData;
+        }
+        return Inertia::render('Dashboard', [
+            'boarders' => $boarders
+        ]);
     }
 }
