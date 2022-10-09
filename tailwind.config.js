@@ -51,6 +51,7 @@ module.exports = {
 
                 'stroke-gray-1': '#E0E0E0',
                 'stroke-gray-2': '#BDBDBD',
+                'stroke-gray-3': '#828282',
 
                 'note-gray-1': '#D9D9D9',
                 'note-gray-2': '#BDBDBD',

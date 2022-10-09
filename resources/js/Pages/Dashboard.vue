@@ -35,12 +35,19 @@ const props = defineProps(['boarders']);
                 </h4>
                 <div class="flex justify-start items-center h-full">
                     <div class="text-gray-400 text-sm mr-1">Building:</div>
-                    <button class="border-gray-600 border ml-1 pl-1 w-36 h-[38px] rounded-md flex justify-evenly items-center">
+                    <button class="border-stroke-gray-3 border ml-1 pl-1 w-36 h-[38px] rounded-md flex justify-evenly items-center relative">
                         <p class="w-3/4 flex justify-start ">West Acre</p>
                         <div class="flex justify-end">
                             <div class="w-2 h-2 text-right">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#828282" d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg>
                             </div>
+                        </div>
+                        <div class="absolute top-[37px] left-0 z-30 w-36 shadow-md border border-t-0 border-stroke-gray-3 rounded-b-md overflow-clip bg-fill-gray-2">
+                            <div class="border-stroke-gray-3 h-[38px] flex pl-3 items-center border-b">All</div>
+                            <div class="border-stroke-gray-3 h-[38px] flex pl-3 items-center border-b">Bradbys</div>
+                            <div class="border-stroke-gray-3 h-[38px] flex pl-3 items-center border-b">Junior Girls</div>
+                            <div class="border-stroke-gray-3 h-[38px] flex pl-3 items-center border-b">The Grove</div>
+                            <div class="border-stroke-gray-3 h-[38px] flex pl-3 items-center">West Acre</div>
                         </div>
                     </button>                    
                 </div>
@@ -82,7 +89,7 @@ const props = defineProps(['boarders']);
                     <thead class="sticky top-0 z-10">
                         <tr class="h-[31px] text-sm text-info-gray-1 flex" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
                             <th colspan="3"  class="w-[424px] sticky top-0 left-0 z-40 font-normal text-center bg-fill-gray-1 border border-stroke-gray-1 flex justify-center items-center">
-                                7 Boarders
+                                {{boarders.length}} Boarders
                             </th>
                             <th colspan="12" class="sticky top-0 font-normal text-center bg-fill-gray-3 border border-stroke-gray-2 flex justify-center items-center"  :class="on_mis_data? 'w-[528px]': 'w-[328px]'">
                                 Monday ( 3 Oct 2022 )
