@@ -113,8 +113,20 @@ const props         = defineProps(['boarders','attendances']);
                                 </div>
                             </td>
 
-                            <BAHeaderA>Morning 0715</BAHeaderA>
-                            <BAHeaderA>Callover 1740</BAHeaderA>
+                            <BAHeaderA class="relative">
+                                Morning 0715
+                                 <!-- Attendance Dropdown -->
+                                <div v-show="on_weekly" class="absolute top-[28px] left-[0px] z-10 w-[195px] -pl-1 shadow-md">
+                                    <div v-for="attendance in attendances" :key="attendance.id" class="border-stroke-gray-1 hover:bg-fill-gray-3 h-fit flex pl-2  border-b" :style="'background-color: '+attendance.display_colour">                                
+                                        <div class="w-[20px] h-[26px] text-info-gray-2 text-xs flex justify-center items-center">{{attendance.display_symbol}}</div>
+                                        <div class="w-[24px] h-[26px] text-info-gray-2 text-xs flex justify-center items-center">-</div>
+                                        <div class="w-full text-info-gray-2 text-xs text-left flex justify-start items-center">{{attendance.attendance_type_name}}</div>
+                                    </div>
+                                </div>
+                            </BAHeaderA>
+                            <BAHeaderA>
+                                Callover 1740
+                            </BAHeaderA>
                             <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Morning</BAHeaderB>
                             <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Afternoon</BAHeaderB>
                             <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Reg</BAHeaderB>
@@ -143,7 +155,7 @@ const props         = defineProps(['boarders','attendances']);
 
 
                         <!-- Data -->
-                        <tr v-for="boarder in boarders" :key="boarder.pupil_id" class="sticky inline-flex h-[66px]" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
+                        <tr v-for="boarder in boarders" :key="boarder.pupil_id" class="sticky flex h-[66px]" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
                             <td class="w-[232px] sticky left-0 z-20 pt-1 text-sm text-info-gray-2 border-l border-b bg-white">  
                                 <div class="p-2.5 pr-0 flex justify-center items-center">
                                     <img class="object-cover object-top w-10 h-10 bg-slate-300 rounded-full mr-2.5 " :src="'data:image/png;base64,' +  boarder.photo" />
@@ -163,8 +175,8 @@ const props         = defineProps(['boarders','attendances']);
                                 {{boarder.boarder_type}}
                             </td>
 
-
-                            <BARegister></BARegister>
+ 
+                            <BARegister :attendances="attendances"></BARegister>
                             <BARegister></BARegister>
                             <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
                             <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
