@@ -56,6 +56,15 @@ module.exports = {
                 'note-gray-1': '#D9D9D9',
                 'note-gray-2': '#BDBDBD',
                 'note-gray-3': '#4F4F4F',
+
+                'reg-no-mark'   : '#E0E0E0',
+                'reg-present'   : '#6FCF97',
+                'reg-absent'    : '#FAB1A0',
+                'reg-exeat'     : '#81ECEC',
+                'reg-home'      : '#74B9FF',
+                'reg-sporting'  : '#2D9CDB',
+                'reg-late'      : '#F2994A',
+                'reg-isolation' : '#F2C94C',
             },
         },
         screens: {

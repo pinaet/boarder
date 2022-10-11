@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use Inertia\Inertia;
 use App\Models\Boarder;
 use App\Models\Building;
@@ -14,6 +15,7 @@ class BoarderController extends Controller
         // dd( Building::all() );
         $boarders = Boarder::where('status','Current')->orderBy('prefered_forename')->take(10)->get();
         // $boarder = Boarder::where('pupil_id','2279')->first(); //dd($boarders,$boarder);
+        $attendances = Attendance::all();
         foreach( $boarders as $boarder )
         {
             if( env('DB_CONNECTION')=='sqlsrv' ){
@@ -33,7 +35,8 @@ class BoarderController extends Controller
             // dd($boarder->contacts,$boarder->building->building_name,$boarder);
         }
         return Inertia::render('Dashboard', [
-            'boarders' => $boarders
+            'boarders' => $boarders,
+            'attendances' => $attendances,
         ]);
     }
 }

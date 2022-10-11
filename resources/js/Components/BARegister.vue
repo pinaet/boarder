@@ -17,7 +17,7 @@
 
 
 <template>    
-    <td class="w-[82px] bg-fill-gray-1 border-l">
+    <td class="w-[82px] bg-white border-l border-b">
         <div class="w-full h-full text-xs p-1 flex items-center justify-evenly space-x-1">
             <div class="bg-note-gray-1 w-[40px] h-[26px] rounded-md px-1 flex items-center justify-evenly space-x-1">
                 <div class="w-[25px] flex justify-center items-center h-full ">

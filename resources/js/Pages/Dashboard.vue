@@ -2,16 +2,21 @@
 import { ref } from 'vue'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import BaSwitch from '@/Components/BASwitch.vue';
+import BABuildingDropdown from '@/Components/BABuildingDropdown.vue';
+import BATotalAttendanceSum from '@/Components/BATotalAttendanceSum.vue';
+import BATotalAttendanceType from '@/Components/BATotalAttendanceType.vue';
 import BAHeaderA from '@/Components/BAHeaderA.vue';
 import BAHeaderB from '@/Components/BAHeaderB.vue';
 import BARegister from '@/Components/BARegister.vue';
 import BAAttendMIS from '@/Components/BAAttendMIS.vue';
+import BATotalBoarder from '@/Components/BATotalBoarder.vue';
 import { useForm, Head } from '@inertiajs/inertia-vue3';
 
-const on_weekly = ref(false)
-const on_mis_data = ref(false)
+const on_weekly     = ref(false)
+const on_mis_data   = ref(false)
+const building      = ref('West Acre')
 
-const props = defineProps(['boarders']);
+const props         = defineProps(['boarders','attendances']);
 
     // console.log( props.boarder.year_group )
 
@@ -35,21 +40,7 @@ const props = defineProps(['boarders']);
                 </h4>
                 <div class="flex justify-start items-center h-full">
                     <div class="text-gray-400 text-sm mr-1">Building:</div>
-                    <button class="border-stroke-gray-3 border ml-1 pl-1 w-36 h-[38px] rounded-md flex justify-evenly items-center relative">
-                        <p class="w-3/4 flex justify-start ">West Acre</p>
-                        <div class="flex justify-end">
-                            <div class="w-2 h-2 text-right">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#828282" d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg>
-                            </div>
-                        </div>
-                        <div class="absolute top-[37px] left-0 z-30 w-36 shadow-md border border-t-0 border-stroke-gray-3 rounded-b-md overflow-clip bg-fill-gray-2">
-                            <div class="border-stroke-gray-3 h-[38px] flex pl-3 items-center border-b">All</div>
-                            <div class="border-stroke-gray-3 h-[38px] flex pl-3 items-center border-b">Bradbys</div>
-                            <div class="border-stroke-gray-3 h-[38px] flex pl-3 items-center border-b">Junior Girls</div>
-                            <div class="border-stroke-gray-3 h-[38px] flex pl-3 items-center border-b">The Grove</div>
-                            <div class="border-stroke-gray-3 h-[38px] flex pl-3 items-center">West Acre</div>
-                        </div>
-                    </button>                    
+                    <BABuildingDropdown @toggle="building=$event">{{building}}</BABuildingDropdown>                
                 </div>
                 <div class="flex justify-start items-center">
                     <div class="text-gray-400 text-sm">Week:</div>
@@ -94,7 +85,7 @@ const props = defineProps(['boarders']);
                             <th colspan="12" class="sticky top-0 font-normal text-center bg-fill-gray-3 border border-stroke-gray-2 flex justify-center items-center"  :class="on_mis_data? 'w-[528px]': 'w-[328px]'">
                                 Monday ( 3 Oct 2022 )
                             </th>
-                            <th colspan="12" class="sticky top-0 font-normal text-center bg-fill-gray-2 border border-stroke-gray-2 flex justify-center items-center"  :class="on_mis_data? 'w-[528px]': 'w-[328px]'">
+                            <th colspan="12" class="sticky top-0 font-normal text-center bg-fill-gray-2 border border-stroke-gray-2 flex justify-center items-center"  :class="[on_mis_data? 'w-[528px]': 'w-[328px]', on_weekly ? '' : 'hidden']" >
                                 Tuesday ( 4 Oct 2022 )
                             </th>
                         </tr>
@@ -135,25 +126,25 @@ const props = defineProps(['boarders']);
                             <BAHeaderA>Bed</BAHeaderA>
                             <BAHeaderA>Offsite Status</BAHeaderA>
 
-                            <BAHeaderA>Morning 0715</BAHeaderA>
-                            <BAHeaderA>Callover 1740</BAHeaderA>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Morning</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Afternoon</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Reg</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Lesson 1</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Lesson 2</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Lesson 3</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Lesson 4</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Lesson 5</BAHeaderB>
-                            <BAHeaderA>Bed</BAHeaderA>
-                            <BAHeaderA class="border-r">Offsite Status</BAHeaderA>
+                            <BAHeaderA :class="on_weekly ? '' : 'hidden'">Morning 0715</BAHeaderA>
+                            <BAHeaderA :class="on_weekly ? '' : 'hidden'">Callover 1740</BAHeaderA>
+                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Morning</BAHeaderB>
+                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Afternoon</BAHeaderB>
+                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Reg</BAHeaderB>
+                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Lesson 1</BAHeaderB>
+                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Lesson 2</BAHeaderB>
+                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Lesson 3</BAHeaderB>
+                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Lesson 4</BAHeaderB>
+                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Lesson 5</BAHeaderB>
+                            <BAHeaderA :class="on_weekly ? '' : 'hidden'">Bed</BAHeaderA>
+                            <BAHeaderA :class="on_weekly ? '' : 'hidden'" class="border-r">Offsite Status</BAHeaderA>
 
                         </tr>
 
 
                         <!-- Data -->
-                        <tr v-for="boarder in boarders" :key="boarder.pupil_id" class="sticky inline-flex border-b h-[66px]" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
-                            <td class="w-[232px] sticky left-0 z-20 pt-1 text-sm text-info-gray-2 border-l bg-fill-gray-1">  
+                        <tr v-for="boarder in boarders" :key="boarder.pupil_id" class="sticky inline-flex h-[66px]" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
+                            <td class="w-[232px] sticky left-0 z-20 pt-1 text-sm text-info-gray-2 border-l border-b bg-white">  
                                 <div class="p-2.5 pr-0 flex justify-center items-center">
                                     <img class="object-cover object-top w-10 h-10 bg-slate-300 rounded-full mr-2.5 " :src="'data:image/png;base64,' +  boarder.photo" />
                                     <div class="text-left flex-col w-[145px]">
@@ -165,10 +156,10 @@ const props = defineProps(['boarders']);
                                     </button>
                                 </div>
                             </td>
-                            <td class="w-[114px] sticky left-[232px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-fill-gray-1">
+                            <td class="w-[114px] sticky left-[232px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-white border-b">
                                 {{boarder.building_name}}
                             </td>
-                            <td class="w-[78px] sticky left-[346px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-fill-gray-1  border-r">
+                            <td class="w-[78px] sticky left-[346px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-white border-b border-r">
                                 {{boarder.boarder_type}}
                             </td>
 
@@ -187,20 +178,59 @@ const props = defineProps(['boarders']);
                             <BARegister></BARegister>
 
 
-                            <BARegister></BARegister>
-                            <BARegister></BARegister>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BARegister></BARegister>
-                            <BARegister class="border-r"></BARegister>
+                            <BARegister :class="on_weekly ? '' : 'hidden'"></BARegister>
+                            <BARegister :class="on_weekly ? '' : 'hidden'"></BARegister>
+                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
+                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
+                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
+                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
+                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
+                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
+                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
+                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
+                            <BARegister :class="on_weekly ? '' : 'hidden'"></BARegister>
+                            <BARegister :class="on_weekly ? '' : 'hidden'" class="border-r"></BARegister>
 
                         </tr>
+
+                        <!-- Table Footer : Boarder Total -->
+                        <tr class="h-[26px] flex" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
+                            <td colspan="3" class="w-[424px] h-full sticky left-0 bg-fill-gray-1 border-l border-b border-r border-stroke-gray-1 flex justify-start items-center pl-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-[21px] h-[15px]" viewBox="0 0 640 512"><!-- users --><path fill="#4F4F4F" d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z"/></svg>
+                                <div class="pl-1  font-bold text-info-gray-2 text-[14px] flex items-center">Boarder Total</div>
+                            </td>
+                            
+                            <BATotalBoarder>{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder>{{boarders.length}}</BATotalBoarder>
+                            <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden']"></td>
+                            <BATotalBoarder>{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder>{{boarders.length}}</BATotalBoarder>
+                            
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
+                            <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]"></td>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
+                        </tr>
+
+
+                        <!-- Table Footer : Attendance Total -->
+                        <tr v-for="attendance in attendances" :key="attendance.id" class="h-[26px] flex" :class="[on_mis_data? 'w-[1484px]': 'w-[1084px]']">
+                            <BATotalAttendanceType class="sticky left-0" :attendance="attendance"></BATotalAttendanceType>
+                            
+                            <BATotalAttendanceSum :attendance="attendance">-</BATotalAttendanceSum>
+                            <BATotalAttendanceSum :attendance="attendance">-</BATotalAttendanceSum>
+                            <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden']"></td>
+                            <BATotalAttendanceSum :attendance="attendance">-</BATotalAttendanceSum>
+                            <BATotalAttendanceSum :attendance="attendance">-</BATotalAttendanceSum>
+                            
+                            <BATotalAttendanceSum :class="on_weekly ? '' : 'hidden'" :attendance="attendance">-</BATotalAttendanceSum>
+                            <BATotalAttendanceSum :class="on_weekly ? '' : 'hidden'" :attendance="attendance">-</BATotalAttendanceSum>
+                            <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]"></td>
+                            <BATotalAttendanceSum :class="on_weekly ? '' : 'hidden'" :attendance="attendance">-</BATotalAttendanceSum>
+                            <BATotalAttendanceSum :class="on_weekly ? '' : 'hidden'" :attendance="attendance">-</BATotalAttendanceSum>
+                        </tr>
+
                         
                     </tbody>
                 </table>
