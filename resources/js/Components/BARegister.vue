@@ -1,16 +1,21 @@
 <script setup>
     import { ref } from 'vue'
+    import BARegisterOption from '@/Components/BARegisterOption.vue';
 
     const showList = ref(false)
 
     const props = defineProps(['attendances'])
 
     const emit = defineEmits([
-        'toggle'
+        'toggle', 'note'
     ])
 
     function update(value){
         emit('toggle',value)
+    }
+
+    function note(value){
+        emit('note',value)
     }
 </script>
 
@@ -26,17 +31,12 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-2 h-2"><path d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"/></svg>
                 </div>
                 <!-- Attendance Dropdown -->
-                <div v-show="showList" class="absolute top-[26px] left-[0px] z-10 w-[195px] -pl-1 shadow-md">
-                    <div v-for="attendance in attendances" :key="attendance.id" class="border-stroke-gray-1 hover:bg-fill-gray-3 h-fit flex pl-2  border-b" :style="'background-color: '+attendance.display_colour">                                
-                        <div class="w-[20px] h-[26px] text-info-gray-2 text-xs flex justify-center items-center">{{attendance.display_symbol}}</div>
-                        <div class="w-[24px] h-[26px] text-info-gray-2 text-xs flex justify-center items-center">-</div>
-                        <div class="w-full text-info-gray-2 text-xs text-left flex justify-start items-center">{{attendance.attendance_type_name}}</div>
-                    </div>
-                </div>
+                <BARegisterOption class="z-10 top-[45px]" v-show="showList" :attendances="attendances">
+                </BARegisterOption>
             </button>
-            <div class="bg-note-gray-1 w-[26px] h-[26px] rounded-md flex justify-center items-center">
+            <button class="bg-note-gray-1 w-[26px] h-[26px] rounded-md flex justify-center items-center" @click="note(true)">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-4 h-4"><path fill="#BDBDBD" d="M312 320h136V56c0-13.3-10.7-24-24-24H24C10.7 32 0 42.7 0 56v400c0 13.3 10.7 24 24 24h264V344c0-13.2 10.8-24 24-24zm129 55l-98 98c-4.5 4.5-10.6 7-17 7h-6V352h128v6.1c0 6.3-2.5 12.4-7 16.9z"/></svg>
-            </div>
+            </button>
         </div>
     </td>
 </template>
