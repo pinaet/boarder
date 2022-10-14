@@ -20,10 +20,18 @@ const on_weekly     = ref(false)
 const on_mis_data   = ref(false)
 const on_reg        = ref(false)
 const on_note       = ref(false)
-const on_boarder    = ref(true)
+const on_boarder    = ref(false)
 const building      = ref('West Acre')
 
 const props         = defineProps(['boarders','attendances','buildings']);
+
+
+const c_boarder     = ref('')
+
+//functions
+const assing_boarder = function( boarder ){
+    c_boarder = boarder
+}
 
     // console.log( props.boarder.year_group )
 
@@ -164,7 +172,7 @@ const props         = defineProps(['boarders','attendances','buildings']);
                                         <div class="font-bold truncate">{{boarder.prefered_forename+' '+boarder.surname}}</div>
                                         <div class="text-info-gray-1">{{boarder.year_group}}, {{boarder.form}}, {{boarder.gender=='M'?'Male':'Female'}}</div>
                                     </div>
-                                    <button>
+                                    <button @click="on_boarder=!on_boarder">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 ml-1 p-0"><path fill="#a39163" d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM325.8 139.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-21.4 21.4-71-71 21.4-21.4c15.6-15.6 40.9-15.6 56.6 0zM119.9 289L225.1 183.8l71 71L190.9 359.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z"/></svg>
                                     </button>
                                 </div>
@@ -263,7 +271,7 @@ const props         = defineProps(['boarders','attendances','buildings']);
                                 <div class="pl-2 font-bold">Notes</div>
                             </div>
                         </div>
-                        <div class="pt-[14px] px-[17px]">
+                        <div class="pt-[14px] px-1 sm:px-[17px]">
                             <div class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2">
                                 Write some notes...
                             </div>
@@ -280,7 +288,7 @@ const props         = defineProps(['boarders','attendances','buildings']);
             <div v-show="on_boarder">
                 <!-- Boarder Container -->
                 <div class="fixed left-0 top-0 h-full w-full z-[51] flex justify-center mt-2">
-                    <div class="left-0 top-0 w-[511px] bg-note-gray-1 rounded-lg shadow-md h-[94vh] ">
+                    <div class="left-0 top-0 w-[493px] sm:w-[511px] bg-note-gray-1 rounded-lg shadow-md min-h-[565px] h-[94vh] ">
                         <div class="bg-harrow-blue-100 h-[33px] rounded-t-lg">
                             <div class="text-white flex justify-center items-center h-full">
                                 <div>
@@ -290,7 +298,7 @@ const props         = defineProps(['boarders','attendances','buildings']);
                                 <div class="pl-2 font-bold">Boarder</div>
                             </div>
                         </div>
-                        <div class="pt-[14px] px-[23px]">
+                        <div class="pt-[14px] px-3 sm:px-[23px]">
                             <div class="w-[465px] bg-white border border-harrow-gold-100 rounded-lg text-info-gray-3 h-[465px] overflow-y-scroll">
                                 <div class="w-full h-[288px] flex px-[18px] pt-[22px] border-b border-harrow-gold-100">
                                     <div class="overflow-clip pr-[18px] w-fit">
@@ -371,8 +379,8 @@ const props         = defineProps(['boarders','attendances','buildings']);
                                 </div>
                             </div>
                             <div class="flex justify-end">
-                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-[#828282]" @click="on_note=false">Cancel</button>
-                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-3 mb-3 mr-4 border border-[#c3c8d2] bg-harrow-gold-100" @click="on_note=false">Save</button>
+                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-[#828282]" @click="on_boarder=false">Cancel</button>
+                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-3 mb-3 mr-4 border border-[#c3c8d2] bg-harrow-gold-100" @click="on_boarder=false">Save</button>
                             </div>
                         </div>
                     </div>
