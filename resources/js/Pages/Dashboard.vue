@@ -8,6 +8,7 @@ import BATotalAttendanceType from '@/Components/BATotalAttendanceType.vue';
 import BARegisterOption from '@/Components/BARegisterOption.vue';
 import BAInputInfo from '@/Components/BAInputInfo.vue';
 import BALabelInfo from '@/Components/BALabelInfo.vue';
+import BASelect from '@/Components/BASelect.vue';
 import BAHeaderA from '@/Components/BAHeaderA.vue';
 import BAHeaderB from '@/Components/BAHeaderB.vue';
 import BARegister from '@/Components/BARegister.vue';
@@ -22,7 +23,7 @@ const on_note       = ref(false)
 const on_boarder    = ref(true)
 const building      = ref('West Acre')
 
-const props         = defineProps(['boarders','attendances']);
+const props         = defineProps(['boarders','attendances','buildings']);
 
     // console.log( props.boarder.year_group )
 
@@ -46,7 +47,7 @@ const props         = defineProps(['boarders','attendances']);
                 </h4>
                 <div class="flex justify-start items-center h-full">
                     <div class="text-gray-400 text-sm mr-1">Building:</div>
-                    <BABuildingDropdown @toggle="building=$event">{{building}}</BABuildingDropdown>                
+                    <BABuildingDropdown :data="buildings" @toggle="building=$event">{{building}}</BABuildingDropdown>                
                 </div>
                 <div class="flex justify-start items-center">
                     <div class="text-gray-400 text-sm">Week:</div>
@@ -279,8 +280,8 @@ const props         = defineProps(['boarders','attendances']);
             <div v-show="on_boarder">
                 <!-- Boarder Container -->
                 <div class="fixed left-0 top-0 h-full w-full z-[51] flex justify-center mt-2">
-                    <div class="left-0 top-0 w-[511px] h-fit bg-note-gray-1 rounded-lg overflow-clip shadow-md">
-                        <div class="bg-harrow-blue-100 h-[33px]">
+                    <div class="left-0 top-0 w-[511px] bg-note-gray-1 rounded-lg shadow-md h-[94vh] ">
+                        <div class="bg-harrow-blue-100 h-[33px] rounded-t-lg">
                             <div class="text-white flex justify-center items-center h-full">
                                 <div>
                                     <!-- user-alt -->
@@ -289,11 +290,11 @@ const props         = defineProps(['boarders','attendances']);
                                 <div class="pl-2 font-bold">Boarder</div>
                             </div>
                         </div>
-                        <div class="pt-[14px] px-[23px] ">
-                            <div class="w-[465px] h-[288px] bg-white border border-harrow-gold-100 rounded-lg text-info-gray-3">
-                                <div class="w-full h-full flex px-[18px] pt-[22px]">
+                        <div class="pt-[14px] px-[23px]">
+                            <div class="w-[465px] bg-white border border-harrow-gold-100 rounded-lg text-info-gray-3 h-[465px] overflow-y-scroll">
+                                <div class="w-full h-[288px] flex px-[18px] pt-[22px] border-b border-harrow-gold-100">
                                     <div class="overflow-clip pr-[18px] w-fit">
-                                        <img class="w-[147px] h-[191px] border-[#C3C8D2] bg-slate-50 object-cover object-top rounded-lg border" src="/images/A218018__Naet Poonsarakhun.jpg"/>
+                                        <img class="w-[147px] h-[191px] border-[#C3C8D2] bg-slate-50 object-cover object-top rounded-lg border" src="/images/Mary_Ma.jpg"/>
                                     </div>
                                     <div class=" pl-[18px] flex-col w-[282px]">
                                         <table class="w-full">
@@ -302,40 +303,70 @@ const props         = defineProps(['boarders','attendances']);
                                                     <BALabelInfo label="Admission No">3984</BALabelInfo>
                                                 </td>
                                             </tr>
-                                            <tr class=" pt-2">
-                                                <td class="w-[141px] pt-2">
-                                                    <BALabelInfo label="Prefered Forename">Naet</BALabelInfo>
+                                            <tr class=" pt-2.5">
+                                                <td class="w-[141px] pt-2.5">
+                                                    <BALabelInfo label="Prefered Forename">Mary</BALabelInfo>
                                                 </td>
-                                                <td class="w-[141px] pt-2">
+                                                <td class="w-[141px] pt-2.5">
                                                     <BALabelInfo label="Surname">Poonsarakhun</BALabelInfo>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="pt-2">
+                                                <td class="pt-2.5">
                                                     <BALabelInfo label="Year Group">10</BALabelInfo>
                                                 </td>
-                                                <td class="pt-2">
+                                                <td class="pt-2.5">
                                                     <BALabelInfo label="Form">K10</BALabelInfo>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="pt-2">
+                                                <td class="pt-2.5">
                                                     <BALabelInfo label="Gender">Male</BALabelInfo>
                                                 </td>
-                                                <td class="pt-2">
+                                                <td class="pt-2.5">
                                                     <BAInputInfo value="0955212365">Telephone:</BAInputInfo>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" class="pt-2">
+                                                <td colspan="2" class="pt-2.5">
                                                     <BAInputInfo value="Allowed">Offsite Permission:</BAInputInfo>
                                                 </td>
                                             </tr>
                                         </table>
-                                        <div>
+                                    </div>
+                                </div>
+                                <div class="w-full h-[75px] flex px-[18px] pt-3 ">
+                                    <div class="h-full w-[165px] flex items-start pl-[32px] flex-col">
+                                        <BALabelInfo label="Boarder Type">Weekly</BALabelInfo>
+                                    </div>
+                                    <div class="h-full pl-[18px] flex-col w-[282px]">
+                                        <BASelect value="West Acre" :data="buildings">Building:</BASelect>
+                                    </div>
+                                </div>
+                                <div class="w-full h-[100px] flex border-t border-harrow-gold-100">
+                                    <div class="h-full w-[178px] flex flex-col justify-center items-center bg-harrow-blue-100 text-white font-bold">
+                                        <div class="">Mother</div>
+                                        <div class="flex justify-center items-center mt-4">
+                                            <div class="text-xs font-normal mr-[2px]">Tel.</div>
+                                            <div>0905768420</div>
                                         </div>
-                                        <div>
+                                    </div>
+                                    <div class="h-full flex flex-col justify-evenly pl-4 w-[287px] rounded-br-lg">
+                                        <BALabelInfo label="Contact Name">Ms. Jessica Carder</BALabelInfo>
+                                        <BALabelInfo label="Email">jessica.carder@gmail.com</BALabelInfo>
+                                    </div>
+                                </div>
+                                <div class="w-full h-[100px] flex border-t border-harrow-gold-100">
+                                    <div class="h-full w-[178px] flex flex-col justify-center items-center bg-harrow-blue-100 text-white font-bold rounded-bl-lg">
+                                        <div class="">Mother</div>
+                                        <div class="flex justify-center items-center mt-4">
+                                            <div class="text-xs font-normal mr-[2px]">Tel.</div>
+                                            <div>0905768420</div>
                                         </div>
+                                    </div>
+                                    <div class="h-full flex flex-col justify-evenly pl-4 w-[287px] rounded-br-lg">
+                                        <BALabelInfo label="Contact Name">Ms. Jessica Carder</BALabelInfo>
+                                        <BALabelInfo label="Email">jessica.carder@gmail.com</BALabelInfo>
                                     </div>
                                 </div>
                             </div>

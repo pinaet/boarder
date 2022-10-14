@@ -16,6 +16,7 @@ class BoarderController extends Controller
         $boarders = Boarder::where('status','Current')->orderBy('prefered_forename')->take(10)->get();
         // $boarder = Boarder::where('pupil_id','2279')->first(); //dd($boarders,$boarder);
         $attendances = Attendance::all();
+        $buildings = Building::all();//dd($buildings);
         foreach( $boarders as $boarder )
         {
             if( env('DB_CONNECTION')=='sqlsrv' ){
@@ -37,6 +38,7 @@ class BoarderController extends Controller
         return Inertia::render('Dashboard', [
             'boarders' => $boarders,
             'attendances' => $attendances,
+            'buildings' => $buildings,
         ]);
     }
 }
