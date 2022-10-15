@@ -44,6 +44,16 @@ class BoarderController extends Controller
 
     function update_profile()
     {
-        dd( request() );
+        $c_boarder  = request()->boarder;
+
+        $building   = Building::where('building_name', $c_boarder['building_name'])->first();
+        Boarder::where('pupil_id', $c_boarder['pupil_id'])
+                ->update([
+                    'telephone'          => $c_boarder['telephone'],
+                    'offsite_permission' => $c_boarder['offsite_permission'],
+                    'building_id'        => $building->id
+                ]);
+        $data['message'] = 'OK 200';
+        return $data;
     }
 }

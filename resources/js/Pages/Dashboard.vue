@@ -35,16 +35,21 @@ const assign_boarder = function( boarder ){
     console.log( this.c_boarder )
 }
 
-// const update_boarder = function(){
-//     // this.on_boarder = false
-//     // axios.post('/boarder/update/profile', [ { 'boarder' : this.c_boarder } ])
-//     //     .then((res) => {
-//     //       success = true
-//     //     })
-//     //     .catch((error) => {
-//     //       error = error.data.message
-//     //     })
-// }
+const update_boarder = function(){
+    this.on_boarder = false
+
+    let data = { 
+        'boarder' : this.c_boarder 
+    }
+
+    axios.post('/boarder/update/profile', data )
+        .then((res) => {
+            console.log( res.data.message )
+        })
+        .catch((error) => {
+            console.log( error )
+        })
+}
 
     // console.log( c_boarder )
 
