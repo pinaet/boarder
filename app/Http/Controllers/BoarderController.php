@@ -41,4 +41,9 @@ class BoarderController extends Controller
             'buildings' => $buildings,
         ]);
     }
+
+    function update_profile()
+    {
+        dd( request() );
+    }
 }

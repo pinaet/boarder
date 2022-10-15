@@ -16,24 +16,37 @@ import BAAttendMIS from '@/Components/BAAttendMIS.vue';
 import BATotalBoarder from '@/Components/BATotalBoarder.vue';
 import { useForm, Head } from '@inertiajs/inertia-vue3';
 
-const on_weekly     = ref(false)
-const on_mis_data   = ref(false)
-const on_reg        = ref(false)
-const on_note       = ref(false)
-const on_boarder    = ref(false)
-const building      = ref('West Acre')
+let on_weekly     = ref(false)
+let on_mis_data   = ref(false)
+let on_reg        = ref(false)
+let on_note       = ref(false)
+let on_boarder    = ref(false)
+let building      = ref('West Acre')
+let c_boarder     = ref('')
 
-const props         = defineProps(['boarders','attendances','buildings']);
+let props         = defineProps(['boarders','attendances','buildings']);
 
-
-const c_boarder     = ref('')
+c_boarder = props.boarders[0]
 
 //functions
-const assing_boarder = function( boarder ){
-    c_boarder = boarder
+const assign_boarder = function( boarder ){
+    this.on_boarder= !this.on_boarder
+    this.c_boarder = boarder
+    console.log( this.c_boarder )
 }
 
-    // console.log( props.boarder.year_group )
+// const update_boarder = function(){
+//     // this.on_boarder = false
+//     // axios.post('/boarder/update/profile', [ { 'boarder' : this.c_boarder } ])
+//     //     .then((res) => {
+//     //       success = true
+//     //     })
+//     //     .catch((error) => {
+//     //       error = error.data.message
+//     //     })
+// }
+
+    // console.log( c_boarder )
 
 </script>
 
@@ -172,7 +185,7 @@ const assing_boarder = function( boarder ){
                                         <div class="font-bold truncate">{{boarder.prefered_forename+' '+boarder.surname}}</div>
                                         <div class="text-info-gray-1">{{boarder.year_group}}, {{boarder.form}}, {{boarder.gender=='M'?'Male':'Female'}}</div>
                                     </div>
-                                    <button @click="on_boarder=!on_boarder">
+                                    <button @click="assign_boarder(boarder)">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 ml-1 p-0"><path fill="#a39163" d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM325.8 139.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-21.4 21.4-71-71 21.4-21.4c15.6-15.6 40.9-15.6 56.6 0zM119.9 289L225.1 183.8l71 71L190.9 359.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z"/></svg>
                                     </button>
                                 </div>
@@ -285,7 +298,7 @@ const assing_boarder = function( boarder ){
             </div>
 
             <!-- Boarder Modal-->
-            <div v-show="on_boarder">
+            <div v-if="on_boarder">
                 <!-- Boarder Container -->
                 <div class="fixed left-0 top-0 h-full w-full z-[51] flex justify-center mt-2">
                     <div class="left-0 top-0 w-[493px] sm:w-[511px] bg-note-gray-1 rounded-lg shadow-md min-h-[565px] h-[94vh] ">
@@ -302,42 +315,42 @@ const assing_boarder = function( boarder ){
                             <div class="w-[465px] bg-white border border-harrow-gold-100 rounded-lg text-info-gray-3 h-[465px] overflow-y-scroll">
                                 <div class="w-full h-[288px] flex px-[18px] pt-[22px] border-b border-harrow-gold-100">
                                     <div class="overflow-clip pr-[18px] w-fit">
-                                        <img class="w-[147px] h-[191px] border-[#C3C8D2] bg-slate-50 object-cover object-top rounded-lg border" src="/images/Mary_Ma.jpg"/>
+                                        <img class="w-[147px] h-[191px] border-[#C3C8D2] bg-slate-50 object-cover object-top rounded-lg border" :src="'data:image/png;base64,' +  c_boarder.photo"/>
                                     </div>
                                     <div class=" pl-[18px] flex-col w-[282px]">
                                         <table class="w-full">
                                             <tr class="w-full">
                                                 <td colspan="2">
-                                                    <BALabelInfo label="Admission No">3984</BALabelInfo>
+                                                    <BALabelInfo label="Admission No">{{c_boarder.admission_no}}</BALabelInfo>
                                                 </td>
                                             </tr>
                                             <tr class=" pt-2.5">
                                                 <td class="w-[141px] pt-2.5">
-                                                    <BALabelInfo label="Prefered Forename">Mary</BALabelInfo>
+                                                    <BALabelInfo label="Prefered Forename">{{c_boarder.prefered_forename}}</BALabelInfo>
                                                 </td>
                                                 <td class="w-[141px] pt-2.5">
-                                                    <BALabelInfo label="Surname">Poonsarakhun</BALabelInfo>
+                                                    <BALabelInfo label="Surname">{{c_boarder.surname}}</BALabelInfo>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="pt-2.5">
-                                                    <BALabelInfo label="Year Group">10</BALabelInfo>
+                                                    <BALabelInfo label="Year Group">{{c_boarder.year_group}}</BALabelInfo>
                                                 </td>
                                                 <td class="pt-2.5">
-                                                    <BALabelInfo label="Form">K10</BALabelInfo>
+                                                    <BALabelInfo label="Form">{{c_boarder.form}}</BALabelInfo>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="pt-2.5">
-                                                    <BALabelInfo label="Gender">Male</BALabelInfo>
+                                                    <BALabelInfo label="Gender">{{c_boarder.gender=='M'?'Male':'Female'}}</BALabelInfo>
                                                 </td>
                                                 <td class="pt-2.5">
-                                                    <BAInputInfo value="0955212365">Telephone:</BAInputInfo>
+                                                    <BAInputInfo :value="c_boarder.telephone" @trigger="c_boarder.telephone=$event">Telephone:</BAInputInfo>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td colspan="2" class="pt-2.5">
-                                                    <BAInputInfo value="Allowed">Offsite Permission:</BAInputInfo>
+                                                    <BAInputInfo :value="c_boarder.offsite_permission" @trigger="c_boarder.offsite_permission=$event">Offsite Permission:</BAInputInfo>
                                                 </td>
                                             </tr>
                                         </table>
@@ -345,42 +358,29 @@ const assing_boarder = function( boarder ){
                                 </div>
                                 <div class="w-full h-[75px] flex px-[18px] pt-3 ">
                                     <div class="h-full w-[165px] flex items-start pl-[32px] flex-col">
-                                        <BALabelInfo label="Boarder Type">Weekly</BALabelInfo>
+                                        <BALabelInfo label="Boarder Type">{{c_boarder.boarder_type}}</BALabelInfo>
                                     </div>
                                     <div class="h-full pl-[18px] flex-col w-[282px]">
-                                        <BASelect value="West Acre" :data="buildings">Building:</BASelect>
+                                        <BASelect :value="c_boarder.building_name" :data="buildings" @trigger="c_boarder.building_name=$event">Building:</BASelect>
                                     </div>
                                 </div>
-                                <div class="w-full h-[100px] flex border-t border-harrow-gold-100">
-                                    <div class="h-full w-[178px] flex flex-col justify-center items-center bg-harrow-blue-100 text-white font-bold">
-                                        <div class="">Mother</div>
+                                <div v-for="(contact, i) in c_boarder.contacts" :key="contact.contact_id" class="w-full h-[100px] flex border-t border-harrow-gold-100">
+                                    <div class="h-full w-[178px] flex flex-col justify-center items-center bg-harrow-blue-100 text-white font-bold" :class="i==c_boarder.contacts.length-1?'rounded-bl-lg' : '' ">
+                                        <div class="">{{contact.relationship}}</div>
                                         <div class="flex justify-center items-center mt-4">
                                             <div class="text-xs font-normal mr-[2px]">Tel.</div>
-                                            <div>0905768420</div>
+                                            <div>{{contact.contact_no}}</div>
                                         </div>
                                     </div>
                                     <div class="h-full flex flex-col justify-evenly pl-4 w-[287px] rounded-br-lg">
-                                        <BALabelInfo label="Contact Name">Ms. Jessica Carder</BALabelInfo>
-                                        <BALabelInfo label="Email">jessica.carder@gmail.com</BALabelInfo>
-                                    </div>
-                                </div>
-                                <div class="w-full h-[100px] flex border-t border-harrow-gold-100">
-                                    <div class="h-full w-[178px] flex flex-col justify-center items-center bg-harrow-blue-100 text-white font-bold rounded-bl-lg">
-                                        <div class="">Mother</div>
-                                        <div class="flex justify-center items-center mt-4">
-                                            <div class="text-xs font-normal mr-[2px]">Tel.</div>
-                                            <div>0905768420</div>
-                                        </div>
-                                    </div>
-                                    <div class="h-full flex flex-col justify-evenly pl-4 w-[287px] rounded-br-lg">
-                                        <BALabelInfo label="Contact Name">Ms. Jessica Carder</BALabelInfo>
-                                        <BALabelInfo label="Email">jessica.carder@gmail.com</BALabelInfo>
+                                        <BALabelInfo label="Contact Name">{{contact.contact_name}}</BALabelInfo>
+                                        <BALabelInfo label="Email">{{contact.email}}</BALabelInfo>
                                     </div>
                                 </div>
                             </div>
                             <div class="flex justify-end">
                                 <button class="w-[81px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-[#828282]" @click="on_boarder=false">Cancel</button>
-                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-3 mb-3 mr-4 border border-[#c3c8d2] bg-harrow-gold-100" @click="on_boarder=false">Save</button>
+                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-3 mb-3 mr-4 border border-[#c3c8d2] bg-harrow-gold-100" @click="update_boarder()">Save</button>
                             </div>
                         </div>
                     </div>

@@ -13,7 +13,6 @@
     ])
 
     function update(value){
-        alert(value)
         emit('trigger',value)
     }
 </script>
