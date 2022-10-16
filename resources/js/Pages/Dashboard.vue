@@ -24,15 +24,10 @@ let on_boarder    = ref(false)
 let building      = ref('West Acre')
 let c_boarder     = ref()
 let boarders      = ref()
-let boarder_num   = ref(0)
-
 
 let props         = defineProps(['all_boarders','attendances','buildings'])
 
-boarders          = JSON.parse(JSON.stringify(props.all_boarders))
-
-boarder_num       = boarders.length
-// console.log( boarders[0] )
+boarders          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
 
 //functions
 const assign_boarder = function( boarder ){
@@ -73,11 +68,20 @@ function change_building( building ){
 
     axios.post('/boarder/change/building', data )
         .then((res) => {
-            console.log( this.boarders[0] )
-            this.boarders = JSON.parse(JSON.stringify(res.data.boarders))
             console.log( res.data.message )
-            console.log( this.boarders[0] )
-            this.boarder_num = JSON.parse(JSON.stringify(this.boarders.length))
+
+            // remove all Element in array
+            this.boarders.splice( 0, this.boarders.length )
+
+            // update element
+            res.data.boarders.forEach( element => {
+                this.boarders.push( element )
+            });
+
+            // while( this.boarders.length > 0) 
+            // {
+            //     this.boarders.pop();
+            // }
         })
         .catch((error) => {
             console.log( error )
@@ -270,17 +274,17 @@ function change_building( building ){
                                 <div class="pl-1  font-bold text-info-gray-2 text-[14px] flex items-center">Boarder Total</div>
                             </td>
                             
-                            <BATotalBoarder >{{boarder_num}}</BATotalBoarder>
-                            <BATotalBoarder >{{boarder_num}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarders.length}}</BATotalBoarder>
                             <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden']"></td>
-                            <BATotalBoarder >{{boarder_num}}</BATotalBoarder>
-                            <BATotalBoarder >{{boarder_num}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarders.length}}</BATotalBoarder>
                             
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num}}</BATotalBoarder>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
                             <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]"></td>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num}}</BATotalBoarder>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
                         </tr>
 
 
