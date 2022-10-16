@@ -40,6 +40,7 @@ Route::get('/Error', function () {
 
 Route::get( '/dashboard', [BoarderController::class, 'dashboard'] )->middleware(['auth', 'verified'])->name('dashboard');
 Route::post( '/boarder/update/profile', [BoarderController::class, 'update_profile'] )->middleware(['auth', 'verified']);
+Route::post( '/boarder/change/building', [BoarderController::class, 'change_building'] )->middleware(['auth', 'verified']);
 
 Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy'])

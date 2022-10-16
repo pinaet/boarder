@@ -22,11 +22,20 @@ let on_reg        = ref(false)
 let on_note       = ref(false)
 let on_boarder    = ref(false)
 let building      = ref('West Acre')
-let c_boarder     = ref('')
+let c_boarder     = ref()
+let boarders      = ref()
 
-let props         = defineProps(['boarders','attendances','buildings']);
 
-c_boarder = props.boarders[0]
+let props         = defineProps(['all_boarders','attendances','buildings'])
+
+// boarders  = props.all_boarders
+boarders          = JSON.parse(JSON.stringify(props.all_boarders))
+
+function boarder_num()
+{
+    return this.boarders.length
+}
+// console.log( boarders[0] )
 
 //functions
 const assign_boarder = function( boarder ){
@@ -51,7 +60,31 @@ const update_boarder = function(){
         })
 }
 
-    // console.log( c_boarder )
+function remove_boarder( building )
+{
+    this.building = building
+    this.boarders.pop();
+}
+
+function change_building( building ){
+    
+    this.building = building
+
+    let data = { 
+        'building' : building 
+    }
+
+    axios.post('/boarder/change/building', data )
+        .then((res) => {
+            console.log( this.boarders[0] )
+            this.boarders = JSON.parse(JSON.stringify(res.data.boarders))
+            console.log( res.data.message )
+            console.log( this.boarders[0] )
+        })
+        .catch((error) => {
+            console.log( error )
+        })
+}
 
 </script>
 
@@ -73,7 +106,7 @@ const update_boarder = function(){
                 </h4>
                 <div class="flex justify-start items-center h-full">
                     <div class="text-gray-400 text-sm mr-1">Building:</div>
-                    <BABuildingDropdown :data="buildings" @toggle="building=$event">{{building}}</BABuildingDropdown>                
+                    <BABuildingDropdown :data="buildings" @toggle="change_building($event)">{{building}}</BABuildingDropdown>                
                 </div>
                 <div class="flex justify-start items-center">
                     <div class="text-gray-400 text-sm">Week:</div>
@@ -239,17 +272,17 @@ const update_boarder = function(){
                                 <div class="pl-1  font-bold text-info-gray-2 text-[14px] flex items-center">Boarder Total</div>
                             </td>
                             
-                            <BATotalBoarder>{{boarders.length}}</BATotalBoarder>
-                            <BATotalBoarder>{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarder_num()}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarder_num()}}</BATotalBoarder>
                             <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden']"></td>
-                            <BATotalBoarder>{{boarders.length}}</BATotalBoarder>
-                            <BATotalBoarder>{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarder_num()}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarder_num()}}</BATotalBoarder>
                             
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num()}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num()}}</BATotalBoarder>
                             <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]"></td>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num()}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num()}}</BATotalBoarder>
                         </tr>
 
 
@@ -319,7 +352,7 @@ const update_boarder = function(){
                         <div class="pt-[14px] px-3 sm:px-[23px]">
                             <div class="w-[465px] bg-white border border-harrow-gold-100 rounded-lg text-info-gray-3 h-[465px] overflow-y-scroll">
                                 <div class="w-full h-[288px] flex px-[18px] pt-[22px] border-b border-harrow-gold-100">
-                                    <div class="overflow-clip pr-[18px] w-fit">
+                                    <div class="overflow-clip pr-[18px] w-[165px]">
                                         <img class="w-[147px] h-[191px] border-[#C3C8D2] bg-slate-50 object-cover object-top rounded-lg border" :src="'data:image/png;base64,' +  c_boarder.photo"/>
                                     </div>
                                     <div class=" pl-[18px] flex-col w-[282px]">
