@@ -368,7 +368,7 @@ function change_building( building ){
                                                 <td class="w-[141px] pt-2.5">
                                                     <BALabelInfo label="Prefered Forename">{{c_boarder.prefered_forename}}</BALabelInfo>
                                                 </td>
-                                                <td class="w-[141px] pt-2.5">
+                                                <td class="w-[141px] pt-2.5 max-w-[120px]">
                                                     <BALabelInfo label="Surname">{{c_boarder.surname}}</BALabelInfo>
                                                 </td>
                                             </tr>
