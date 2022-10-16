@@ -397,7 +397,7 @@ function change_building( building ){
                                     </div>
                                 </div>
                                 <div class="w-full h-[75px] flex px-[18px] pt-3 ">
-                                    <div class="h-full w-[165px] flex items-start pl-[32px] flex-col">
+                                    <div class="h-full w-[165px] flex items-start pl-[22px] flex-col">
                                         <BALabelInfo label="Boarder Type">{{c_boarder.boarder_type}}</BALabelInfo>
                                     </div>
                                     <div class="h-full pl-[18px] flex-col w-[282px]">
@@ -405,16 +405,16 @@ function change_building( building ){
                                     </div>
                                 </div>
                                 <div v-for="(contact, i) in c_boarder.contacts" :key="contact.contact_id" class="w-full h-[100px] flex border-t border-harrow-gold-100">
-                                    <div class="h-full w-[178px] flex flex-col justify-center items-center bg-harrow-blue-100 text-white font-bold" :class="i==c_boarder.contacts.length-1?'rounded-bl-lg' : '' ">
-                                        <div class="">{{contact.relationship}}</div>
+                                    <div class="h-full min-w-[173px] flex flex-col justify-center items-center bg-harrow-blue-100 text-white font-bold" :class="i==c_boarder.contacts.length-1?'rounded-bl-lg' : '' ">
+                                        <div>{{contact.relationship}}</div>
                                         <div class="flex justify-center items-center mt-4">
                                             <div class="text-xs font-normal mr-[2px]">Tel.</div>
-                                            <div>{{contact.contact_no}}</div>
+                                            <div>{{contact.contact_no?contact.contact_no:'(Not available)'}}</div>
                                         </div>
                                     </div>
-                                    <div class="h-full flex flex-col justify-evenly pl-4 w-[287px] rounded-br-lg">
-                                        <BALabelInfo label="Contact Name">{{contact.contact_name}}</BALabelInfo>
-                                        <BALabelInfo label="Email">{{contact.email}}</BALabelInfo>
+                                    <div class="h-full flex flex-col justify-evenly pl-4 max-w-[267px] rounded-br-lg">
+                                        <BALabelInfo label="Contact Name" >{{contact.contact_name?contact.contact_name:'(Not available)'}}</BALabelInfo>
+                                        <BALabelInfo label="Email" class="">{{contact.email?contact.email:'(Not available)'}}</BALabelInfo>
                                     </div>
                                 </div>
                             </div>
