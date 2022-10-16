@@ -24,17 +24,14 @@ let on_boarder    = ref(false)
 let building      = ref('West Acre')
 let c_boarder     = ref()
 let boarders      = ref()
+let boarder_num   = ref(0)
 
 
 let props         = defineProps(['all_boarders','attendances','buildings'])
 
-// boarders  = props.all_boarders
 boarders          = JSON.parse(JSON.stringify(props.all_boarders))
 
-function boarder_num()
-{
-    return this.boarders.length
-}
+boarder_num       = boarders.length
 // console.log( boarders[0] )
 
 //functions
@@ -80,6 +77,7 @@ function change_building( building ){
             this.boarders = JSON.parse(JSON.stringify(res.data.boarders))
             console.log( res.data.message )
             console.log( this.boarders[0] )
+            this.boarder_num = JSON.parse(JSON.stringify(this.boarders.length))
         })
         .catch((error) => {
             console.log( error )
@@ -272,17 +270,17 @@ function change_building( building ){
                                 <div class="pl-1  font-bold text-info-gray-2 text-[14px] flex items-center">Boarder Total</div>
                             </td>
                             
-                            <BATotalBoarder >{{boarder_num()}}</BATotalBoarder>
-                            <BATotalBoarder >{{boarder_num()}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarder_num}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarder_num}}</BATotalBoarder>
                             <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden']"></td>
-                            <BATotalBoarder >{{boarder_num()}}</BATotalBoarder>
-                            <BATotalBoarder >{{boarder_num()}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarder_num}}</BATotalBoarder>
+                            <BATotalBoarder >{{boarder_num}}</BATotalBoarder>
                             
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num()}}</BATotalBoarder>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num()}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num}}</BATotalBoarder>
                             <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]"></td>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num()}}</BATotalBoarder>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num()}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num}}</BATotalBoarder>
+                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarder_num}}</BATotalBoarder>
                         </tr>
 
 
