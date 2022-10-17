@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Models\Boarder;
 use App\Models\Building;
 use App\Models\Attendance;
+use App\Models\RegisterColumn;
 use App\Models\SchoolTerm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,8 @@ class BoarderController extends Controller
         $dates       = $this->generate_dates();
 
         $term        = $this->generate_term();
+
+        $cols        = $this->generate_cols();
 
         // $building = 'West Acre';
         return Inertia::render('Dashboard', [
@@ -247,5 +250,10 @@ class BoarderController extends Controller
         }
         
         return $term;
+    }
+
+    function generate_cols()
+    {
+        $cols = RegisterColumn::all();
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Building;
 use Illuminate\Http\Request;
+use App\Models\RegisterColumn;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\SyncController;
 
@@ -13,6 +14,12 @@ class TestsController extends Controller
 {
     public function index()
     {
+        /**
+         * generate columns
+         */
+        (new RegisterColumn)->generate();
+
+
         /**
          * test mis connection
          */
