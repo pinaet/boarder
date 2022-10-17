@@ -289,6 +289,39 @@ class SyncController extends Controller
             //find school_term
             $attributes = array(
                 'academic_year' => $school_term->SchoolYear,
+                'term'          => 'Term '.(int)$school_term->Term,
+                'start_date'    => $school_term->StartDate,
+                'end_date'      => $school_term->EndDate,
+            );  
+
+            //create
+            DB::beginTransaction();
+            try {
+                SchoolTerm::create($attributes);
+                DB::commit ();
+            } catch (Exception $e) {
+                DB::rollBack ();
+                dd($attributes,$e);
+            }
+        }
+
+        // Term Breaks
+        $sql = "
+            SELECT 
+                SchoolYear, 
+                Name Term, 
+                StartDate,
+                EndDate	
+            FROM 
+                TermBreaks
+        ";
+        $school_terms = DB::connection('mis')->select( $sql );
+        
+        foreach($school_terms as $school_term)
+        {
+            //find school_term
+            $attributes = array(
+                'academic_year' => $school_term->SchoolYear,
                 'term'          => $school_term->Term,
                 'start_date'    => $school_term->StartDate,
                 'end_date'      => $school_term->EndDate,

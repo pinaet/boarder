@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('school_terms', function (Blueprint $table) {
             $table->id();
             $table->integer('academic_year');
-            $table->integer('term');
+            $table->string('term');
             $table->date('start_date');
             $table->date('end_date');
             $table->timestamps();

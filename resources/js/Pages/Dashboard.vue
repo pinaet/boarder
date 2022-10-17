@@ -24,10 +24,14 @@ let on_boarder    = ref(false)
 let building      = ref('West Acre')
 let c_boarder     = ref()
 let boarders      = ref()
+let term          = ref()
+let dates         = ref()
 
-let props         = defineProps(['all_boarders','attendances','buildings','dates','term'])
+let props         = defineProps(['all_boarders','attendances','buildings','dates','term']) 
 
 boarders          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
+dates             = props.dates 
+term              = props.term
 
 //functions
 const assign_boarder = function( boarder ){
@@ -77,11 +81,34 @@ function change_building( building ){
             res.data.boarders.forEach( element => {
                 this.boarders.push( element )
             });
+        })
+        .catch((error) => {
+            console.log( error )
+        })
+}
 
-            // while( this.boarders.length > 0) 
-            // {
-            //     this.boarders.pop();
-            // }
+function change_week( direction ){
+
+    let data = { 
+        'term'      : this.term,
+        'direction' : direction
+    }
+
+    axios.post('/boarder/change/week', data )
+        .then((res) => {
+            console.log( res.data.message )
+
+            // remove all Element in array
+            this.dates.splice( 0, this.dates.length )
+            // this.term.splice(  0, this.term.length  )
+            // this.dates= res.data.dates
+            this.term = res.data.term
+            // this.term.push( res.data.term )
+
+            // update element
+            res.data.dates.forEach( element => {
+                this.dates.push( element )
+            });
         })
         .catch((error) => {
             console.log( error )
@@ -114,13 +141,13 @@ function change_building( building ){
                     <div class="text-gray-400 text-sm">Week:</div>
                     <div class="flex justify-evenly items-center">
                         <div class="pt-1 mx-2 ">
-                            <button class="w-5 h-5 shadow-md rounded-full border-2 bg-white hover:bg-harrow-gold-20">
+                            <button class="w-5 h-5 shadow-md rounded-full border-2 bg-white hover:bg-harrow-gold-20" @click="change_week( 'previous' )">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#828282" d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256S114.6 512 256 512s256-114.6 256-256zM116.7 244.7l112-112c4.6-4.6 11.5-5.9 17.4-3.5s9.9 8.3 9.9 14.8l0 64 96 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32l-96 0 0 64c0 6.5-3.9 12.3-9.9 14.8s-12.9 1.1-17.4-3.5l-112-112c-6.2-6.2-6.2-16.4 0-22.6z"/></svg>
                             </button>
                         </div>
                         <p class="w-[320px] text-base text-center font-bold text-harrow-gold-100">{{dates[0].date_long +' - '+ dates[6].date_long}}</p>
                         <div class="pt-1 mx-2 ">
-                            <button class="w-5 h-5 shadow-md rounded-full border-2 bg-white hover:bg-harrow-gold-20">
+                            <button class="w-5 h-5 shadow-md rounded-full border-2 bg-white hover:bg-harrow-gold-20" @click="change_week( 'next' )">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#828282" d="M0 256C0 397.4 114.6 512 256 512s256-114.6 256-256S397.4 0 256 0S0 114.6 0 256zm395.3 11.3l-112 112c-4.6 4.6-11.5 5.9-17.4 3.5s-9.9-8.3-9.9-14.8l0-64-96 0c-17.7 0-32-14.3-32-32l0-32c0-17.7 14.3-32 32-32l96 0 0-64c0-6.5 3.9-12.3 9.9-14.8s12.9-1.1 17.4 3.5l112 112c6.2 6.2 6.2 16.4 0 22.6z"/></svg>
                             </button>
                         </div>
