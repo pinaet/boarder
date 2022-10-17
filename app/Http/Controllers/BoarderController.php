@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
 use Inertia\Inertia;
 use App\Models\Boarder;
 use App\Models\Building;
+use App\Models\Attendance;
+use App\Models\SchoolTerm;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BoarderController extends Controller
 {
@@ -19,12 +21,15 @@ class BoarderController extends Controller
 
         $dates       = $this->generate_dates();
 
+        $term        = $this->generate_term();
+
         // $building = 'West Acre';
         return Inertia::render('Dashboard', [
             'all_boarders'  => $boarders,
             'attendances'   => $attendances,
             'buildings'     => $buildings,
             'dates'         => $dates,
+            'term'          => $term,
         ]);
     }
 
@@ -158,9 +163,19 @@ class BoarderController extends Controller
         return $dates;
     }
 
-    function generate_term( $date )
+    function generate_term( $date='' )
     {
-        $term = array();
+        if( $date=='' ){
+            $date = date('Y-m-d');
+        }
 
+        $term   = SchoolTerm::where('start_date', '<', $date)->where('end_date', '>', $date)->get()[0];
+
+        if( $term ){
+            $term->{'weeks'} = datediff( 'ww', $term->start_date, $date );
+            $term->{'name'}  = $term->academic_year . '-' . ($term->academic_year+1-2000) .' Term '. $term->term .' ( Week '.$term->weeks.' )';
+        }
+        
+        return $term;
     }
 }

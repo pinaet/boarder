@@ -29,7 +29,10 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         },
-        "files": ["app/Overrides/Response.php"],
+        "files": [
+            "app/Overrides/Response.php",
+            "app/helpers.php"
+        ],
         "exclude-from-classmap": ["vendor/inertiajs/inertial-laravel/src/Response.php"]
     },
     "autoload-dev": {

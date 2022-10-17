@@ -25,7 +25,7 @@ let building      = ref('West Acre')
 let c_boarder     = ref()
 let boarders      = ref()
 
-let props         = defineProps(['all_boarders','attendances','buildings','dates'])
+let props         = defineProps(['all_boarders','attendances','buildings','dates','term'])
 
 boarders          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
 
@@ -135,7 +135,7 @@ function change_building( building ){
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden ">
                     <div class="p-1 text-[#828282] text- font-bold text-center">
-                        2022-23 Term 1 ( Week 5 )
+                        {{term.name}}
                     </div>
                 </div>
             </div>
@@ -314,7 +314,7 @@ function change_building( building ){
             <div v-show="on_note">
                 <!-- Notes Container -->
                 <div class="fixed left-0 top-0 h-full w-full z-[51] flex justify-center mt-9 sm:mt-20">
-                    <div class="left-0 top-0 w-[511px] h-[193px] bg-note-gray-1 rounded-lg overflow-clip shadow-md">
+                    <div class="left-0 top-0 w-[511px] h-fit min-h-[193px] bg-note-gray-1 rounded-lg overflow-clip shadow-md">
                         <div class="bg-harrow-blue-100 h-[33px]">
                             <div class="text-white flex justify-center items-center h-full">
                                 <div>
@@ -324,10 +324,8 @@ function change_building( building ){
                                 <div class="pl-2 font-bold">Notes</div>
                             </div>
                         </div>
-                        <div class="pt-[14px] px-1 sm:px-[17px]">
-                            <div class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2">
-                                Write some notes...
-                            </div>
+                        <div class="py-[14px] px-1 sm:px-[17px]">
+                            <textarea class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2">Write some notes...</textarea>
                             <div class="flex justify-end">
                                 <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 border border-[#c3c8d2] bg-[#828282]" @click="on_note=false">Cancel</button>
                                 <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 ml-2 mr-[1px] border border-[#c3c8d2] bg-harrow-gold-100" @click="on_note=false">Save</button>
