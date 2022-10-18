@@ -21,13 +21,13 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 1;   
         $attributes['column_name']   = 'Moning 0715';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;   
+        $attributes['width']         = 82;   
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 1;       
         $attributes['display_order'] = 2;   
         $attributes['column_name']   = 'Call Over 1740';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 1;       
         $attributes['display_order'] = 3;   
@@ -81,13 +81,13 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 11;   
         $attributes['column_name']   = 'Bed';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 1;       
         $attributes['display_order'] = 12;   
         $attributes['column_name']   = 'Offsite Status';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         
         //Tuesday
@@ -95,13 +95,13 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 1;   
         $attributes['column_name']   = 'Moning 0715';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 2;       
         $attributes['display_order'] = 2;   
         $attributes['column_name']   = 'Call Over 1740';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 2;       
         $attributes['display_order'] = 3;   
@@ -155,13 +155,13 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 11;   
         $attributes['column_name']   = 'Bed';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 2;       
         $attributes['display_order'] = 12;   
         $attributes['column_name']   = 'Offsite Status';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         
         //Wednesday
@@ -169,13 +169,13 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 1;   
         $attributes['column_name']   = 'Moning 0715';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 3;       
         $attributes['display_order'] = 2;   
         $attributes['column_name']   = 'Call Over 1740';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 3;       
         $attributes['display_order'] = 3;   
@@ -229,13 +229,13 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 11;   
         $attributes['column_name']   = 'Bed';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 3;       
         $attributes['display_order'] = 12;   
         $attributes['column_name']   = 'Offsite Status';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         
         //Thursday
@@ -243,13 +243,13 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 1;   
         $attributes['column_name']   = 'Moning 0715';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 4;       
         $attributes['display_order'] = 2;   
         $attributes['column_name']   = 'Call Over 1740';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 4;       
         $attributes['display_order'] = 3;   
@@ -303,13 +303,13 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 11;   
         $attributes['column_name']   = 'Bed';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 4;       
         $attributes['display_order'] = 12;   
         $attributes['column_name']   = 'Offsite Status';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         
         //Friday
@@ -317,13 +317,13 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 1;   
         $attributes['column_name']   = 'Moning 0715';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 5;       
         $attributes['display_order'] = 2;   
         $attributes['column_name']   = 'Call Over 1740';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 5;       
         $attributes['display_order'] = 3;   
@@ -377,13 +377,13 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 11;   
         $attributes['column_name']   = 'Bed';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 5;       
         $attributes['display_order'] = 12;   
         $attributes['column_name']   = 'Offsite Status';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         
         //Saturday
@@ -391,37 +391,37 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 1;   
         $attributes['column_name']   = '1000';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 6;       
         $attributes['display_order'] = 2;   
         $attributes['column_name']   = '1300';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 6;       
         $attributes['display_order'] = 3;   
         $attributes['column_name']   = '1600';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 6;       
         $attributes['display_order'] = 4;   
         $attributes['column_name']   = '1800';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 6;       
         $attributes['display_order'] = 5;   
         $attributes['column_name']   = 'Bed';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 6;       
         $attributes['display_order'] = 6;   
         $attributes['column_name']   = 'Offsite Status';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         
         //Saturday
@@ -429,37 +429,37 @@ class RegisterColumn extends Model
         $attributes['display_order'] = 1;   
         $attributes['column_name']   = '1100';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 7;       
         $attributes['display_order'] = 2;   
         $attributes['column_name']   = '1300';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 7;       
         $attributes['display_order'] = 3;   
         $attributes['column_name']   = '1600';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 7;       
         $attributes['display_order'] = 4;   
         $attributes['column_name']   = '2000';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 7;       
         $attributes['display_order'] = 5;   
         $attributes['column_name']   = 'Bed';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
         $attributes['day_of_week']   = 7;       
         $attributes['display_order'] = 6;   
         $attributes['column_name']   = 'Offsite Status';       
         $attributes['academic_year'] = 2021;
-        $attributes['width']         = 81;
+        $attributes['width']         = 82;
         RegisterColumn::create($attributes);
     }
 }

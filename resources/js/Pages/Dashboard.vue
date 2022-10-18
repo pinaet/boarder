@@ -171,18 +171,18 @@ function change_week( direction ){
         <!-- Boarder Columns -->
         <div class="flex flex-col h-[73vh] max-w-7xl mx-auto sm:pl-6 sm:pr-6 lg:pl-8 ">
             <div class="w-full flex-grow overflow-auto rounded" :class="on_mis_data ? '  border-harrow-gold-100' : ''">
-                <table class="relative table-fixed border-collapse " :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
+                <table class="relative table-fixed border-collapse " :style="on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w">
                     <thead class="sticky top-0" :style="'z-index:'+(boarders.length+1)">
-                        <tr class="h-[31px] text-sm text-info-gray-1 flex" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
+                        <tr class="h-[31px] text-sm text-info-gray-1 flex" :style="on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w">
                             <th colspan="3"  class="w-[424px] sticky top-0 left-0 font-normal text-center bg-fill-gray-1 border border-stroke-gray-1 flex justify-center items-center" :style="'z-index:'+(boarders.length+2)">
                                 {{boarders.length}} Boarders
                             </th>
-                            <th colspan="12" class="sticky top-0 font-normal text-center bg-fill-gray-3 border border-stroke-gray-2 flex justify-center items-center"  :class="on_mis_data? 'w-[528px]': 'w-[328px]'">
-                                {{dates[0].day +' ( '+ dates[0].date_short +' )'}}
+                            <th v-for="col in headers.cols" :key="col.id" :colspan="col.colspan" class="sticky top-0 font-normal text-center border border-stroke-gray-2 flex justify-center items-center" :style="[on_mis_data? 'width: '+col.max_w+'px': 'width: '+col.min_w+'px', col.status=='current' ? 'background-color: '+col.color : col.id%2==0?'background-color: #F2F2F2':'background-color: #E0E0E0']">
+                                {{col.col_name}}
                             </th>
-                            <th colspan="12" class="sticky top-0 font-normal text-center bg-fill-gray-2 border border-stroke-gray-2 flex justify-center items-center"  :class="[on_mis_data? 'w-[528px]': 'w-[328px]', on_weekly ? '' : 'hidden']" >
+                            <!-- <th colspan="12" class="sticky top-0 font-normal text-center bg-fill-gray-2 border border-stroke-gray-2 flex justify-center items-center" :style="on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w" :class="[on_mis_data? 'w-[528px]': 'w-[328px]', on_weekly ? '' : 'hidden']" >
                                 {{dates[1].day +' ( '+ dates[1].date_short +' )'}}
-                            </th>
+                            </th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -207,7 +207,6 @@ function change_week( direction ){
                                     <p class="font-bold ml-1 pt-[2px]">Type</p>
                                 </div>
                             </td>
-
                             <BAHeaderA class="relative" @click="on_reg=!on_reg" >
                                 Morning 0715
                                  <!-- Attendance Dropdown -->

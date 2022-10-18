@@ -25,6 +25,7 @@ class BoarderController extends Controller
         $term        = $this->generate_term();
 
         $headers     = $this->generate_cols( $dates );
+        // dd($headers);
 
         // $building = 'West Acre';
         return Inertia::render('Dashboard', [
@@ -151,15 +152,12 @@ class BoarderController extends Controller
         $week_days = [
             'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
         ];
+        $day_colors = [
+            //'bg-yellow-100', 'bg-pink-100', 'bg-green-100', 'bg-orange-100', 'bg-blue-100', 'bg-purple-100', 'bg-red-100'
+            '#FEF9C3'        , '#FCE7F3'    , '#DCFCE7'     , '#FFEDD5'      , '#DBEAFE'    , '#F3E8FF'      , '#FEE2E2'
+        ];
 
-        $date = array(
-            'date_long'  => '',
-            'date_short' => '',
-            'formatted'  => '',
-            'day'        => '',
-            'day_short'  => '',
-            'order'      => '',
-        );
+        $date = array();
 
         //get current date
         if( $seed_date ){
@@ -205,6 +203,7 @@ class BoarderController extends Controller
                 'day_short'  => date( 'D', strtotime( $temp ) ),
                 'order'      => $index, //== date( 'N', strtotime( $temp ) ) - 1,
                 'status'     => $status,
+                'color'      => $day_colors[ $index ]
             );
 
             array_push( $dates, $date );
@@ -263,31 +262,50 @@ class BoarderController extends Controller
         $colspan    = 0;
         $cols       = [];
         $temp_cols  = [];
+        $sub_max_w  = 0;
+        $sub_min_w  = 0;
         foreach( $reg_cols as $i => $reg_col )
         {
-            $max_w += $reg_col->width;
-            if( $reg_col->width==81 ){
-                $min_w += $reg_col->width;
-            }
-
             if( $reg_col->day_of_week==$group ){
                 array_push( $temp_cols, $reg_col );
             }
             
             if( $reg_col->day_of_week!=$group || count($reg_cols)==$i+1 ){
+                // dd($i,$sub_min_w,$sub_max_w,$temp_cols);
+                if( count($reg_cols)==$i+1 ){
+                    $sub_max_w  += $reg_col->width;
+                    if( $reg_col->width==82 ){
+                        $sub_min_w  += $reg_col->width;
+                    }
+                }
                 $temp = [
+                    'id'        => $group,
                     'col_name'  => $dates[$group-1]['day'] .' ( '. $dates[$group-1]['date_short'] .' )',
                     'colspan'   => $colspan,
                     'cols'      => $temp_cols,
+                    'max_w'     => $sub_max_w,
+                    'min_w'     => $sub_min_w,
+                    'status'    => $dates[$group-1]['status'],
+                    'color'     => $dates[$group-1]['color']
                 ];
                 array_push( $cols, $temp );
 
                 $group      = $reg_col->day_of_week;
                 $colspan    = 0;
+                $sub_max_w  = 0;
+                $sub_min_w  = 0;
                 $temp_cols  = [];
 
                 array_push( $temp_cols, $reg_col );
             }
+
+            $max_w      += $reg_col->width;
+            $sub_max_w  += $reg_col->width;
+            if( $reg_col->width==82 ){
+                $min_w      += $reg_col->width;
+                $sub_min_w  += $reg_col->width;
+            }
+            
             $colspan++;
         }
 
