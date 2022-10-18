@@ -171,22 +171,19 @@ function change_week( direction ){
         <!-- Boarder Columns -->
         <div class="flex flex-col h-[73vh] max-w-7xl mx-auto sm:pl-6 sm:pr-6 lg:pl-8 ">
             <div class="w-full flex-grow overflow-auto rounded" :class="on_mis_data ? '  border-harrow-gold-100' : ''">
-                <table class="relative table-fixed border-collapse " :style="on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w">
+                <table class="relative table-fixed border-collapse " :style="[on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
                     <thead class="sticky top-0" :style="'z-index:'+(boarders.length+1)">
-                        <tr class="h-[31px] text-sm text-info-gray-1 flex" :style="on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w">
+                        <tr class="h-[31px] text-sm text-info-gray-1 flex" :style="[on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
                             <th colspan="3"  class="w-[424px] sticky top-0 left-0 font-normal text-center bg-fill-gray-1 border border-stroke-gray-1 flex justify-center items-center" :style="'z-index:'+(boarders.length+2)">
                                 {{boarders.length}} Boarders
                             </th>
                             <th v-for="col in headers.cols" :key="col.id" :colspan="col.colspan" class="sticky top-0 font-normal text-center border border-stroke-gray-2 flex justify-center items-center" :style="[on_mis_data? 'width: '+col.max_w+'px': 'width: '+col.min_w+'px', col.status=='current' ? 'background-color: '+col.color : col.id%2==0?'background-color: #F2F2F2':'background-color: #E0E0E0']">
                                 {{col.col_name}}
                             </th>
-                            <!-- <th colspan="12" class="sticky top-0 font-normal text-center bg-fill-gray-2 border border-stroke-gray-2 flex justify-center items-center" :style="on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w" :class="[on_mis_data? 'w-[528px]': 'w-[328px]', on_weekly ? '' : 'hidden']" >
-                                {{dates[1].day +' ( '+ dates[1].date_short +' )'}}
-                            </th> -->
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class=" sticky top-[31px] flex border-stroke-gray-1 " :class="on_mis_data? 'h-[66px] w-[1484px]': 'h-[31px] w-[1084px]'" :style="'z-index:'+(boarders.length+1)">
+                        <tr class=" sticky top-[31px] flex border-stroke-gray-1 " :style="['z-index:'+(boarders.length+1), on_mis_data? 'height:66px; width:'+headers.max_w: 'height:31px; width:'+headers.min_w]">
                             <td class="w-[232px] h-full sticky left-0 text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1 border-l border-b" :style="'z-index:'+(boarders.length+2)">
                                 <div class="flex w-auto justify-center items-center">
                                     <!-- user-alt -->
@@ -207,43 +204,20 @@ function change_week( direction ){
                                     <p class="font-bold ml-1 pt-[2px]">Type</p>
                                 </div>
                             </td>
-                            <BAHeaderA class="relative" @click="on_reg=!on_reg" >
-                                Morning 0715
-                                 <!-- Attendance Dropdown -->
-                                <BARegisterOption v-show="on_reg" :attendances="attendances" :class="on_mis_data? 'top-[46px]': 'top-[31px]'" ></BARegisterOption>
-                            </BAHeaderA>
-                            <BAHeaderA>
-                                Callover 1740
-                            </BAHeaderA>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Morning</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Afternoon</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Reg</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Lesson 1</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Lesson 2</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Lesson 3</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Lesson 4</BAHeaderB>
-                            <BAHeaderB :class="on_mis_data ? '' : 'hidden' ">Lesson 5</BAHeaderB>
-                            <BAHeaderA>Bed</BAHeaderA>
-                            <BAHeaderA>Offsite Status</BAHeaderA>
-
-                            <BAHeaderA :class="on_weekly ? '' : 'hidden'">Morning 0715</BAHeaderA>
-                            <BAHeaderA :class="on_weekly ? '' : 'hidden'">Callover 1740</BAHeaderA>
-                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Morning</BAHeaderB>
-                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Afternoon</BAHeaderB>
-                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Reg</BAHeaderB>
-                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Lesson 1</BAHeaderB>
-                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Lesson 2</BAHeaderB>
-                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Lesson 3</BAHeaderB>
-                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Lesson 4</BAHeaderB>
-                            <BAHeaderB :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">Lesson 5</BAHeaderB>
-                            <BAHeaderA :class="on_weekly ? '' : 'hidden'">Bed</BAHeaderA>
-                            <BAHeaderA :class="on_weekly ? '' : 'hidden'" class="border-r">Offsite Status</BAHeaderA>
+                            <template v-for="(header,i) in headers.cols" :key="header.id" >
+                                <template v-for="col in headers.cols[i].cols" :key="col.id" >
+                                    <BAHeaderA v-if="col.width==82" class="relative" @click="on_reg=!on_reg" >
+                                        {{col.column_name}}
+                                    </BAHeaderA>
+                                    <BAHeaderB v-else :class="on_mis_data ? '' : 'hidden' ">{{col.column_name}}</BAHeaderB>
+                                </template>
+                            </template>
 
                         </tr>
 
 
                         <!-- Data -->
-                        <tr v-for="(boarder, index) in boarders" :key="boarder.pupil_id" class="sticky flex h-[66px]" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'" :style="'z-index:'+(boarders.length-index)">
+                        <tr v-for="(boarder, index) in boarders" :key="boarder.pupil_id" class="sticky flex h-[66px]" :style="['z-index:'+(boarders.length-index),on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
                             <td class="w-[232px] sticky left-0 z-20 pt-1 text-sm text-info-gray-2 border-l border-b bg-white">  
                                 <div class="p-2.5 pr-0 flex justify-center items-center">
                                     <img class="object-cover object-top w-10 h-10 bg-slate-300 rounded-full mr-2.5 " :src="'data:image/png;base64,' +  boarder.photo" />
@@ -294,7 +268,7 @@ function change_week( direction ){
                         </tr>
 
                         <!-- Table Footer : Boarder Total -->
-                        <tr class="h-[26px] flex" :class="on_mis_data? 'w-[1484px]': 'w-[1084px]'">
+                        <tr class="h-[26px] flex" :style="[on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
                             <td colspan="3" class="w-[424px] h-full sticky left-0 bg-fill-gray-1 border-l border-b border-r border-stroke-gray-1 flex justify-start items-center pl-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-[21px] h-[15px]" viewBox="0 0 640 512"><!-- users --><path fill="#4F4F4F" d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z"/></svg>
                                 <div class="pl-1  font-bold text-info-gray-2 text-[14px] flex items-center">Boarder Total</div>
@@ -315,7 +289,7 @@ function change_week( direction ){
 
 
                         <!-- Table Footer : Attendance Total -->
-                        <tr v-for="attendance in attendances" :key="attendance.id" class="h-[26px] flex" :class="[on_mis_data? 'w-[1484px]': 'w-[1084px]']">
+                        <tr v-for="attendance in attendances" :key="attendance.id" class="h-[26px] flex" :style="[on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
                             <BATotalAttendanceType class="sticky left-0" :attendance="attendance"></BATotalAttendanceType>
                             
                             <BATotalAttendanceSum :attendance="attendance">-</BATotalAttendanceSum>
