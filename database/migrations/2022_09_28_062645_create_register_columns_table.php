@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('display_order');
             $table->string('column_name');
             $table->integer('academic_year');
+            $table->integer('width');
             $table->timestamps();
         });
 

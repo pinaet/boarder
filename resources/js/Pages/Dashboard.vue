@@ -27,7 +27,7 @@ let boarders      = ref()
 let term          = ref()
 let dates         = ref()
 
-let props         = defineProps(['all_boarders','attendances','buildings','dates','term']) 
+let props         = defineProps(['all_boarders','attendances','buildings','dates','term','headers']) 
 
 boarders          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
 dates             = props.dates 

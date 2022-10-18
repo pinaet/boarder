@@ -24,7 +24,7 @@ class BoarderController extends Controller
 
         $term        = $this->generate_term();
 
-        $cols        = $this->generate_cols();
+        $headers     = $this->generate_cols( $dates );
 
         // $building = 'West Acre';
         return Inertia::render('Dashboard', [
@@ -33,6 +33,7 @@ class BoarderController extends Controller
             'buildings'     => $buildings,
             'dates'         => $dates,
             'term'          => $term,
+            'headers'       => $headers,
         ]);
     }
 
@@ -144,6 +145,7 @@ class BoarderController extends Controller
         // M = Jan - Dec
         // F = January - December
         // Y = YYYY
+        // Ref. https://www.php.net/manual/en/datetime.format.php
 
         $dates = array();
         $week_days = [
@@ -252,8 +254,49 @@ class BoarderController extends Controller
         return $term;
     }
 
-    function generate_cols()
+    function generate_cols( $dates )
     {
-        $cols = RegisterColumn::all();
+        $reg_cols   = RegisterColumn::all();
+        $min_w      = 0;
+        $max_w      = 0;
+        $group      = 1;
+        $colspan    = 0;
+        $cols       = [];
+        $temp_cols  = [];
+        foreach( $reg_cols as $i => $reg_col )
+        {
+            $max_w += $reg_col->width;
+            if( $reg_col->width==81 ){
+                $min_w += $reg_col->width;
+            }
+
+            if( $reg_col->day_of_week==$group ){
+                array_push( $temp_cols, $reg_col );
+            }
+            
+            if( $reg_col->day_of_week!=$group || count($reg_cols)==$i+1 ){
+                $temp = [
+                    'col_name'  => $dates[$group-1]['day'] .' ( '. $dates[$group-1]['date_short'] .' )',
+                    'colspan'   => $colspan,
+                    'cols'      => $temp_cols,
+                ];
+                array_push( $cols, $temp );
+
+                $group      = $reg_col->day_of_week;
+                $colspan    = 0;
+                $temp_cols  = [];
+
+                array_push( $temp_cols, $reg_col );
+            }
+            $colspan++;
+        }
+
+        $headers = [
+            'cols'  => $cols,
+            'min_w' => $min_w,
+            'max_w' => $max_w,
+        ];
+        
+        return $headers;
     }
 }
