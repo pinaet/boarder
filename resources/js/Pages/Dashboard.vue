@@ -246,7 +246,7 @@ function show_note( pupil_id, date, column_id, event )
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
                                 <template v-for="col in headers.cols[i].cols" :key="col.id" >
                                     <!-- pupil_id, date, column_id -->
-                                    <BARegister v-if="col.width==82" :pupil_id="boarder.pupil_id" :column_id="col.id" :date="header.date" :attendances="attendances" @note="show_note( boarder.pupil_id, col.id, header.date, $event )"></BARegister>
+                                    <BARegister v-if="col.width==82" :pupil_id="boarder.pupil_id" :column_id="col.id" :date="header.date" :academic_year="term.academic_year" :attendances="attendances" @note="show_note( boarder.pupil_id, col.id, header.date, $event )"></BARegister>
                                     <BAAttendMIS v-else :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
                                 </template>
                             </template>
@@ -302,7 +302,7 @@ function show_note( pupil_id, date, column_id, event )
                             </div>
                         </div>
                         <div class="py-[14px] px-1 sm:px-[17px]">
-                            <textarea class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2">Write some notes...</textarea>
+                            <textarea class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2" placeholder="Write some notes..."></textarea>
                             <div class="flex justify-end">
                                 <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 border border-[#c3c8d2] bg-[#828282]" @click="on_note=false">Cancel</button>
                                 <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 ml-2 mr-[1px] border border-[#c3c8d2] bg-harrow-gold-100" @click="on_note=false">Save</button>

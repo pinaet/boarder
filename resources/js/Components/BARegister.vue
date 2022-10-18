@@ -4,7 +4,9 @@
 
     const showList = ref(false)
 
-    const props = defineProps(['attendances'])
+    const props = defineProps(['attendances','pupil_id','column_id','date','academic_year'])
+
+    let attendance = props.attendances[0]
 
     const emit = defineEmits([
         'toggle', 'note'
@@ -17,21 +19,48 @@
     function note(value){
         emit('note',value)
     }
+
+    function save($event)
+    {
+        let data = { 
+            'attendance_id' : $event,
+            'pupil_id'      : props.pupil_id,
+            'column_id'     : props.column_id,
+            'date'          : props.date,
+            'academic_year' : props.academic_year,
+        }
+
+        props.attendances.forEach( element => {
+            if(element.id==$event){
+                this.attendance = element
+                return
+            }
+        });
+        // console.log( this.attendance )
+
+        axios.post('/boarder/store/attendance', data )
+            .then((res) => {
+                //emit to update total attendance type
+            })
+            .catch((error) => {
+                console.log( error )
+            })
+    }
 </script>
 
 
 <template >    
     <td class="w-[82px] bg-white border-l border-b ">
         <div class="w-full h-full text-xs p-1 flex items-center justify-evenly space-x-1 relative">
-            <button @click="showList=!showList" class="bg-note-gray-1 w-[40px] h-[26px] rounded-md px-1 flex items-center justify-evenly space-x-1 ">
-                <div class="w-[25px] flex justify-center items-center h-full ">
-                    -
+            <button @click="showList=!showList" class="w-[40px] h-[26px] rounded-md px-1 flex items-center justify-evenly space-x-1 " :style="'background-color: '+attendance.display_colour">
+                <div class="w-[25px] flex justify-center items-center h-full">
+                    {{attendance.display_symbol}}
                 </div>
                 <div class="w-[15px] flex justify-end items-center h-full">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-2 h-2"><path d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"/></svg>
                 </div>
                 <!-- Attendance Dropdown -->
-                <BARegisterOption class="z-10 top-[45px]" v-show="showList" :attendances="attendances">
+                <BARegisterOption class="z-10 top-[46px]" v-show="showList" :attendances="attendances" @toggle="save($event)">
                 </BARegisterOption>
             </button>
             <button class="bg-note-gray-1 w-[26px] h-[26px] rounded-md flex justify-center items-center" @click="note(true)">

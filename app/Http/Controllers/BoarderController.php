@@ -6,9 +6,10 @@ use Inertia\Inertia;
 use App\Models\Boarder;
 use App\Models\Building;
 use App\Models\Attendance;
-use App\Models\RegisterColumn;
 use App\Models\SchoolTerm;
+use App\Models\Registration;
 use Illuminate\Http\Request;
+use App\Models\RegisterColumn;
 use Illuminate\Support\Facades\DB;
 
 class BoarderController extends Controller
@@ -108,6 +109,52 @@ class BoarderController extends Controller
             'message'  => 'OK 200 - change_week',
         ];
         
+        return $data;
+    }
+
+    public function store_attendance()
+    {
+        /**
+         * Undocumented function
+         *
+            pupil_id
+            attendance_id
+            register_column_id
+            date
+            created_by
+            updated_by
+            year_group
+            academic_year
+            notes
+         */
+        $attendance_id = request()->attendance_id;
+        $pupil_id      = request()->pupil_id;
+        $column_id     = request()->column_id;
+        $date          = request()->date;
+        $academic_year = request()->academic_year;
+        
+        $boarder  = Boarder::where('pupil_id',$pupil_id)->first();
+
+        // $register = Registration::where('pupil_id',$pupil_id)->where('column_id',$column_id)->where('date',$date)->where('date',$date)->get();
+        $register = Registration::updateOrCreate(
+            [   //where
+                'pupil_id'           => $pupil_id,
+                'register_column_id' => $column_id,
+                'date'               => $date,
+            ],
+            [
+                'attendance_id' => $attendance_id,
+                'created_by'    => auth()->user()->id,
+                'updated_by'    => auth()->user()->id,
+                'year_group'    => $boarder->year_group,
+                'academic_year' => $academic_year,
+            ] //what to update
+        );
+
+        $data = [
+            'register'=> $register,
+            'message' => 'OK 200 - store attendance'
+        ];
         return $data;
     }
 

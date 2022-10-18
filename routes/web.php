@@ -43,6 +43,9 @@ Route::post( '/boarder/update/profile', [BoarderController::class, 'update_profi
 Route::post( '/boarder/change/building', [BoarderController::class, 'change_building'] )->middleware(['auth', 'verified']);
 Route::post( '/boarder/change/week', [BoarderController::class, 'change_week'] )->middleware(['auth', 'verified']);
 
+Route::post( '/boarder/store/attendance', [BoarderController::class, 'store_attendance'] )->middleware(['auth', 'verified']);
+
+
 Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
