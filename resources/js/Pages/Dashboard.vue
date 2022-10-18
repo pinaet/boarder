@@ -238,32 +238,12 @@ function change_week( direction ){
                             </td>
 
  
-                            <BARegister :attendances="attendances" @note="on_note=$event"></BARegister>
-                            <BARegister :attendances="attendances"></BARegister>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BAAttendMIS :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                            <BARegister :attendances="attendances"></BARegister>
-                            <BARegister :attendances="attendances"></BARegister>
-
-
-                            <BARegister :class="on_weekly ? '' : 'hidden'"></BARegister>
-                            <BARegister :class="on_weekly ? '' : 'hidden'"></BARegister>
-                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
-                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
-                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
-                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
-                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
-                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
-                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
-                            <BAAttendMIS :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]">/</BAAttendMIS>
-                            <BARegister :class="on_weekly ? '' : 'hidden'"></BARegister>
-                            <BARegister :class="on_weekly ? '' : 'hidden'" class="border-r"></BARegister>
+                            <template v-for="(header,i) in headers.cols" :key="header.id" >
+                                <template v-for="col in headers.cols[i].cols" :key="col.id" >
+                                    <BARegister v-if="col.width==82" :attendances="attendances" @note="on_note=$event"></BARegister>
+                                    <BAAttendMIS v-else :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
+                                </template>
+                            </template>
 
                         </tr>
 
@@ -274,17 +254,12 @@ function change_week( direction ){
                                 <div class="pl-1  font-bold text-info-gray-2 text-[14px] flex items-center">Boarder Total</div>
                             </td>
                             
-                            <BATotalBoarder >{{boarders.length}}</BATotalBoarder>
-                            <BATotalBoarder >{{boarders.length}}</BATotalBoarder>
-                            <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden']"></td>
-                            <BATotalBoarder >{{boarders.length}}</BATotalBoarder>
-                            <BATotalBoarder >{{boarders.length}}</BATotalBoarder>
-                            
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
-                            <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]"></td>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
-                            <BATotalBoarder :class="on_weekly ? '' : 'hidden'">{{boarders.length}}</BATotalBoarder>
+                            <template v-for="(header,i) in headers.cols" :key="header.id" >
+                                <template v-for="col in headers.cols[i].cols" :key="col.id" >
+                                    <BATotalBoarder v-if="col.width==82">{{boarders.length}}</BATotalBoarder>
+                                    <td v-else class="w-[25px]" :class="[on_mis_data ? '' : 'hidden']"></td>
+                                </template>
+                            </template>
                         </tr>
 
 
@@ -292,17 +267,13 @@ function change_week( direction ){
                         <tr v-for="attendance in attendances" :key="attendance.id" class="h-[26px] flex" :style="[on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
                             <BATotalAttendanceType class="sticky left-0" :attendance="attendance"></BATotalAttendanceType>
                             
-                            <BATotalAttendanceSum :attendance="attendance">-</BATotalAttendanceSum>
-                            <BATotalAttendanceSum :attendance="attendance">-</BATotalAttendanceSum>
-                            <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden']"></td>
-                            <BATotalAttendanceSum :attendance="attendance">-</BATotalAttendanceSum>
-                            <BATotalAttendanceSum :attendance="attendance">-</BATotalAttendanceSum>
                             
-                            <BATotalAttendanceSum :class="on_weekly ? '' : 'hidden'" :attendance="attendance">-</BATotalAttendanceSum>
-                            <BATotalAttendanceSum :class="on_weekly ? '' : 'hidden'" :attendance="attendance">-</BATotalAttendanceSum>
-                            <td colspan="8" class="w-[200px]" :class="[on_mis_data ? '' : 'hidden', on_weekly ? '' : 'hidden' ]"></td>
-                            <BATotalAttendanceSum :class="on_weekly ? '' : 'hidden'" :attendance="attendance">-</BATotalAttendanceSum>
-                            <BATotalAttendanceSum :class="on_weekly ? '' : 'hidden'" :attendance="attendance">-</BATotalAttendanceSum>
+                            <template v-for="(header,i) in headers.cols" :key="header.id" >
+                                <template v-for="col in headers.cols[i].cols" :key="col.id" >
+                                    <BATotalAttendanceSum v-if="col.width==82" :attendance="attendance">-</BATotalAttendanceSum>
+                                    <td v-else class="w-[25px]" :class="[on_mis_data ? '' : 'hidden']"></td>
+                                </template>
+                            </template>
                         </tr>
 
                         

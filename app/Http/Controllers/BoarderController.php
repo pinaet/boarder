@@ -286,7 +286,8 @@ class BoarderController extends Controller
                     'max_w'     => $sub_max_w,
                     'min_w'     => $sub_min_w,
                     'status'    => $dates[$group-1]['status'],
-                    'color'     => $dates[$group-1]['color']
+                    'color'     => $dates[$group-1]['color'],
+                    'date'      => $dates[$group-1]['formatted']
                 ];
                 array_push( $cols, $temp );
 

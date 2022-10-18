@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('pupil_id')->references('pupil_id')->on('boarders');
             $table->foreignId('attendance_id')->constrained();
             $table->foreignId('register_column_id')->constrained();//->references('id')->on('register_columns');
+            $table->string('date');
             $table->foreignId('created_by')->references('id')->on('users');
             $table->foreignId('updated_by')->references('id')->on('users');
             $table->string('year_group'); //Y5,Y6
