@@ -206,7 +206,7 @@ function change_week( direction ){
                             </td>
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
                                 <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <BAHeaderA v-if="col.width==82" class="relative" @click="on_reg=!on_reg" >
+                                    <BAHeaderA v-if="col.width==82" class="relative" @click="on_reg=!on_reg" :attendances="attendances" :on_mis_data="on_mis_data">
                                         {{col.column_name}}
                                     </BAHeaderA>
                                     <BAHeaderB v-else :class="on_mis_data ? '' : 'hidden' ">{{col.column_name}}</BAHeaderB>
