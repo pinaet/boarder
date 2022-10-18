@@ -115,6 +115,11 @@ function change_week( direction ){
         })
 }
 
+function show_note( pupil_id, date, column_id, event )
+{
+    this.on_note=event
+}
+
 </script>
 
 <template>
@@ -169,7 +174,7 @@ function change_week( direction ){
         </div>
 
         <!-- Boarder Columns -->
-        <div class="flex flex-col h-[73vh] max-w-7xl mx-auto sm:pl-6 sm:pr-6 lg:pl-8 ">
+        <div class="flex flex-col h-[78vh] max-w-7xl mx-auto sm:pl-6 sm:pr-6 lg:pl-8 ">
             <div class="w-full flex-grow overflow-auto rounded" :class="on_mis_data ? '  border-harrow-gold-100' : ''">
                 <table class="relative table-fixed border-collapse " :style="[on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
                     <thead class="sticky top-0" :style="'z-index:'+(boarders.length+1)">
@@ -237,10 +242,11 @@ function change_week( direction ){
                                 {{boarder.boarder_type}}
                             </td>
 
- 
+                            <!-- Registration & Note -->
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
                                 <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <BARegister v-if="col.width==82" :attendances="attendances" @note="on_note=$event"></BARegister>
+                                    <!-- pupil_id, date, column_id -->
+                                    <BARegister v-if="col.width==82" :pupil_id="boarder.pupil_id" :column_id="col.id" :date="header.date" :attendances="attendances" @note="show_note( boarder.pupil_id, col.id, header.date, $event )"></BARegister>
                                     <BAAttendMIS v-else :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
                                 </template>
                             </template>

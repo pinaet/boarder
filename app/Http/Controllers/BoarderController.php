@@ -15,7 +15,7 @@ class BoarderController extends Controller
 {
     public function dashboard()
     {
-        $boarders    = Boarder::where('status','Current')->orderBy('prefered_forename')->take(3)->get();
+        $boarders    = Boarder::where('status','Current')->orderBy('prefered_forename')->take(4)->get();
         $boarders    = $this->prepare_boarders( $boarders );
         $attendances = Attendance::all();
         $buildings   = Building::all();
