@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('date');
             $table->foreignId('created_by')->references('id')->on('users');
             $table->foreignId('updated_by')->references('id')->on('users');
-            $table->string('year_group'); //Y5,Y6
-            $table->integer('academic_year');
+            $table->string('year_group')->nullable(); //Y5,Y6
+            $table->integer('academic_year')->nullable();
             $table->string('notes')->nullable();
             $table->timestamps();
         });

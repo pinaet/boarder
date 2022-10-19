@@ -16,17 +16,15 @@ class BoarderController extends Controller
 {
     public function dashboard()
     {
-        $boarders    = Boarder::where('status','Current')->orderBy('prefered_forename')->take(4)->get();
-        $boarders    = $this->prepare_boarders( $boarders );
         $attendances = Attendance::all();
         $buildings   = Building::all();
 
         $dates       = $this->generate_dates();
-
         $term        = $this->generate_term();
-
         $headers     = $this->generate_cols( $dates );
         // dd($headers);
+        $boarders    = Boarder::where('status','Current')->orderBy('prefered_forename')->take(4)->get();
+        $boarders    = $this->prepare_boarders( $boarders );
 
         // $building = 'West Acre';
         return Inertia::render('Dashboard', [
@@ -70,8 +68,9 @@ class BoarderController extends Controller
                                 ->where( 'building_id', $building->id )
                                 ->orderBy( 'prefered_forename' )->take(10)->get();
         }
-
-        $boarders = $this->prepare_boarders( $boarders );
+        $dates    = $this->generate_dates();
+        $headers  = $this->generate_cols( $dates );
+        $boarders = $this->prepare_boarders( $boarders, $dates, $headers );
 
         $data = [
             'boarders' => json_decode($boarders),
@@ -158,8 +157,17 @@ class BoarderController extends Controller
         return $data;
     }
 
-    function prepare_boarders( $boarders )
+    function prepare_boarders( $boarders, $seed_date='' )
     {
+        if( $seed_date=='' ){
+            $seed_date = date('Y-m-d');
+        }
+        
+        $attendance  = Attendance::where( 'is_default', 1 )->first();
+        $dates       = $this->generate_dates( $seed_date );
+        $term        = $this->generate_term(  $seed_date );
+        $headers     = $this->generate_cols(  $dates     );
+
         foreach( $boarders as $boarder )
         {
             if( env('DB_CONNECTION')=='sqlsrv' ){
@@ -176,7 +184,72 @@ class BoarderController extends Controller
             $boarder->photo = $sData;
             $boarder->{'building_name'} = $boarder->building->building_name;
             $boarder->{'contacts'}      = $boarder->contacts;
-            // dd($boarder->contacts,$boarder->building->building_name,$boarder);
+
+            //prepare boarder registrations
+            $start_date    = $dates[0]['formatted'];
+            $end_date      = $dates[6]['formatted'];
+            
+            $registrations = Registration::where('date','>=',$start_date)->where('date','<=',$end_date)->get();
+
+            $registers    = [];
+            foreach( $headers['cols'] as $header )
+            {
+                foreach( $header['cols'] as $col )
+                {
+                    $register = [];
+                    foreach( $registrations as $reg )
+                    {
+                        if( $col->id==$reg->register_column_id && $reg->date==$header['date'] ){
+                            //assign register value
+                            // dd($boarder,$header,$col,$reg,$attendance);
+                            $register = [
+                                'pupil_id'           => $boarder->pupil_id,
+                                'register_column_id' => $col->id,
+                                'attendance_id'      => $reg->attendance_id,
+                                'width'              => $col->width,
+                                'notes'              => $reg->notes,
+                                'date'               => $reg->date,
+                                'academic_year'      => $term->academic_year,
+                            ];
+
+                            break;
+                        }
+                    }
+
+                    if( !$register ){
+                        if( $col->width==config('app.width') )
+                        {
+                            $register = [
+                                'pupil_id'           => $boarder->pupil_id,
+                                'register_column_id' => $col->id,
+                                'attendance_id'      => $attendance->id,
+                                'width'              => $col->width,
+                                'notes'              => '',
+                                'date'               => $header['date'],
+                                'academic_year'      => $term->academic_year,
+                            ];
+                        }
+                        else
+                        {   
+                            //prepare attendance from mis
+                            //mis attendance data
+                            $register = [
+                                'pupil_id'           => $boarder->pupil_id,
+                                'register_column_id' => $col->id,
+                                'attendance_id'      => 0,
+                                'width'              => $col->width,
+                                'notes'              => '/',
+                                'date'               => $header['date'],
+                                'academic_year'      => $term->academic_year,
+                            ];
+                        }
+                    }
+
+                    array_push( $registers, $register );
+                }
+            }
+
+            $boarder->{'registers'}     = $registers;
         }
 
         return $boarders;
