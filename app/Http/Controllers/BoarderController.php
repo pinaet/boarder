@@ -131,6 +131,7 @@ class BoarderController extends Controller
         $column_id     = request()->column_id;
         $date          = request()->date;
         $academic_year = request()->academic_year;
+        $notes         = request()->notes;
         
         $boarder  = Boarder::where('pupil_id',$pupil_id)->first();
 
@@ -147,6 +148,7 @@ class BoarderController extends Controller
                 'updated_by'    => auth()->user()->id,
                 'year_group'    => $boarder->year_group,
                 'academic_year' => $academic_year,
+                'notes'         => $notes,
             ] //what to update
         );
 
@@ -191,7 +193,7 @@ class BoarderController extends Controller
             
             $registrations = Registration::where('date','>=',$start_date)->where('date','<=',$end_date)->get();
 
-            $registers    = [];
+            $registers     = [];
             foreach( $headers['cols'] as $header )
             {
                 foreach( $header['cols'] as $col )
@@ -199,7 +201,7 @@ class BoarderController extends Controller
                     $register = [];
                     foreach( $registrations as $reg )
                     {
-                        if( $col->id==$reg->register_column_id && $reg->date==$header['date'] ){
+                        if( $col->id==$reg->register_column_id && $reg->date==$header['date'] && $reg->pupil_id==$boarder->pupil_id){
                             //assign register value
                             // dd($boarder,$header,$col,$reg,$attendance);
                             $register = [

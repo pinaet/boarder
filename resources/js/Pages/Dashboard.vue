@@ -26,6 +26,8 @@ let c_boarder     = ref()
 let boarders      = ref()
 let term          = ref()
 let dates         = ref()
+let register      = ref()
+let notes         = ref()
 
 let props         = defineProps(['all_boarders','attendances','buildings','dates','term','headers']) 
 
@@ -115,9 +117,50 @@ function change_week( direction ){
         })
 }
 
-function show_note( pupil_id, date, column_id, event )
+function show_note( register, event )
 {
-    this.on_note=event
+    this.register = register
+    this.notes    = register.notes
+    this.on_note  = event
+}
+
+function store_note( event )
+{
+    if( event==true ){
+        let data = { 
+            'attendance_id' : this.register.attendance_id,
+            'pupil_id'      : this.register.pupil_id,
+            'column_id'     : this.register.register_column_id,
+            'date'          : this.register.date,
+            'academic_year' : this.register.academic_year,
+            'notes'         : this.notes,
+        }
+
+        this.boarders.forEach( boarder => {
+            if(boarder.pupil_id==this.register.pupil_id){
+                boarder.registers.forEach( register => {
+                    if( register.register_column_id==this.register.register_column_id && register.date==this.register.date ){
+                        register.notes = this.notes
+                        console.log( boarder )
+                        return
+                    }
+                })
+                return
+            }
+        });
+        // console.log( this.attendance )
+
+        axios.post('/boarder/store/attendance', data )
+            .then((res) => {
+                //emit to update total attendance type
+            })
+            .catch((error) => {
+                console.log( error )
+            })
+    }
+    this.register= []
+    this.notes   = ''
+    this.on_note = false
 }
 
 </script>
@@ -136,7 +179,7 @@ function show_note( pupil_id, date, column_id, event )
         <header class="bg-white shadow">
             <div class="max-w-7xl h-[50px] mx-auto px-4 sm:px-6 lg:px-8 flex justify-start items-center space-x-6">
                 <h4 class="font-semibold text-xl text-gray-800 ">
-                    Registration
+                    Registration {{notes}}
                 </h4>
                 <div class="flex justify-start items-center h-full">
                     <div class="text-gray-400 text-sm mr-1">Building:</div>
@@ -243,12 +286,10 @@ function show_note( pupil_id, date, column_id, event )
                             </td>
 
                             <!-- Registration & Note -->
-                            <template v-for="(header,i) in headers.cols" :key="header.id" >
-                                <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <!-- pupil_id, date, column_id -->
-                                    <BARegister v-if="col.width==82" :pupil_id="boarder.pupil_id" :column_id="col.id" :date="header.date" :academic_year="term.academic_year" :attendances="attendances" @note="show_note( boarder.pupil_id, col.id, header.date, $event )"></BARegister>
-                                    <BAAttendMIS v-else :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
-                                </template>
+                            <template v-for="(register,i) in boarder.registers" :key="i" >
+                                <!-- pupil_id, date, column_id -->
+                                <BARegister v-if="register.width==82" :register="register" :attendances="attendances" @note="show_note( register, $event )"></BARegister>
+                                <BAAttendMIS v-else :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
                             </template>
 
                         </tr>
@@ -302,10 +343,10 @@ function show_note( pupil_id, date, column_id, event )
                             </div>
                         </div>
                         <div class="py-[14px] px-1 sm:px-[17px]">
-                            <textarea class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2" placeholder="Write some notes..."></textarea>
+                            <textarea class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2" v-model="notes" placeholder="Write some notes..."></textarea>
                             <div class="flex justify-end">
-                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 border border-[#c3c8d2] bg-[#828282]" @click="on_note=false">Cancel</button>
-                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 ml-2 mr-[1px] border border-[#c3c8d2] bg-harrow-gold-100" @click="on_note=false">Save</button>
+                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 border border-[#c3c8d2] bg-[#828282]" @click="store_note(false)">Cancel</button>
+                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 ml-2 mr-[1px] border border-[#c3c8d2] bg-harrow-gold-100" @click="store_note(true)">Save</button>
                             </div>
                         </div>
                     </div>
