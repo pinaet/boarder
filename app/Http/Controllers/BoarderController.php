@@ -277,13 +277,19 @@ class BoarderController extends Controller
         $totals      = [];
         $attendances = Attendance::all();
         $reg_cols    = RegisterColumn::all();
+        for( $i=0;$i<=count($attendances);$i++ ){
+            $totals[$i] = [];
+            for( $j=0;$j<=count($reg_cols);$j++ ){
+                $totals[$i][$j] = [];
+                for( $k=0;$k<=config('app.width');$k++ ) {
+                    $totals[$i][$j][$k] = [];
+                }
+            }
+        }
         foreach( $attendances as $attendance )
         {
-            $totals[$attendance->id] = [];
             foreach( $reg_cols as $reg_col )
             {
-                $totals[$attendance->id][$reg_col->id] = [];
-                $totals[$attendance->id][$reg_col->id][$reg_col->width] = [];
                 foreach( $dates as $date )
                 {
                     $totals[$attendance->id][$reg_col->id][$reg_col->width][$date['formatted']] = 0;

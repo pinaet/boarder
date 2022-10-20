@@ -75,33 +75,22 @@ function change_building( building ){
 
             // remove all Element in array
             this.boarders.splice( 0, this.boarders.length )
-            // this.totals.splice( 0, this.totals.length )
-            console.log( res.data.totals )
+
+            this.totals.forEach( (att,i) =>{
+                att.forEach( (col,j)=>{
+                    col.splice( j, 1 )
+                })
+                att.splice( i, 1 )
+            })
+            this.totals.splice( 0, this.totals.length )//empty
 
             // update element
             res.data.boarders.forEach( element => {
                 this.boarders.push( element )
             });
-            
-            //update totals
-            // this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date]--
-            this.boarders.forEach( (boarder, i) => {
-                boarder.registers.forEach( (register, j) => {
-                    // console.log( register )
-                    try {
-                        if( register.width==82 ){
-                            // this.totals[     register.attendance_id ][ register.register_column_id ][ register.width ][ register.date ]++
-                            // res.data.totals[ register.attendance_id ][ register.register_column_id ][ register.width ][ register.date ]
-                        }
-                    } catch (error) {
-                        console.log( error, register, i, j )
-                        // alert( error )
-                    }
-                    // console.log( this.totals[ register.attendance_id ][ register.register_column_id ][ register.width ][ register.date ] )
-                    // console.log( res.data.totals[ 1 ] )
-                  
-                })
-            })
+            res.data.totals.forEach( element => {
+                this.totals.push( element )//refresh with new data
+            });
         })
         .catch((error) => {
             console.log( error )
