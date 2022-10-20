@@ -130,20 +130,20 @@ class BoarderController extends Controller
             academic_year
             notes
          */
-        $attendance_id = request()->attendance_id;
-        $pupil_id      = request()->pupil_id;
-        $column_id     = request()->column_id;
-        $date          = request()->date;
-        $academic_year = request()->academic_year;
-        $notes         = request()->notes;
+        $attendance_id      = request()->attendance_id;
+        $pupil_id           = request()->pupil_id;
+        $register_column_id = request()->register_column_id;
+        $date               = request()->date;
+        $academic_year      = request()->academic_year;
+        $notes              = request()->notes;
         
         $boarder  = Boarder::where('pupil_id',$pupil_id)->first();
 
-        // $register = Registration::where('pupil_id',$pupil_id)->where('column_id',$column_id)->where('date',$date)->where('date',$date)->get();
+        // $register = Registration::where('pupil_id',$pupil_id)->where('register_column_id',$register_column_id)->where('date',$date)->where('date',$date)->get();
         $register = Registration::updateOrCreate(
             [   //where
                 'pupil_id'           => $pupil_id,
-                'register_column_id' => $column_id,
+                'register_column_id' => $register_column_id,
                 'date'               => $date,
             ],
             [

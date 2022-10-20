@@ -24,6 +24,7 @@ let on_boarder    = ref(false)
 let building      = ref('West Acre')
 let c_boarder     = ref()
 let boarders      = ref()
+let totals        = ref()
 let term          = ref()
 let dates         = ref()
 let register      = ref()
@@ -32,6 +33,7 @@ let notes         = ref()
 let props         = defineProps(['all_boarders','attendances','buildings','dates','term','headers','totals']) 
 
 boarders          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
+totals            = props.totals
 dates             = props.dates 
 term              = props.term
 
@@ -163,6 +165,23 @@ function store_note( event )
     this.on_note = false
 }
 
+function update_totals( event ){
+    let old_reg = event.old_reg
+    let new_reg = event.new_reg
+
+    console.log( old_reg )
+    console.log( new_reg )
+
+    console.log( this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date] )
+    console.log( this.totals[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date] )
+
+    this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date]--
+    this.totals[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date]++
+    
+    console.log( this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date] )
+    console.log( this.totals[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date] )
+}
+
 </script>
 
 <template>
@@ -288,7 +307,7 @@ function store_note( event )
                             <!-- Registration & Note -->
                             <template v-for="(register,i) in boarder.registers" :key="i" >
                                 <!-- pupil_id, date, column_id -->
-                                <BARegister v-if="register.width==82" :register="register" :attendances="attendances" @note="show_note( register, $event )"></BARegister>
+                                <BARegister v-if="register.width==82" :register="register" :attendances="attendances" @note="show_note( register, $event )" @count="update_totals( $event )"></BARegister>
                                 <BAAttendMIS v-else :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
                             </template>
 

@@ -6,6 +6,9 @@
 
     const props = defineProps(['attendances','register',])
 
+    let register   = ref()
+    register       = props.register
+
     let attendance = ref()
     props.attendances.forEach( element => {
         if( element.id == props.register.attendance_id ){
@@ -14,7 +17,7 @@
     })
 
     const emit = defineEmits([
-        'toggle', 'note'
+        'toggle', 'note', 'count'
     ])
 
     function update(value){
@@ -28,12 +31,13 @@
     function save($event)
     {
         let data = { 
-            'attendance_id' : $event,
-            'pupil_id'      : props.register.pupil_id,
-            'column_id'     : props.register.register_column_id,
-            'date'          : props.register.date,
-            'academic_year' : props.register.academic_year,
-            'notes'         : props.register.notes,
+            'academic_year'      : props.register.academic_year,
+            'attendance_id'      : $event,
+            'date'               : props.register.date,
+            'notes'              : props.register.notes,
+            'pupil_id'           : props.register.pupil_id,
+            'register_column_id' : props.register.register_column_id,
+            'width'              : props.register.width,
         }
 
         props.attendances.forEach( element => {
@@ -44,9 +48,14 @@
         });
         // console.log( this.attendance )
 
+        //emit to update total attendance type
+        let temp = { new_reg: data, old_reg: this.register }
+        emit( 'count', temp )
+        this.register.attendance_id = $event
+
         axios.post('/boarder/store/attendance', data )
             .then((res) => {
-                //emit to update total attendance type
+                console.log(res.data.message)
             })
             .catch((error) => {
                 console.log( error )
