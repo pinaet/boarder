@@ -216,6 +216,7 @@ class BoarderController extends Controller
                                 'notes'              => $reg->notes,
                                 'date'               => $reg->date,
                                 'academic_year'      => $term->academic_year,
+                                'status'             => $header['status'],
                             ];
 
                             break;
@@ -233,6 +234,7 @@ class BoarderController extends Controller
                                 'notes'              => '',
                                 'date'               => $header['date'],
                                 'academic_year'      => $term->academic_year,
+                                'status'             => $header['status'],
                             ];
                         }
                         else
@@ -247,6 +249,7 @@ class BoarderController extends Controller
                                 'notes'              => '/',
                                 'date'               => $header['date'],
                                 'academic_year'      => $term->academic_year,
+                                'status'             => $header['status'],
                             ];
                         }
                     }
@@ -350,8 +353,8 @@ class BoarderController extends Controller
                 }
                 else{
                     $temp   = date( 'Y-m-d' );
-                    $status = 'current';
                 }
+                $status = 'current';
             }
             
             // if( $index>0 ) dd($index,$value,$order,$key_word,$temp);

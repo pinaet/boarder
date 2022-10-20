@@ -259,7 +259,7 @@ function update_totals_col( event ){
                             <th colspan="3"  class="w-[424px] sticky top-0 left-0 font-normal text-center bg-fill-gray-1 border border-stroke-gray-1 flex justify-center items-center" :style="'z-index:'+(boarders.length+2)">
                                 {{boarders.length}} Boarders
                             </th>
-                            <th v-for="col in headers.cols" :key="col.id" :colspan="col.colspan" class="sticky top-0 font-normal text-center border border-stroke-gray-2 flex justify-center items-center" :style="[on_mis_data? 'width: '+col.max_w+'px': 'width: '+col.min_w+'px', col.status=='current' ? 'background-color: '+col.color : col.id%2==0?'background-color: #F2F2F2':'background-color: #E0E0E0']">
+                            <th v-for="col in headers.cols" :key="col.id" :colspan="col.colspan" class="sticky top-0 font-normal text-center border border-stroke-gray-2 flex justify-center items-center" :style="[on_mis_data? 'width: '+col.max_w+'px': 'width: '+col.min_w+'px', col.status=='current' ? 'background-color: '+col.color : col.id%2==0?'background-color: #F2F2F2':'background-color: #E0E0E0']" :class="col.status!='current'&&!on_weekly ? 'hidden' : ''">
                                 {{col.col_name}}
                             </th>
                         </tr>
@@ -288,10 +288,10 @@ function update_totals_col( event ){
                             </td>
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
                                 <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <BAHeaderA v-if="col.width==82" class="relative" @click="on_reg=!on_reg" :attendances="attendances" :on_mis_data="on_mis_data" :header="header" :col="col" :term="term" @batch="update_totals_col($event)">
+                                    <BAHeaderA v-if="col.width==82" class="relative" @click="on_reg=!on_reg" :attendances="attendances" :on_mis_data="on_mis_data" :header="header" :col="col" :term="term" @batch="update_totals_col($event)" :class="header.status!='current'&&!on_weekly ? 'hidden' : ''">
                                         {{col.column_name}}
                                     </BAHeaderA>
-                                    <BAHeaderB v-else :class="on_mis_data ? '' : 'hidden' ">{{col.column_name}}</BAHeaderB>
+                                    <BAHeaderB v-else :class="on_mis_data&&on_weekly || header.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&header.status=='current' ? '' : 'hidden' ">{{col.column_name}}</BAHeaderB>
                                 </template>
                             </template>
 
@@ -322,8 +322,8 @@ function update_totals_col( event ){
                             <!-- Registration & Note -->
                             <template v-for="(register,i) in boarder.registers" :key="i" >
                                 <!-- pupil_id, date, column_id -->
-                                <BARegister v-if="register.width==82" :register="register" :attendances="attendances" @note="show_note( register, $event )" @count="update_totals( $event )"></BARegister>
-                                <BAAttendMIS v-else :class="on_mis_data ? '' : 'hidden' ">/</BAAttendMIS>
+                                <BARegister v-if="register.width==82" :register="register" :attendances="attendances" @note="show_note( register, $event )" @count="update_totals( $event )" :class="register.status!='current'&&!on_weekly ? 'hidden' : ''"></BARegister>
+                                <BAAttendMIS v-else :class="on_mis_data&&on_weekly || register.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&register.status=='current' ? '' : 'hidden' ">/</BAAttendMIS>
                             </template>
 
                         </tr>
@@ -337,8 +337,8 @@ function update_totals_col( event ){
                             
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
                                 <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <BATotalBoarder v-if="col.width==82">{{boarders.length}}</BATotalBoarder>
-                                    <td v-else class="w-[25px]" :class="[on_mis_data ? '' : 'hidden']"></td>
+                                    <BATotalBoarder v-if="col.width==82" :class="header.status!='current'&&!on_weekly ? 'hidden' : ''">{{boarders.length}}</BATotalBoarder>
+                                    <td v-else class="w-[25px]" :class="on_mis_data&&on_weekly || header.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&header.status=='current' ? '' : 'hidden' "></td>
                                 </template>
                             </template>
                         </tr>
@@ -351,10 +351,10 @@ function update_totals_col( event ){
                             
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
                                 <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <BATotalAttendanceSum v-if="col.width==82" :attendance="attendance">
+                                    <BATotalAttendanceSum v-if="col.width==82" :attendance="attendance" :class="header.status!='current'&&!on_weekly ? 'hidden' : ''">
                                         {{ totals[attendance.id][col.id][col.width][header.date]>0 ? totals[attendance.id][col.id][col.width][header.date] : '-' }}
                                     </BATotalAttendanceSum>
-                                    <td v-else class="w-[25px]" :class="[on_mis_data ? '' : 'hidden']"></td>
+                                    <td v-else class="w-[25px]" :class="on_mis_data&&on_weekly || header.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&header.status=='current' ? '' : 'hidden' "></td>
                                 </template>
                             </template>
                         </tr>
