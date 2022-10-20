@@ -10,6 +10,7 @@ use App\Models\SchoolTerm;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 use App\Models\RegisterColumn;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class BoarderController extends Controller
@@ -24,7 +25,9 @@ class BoarderController extends Controller
         $headers     = $this->generate_cols( $dates );
         // dd($headers);
         $boarders    = Boarder::where('status','Current')->orderBy('prefered_forename')->take(4)->get();
-        $boarders    = $this->prepare_boarders( $boarders );
+        $data        = $this->prepare_boarders( $boarders );
+        $boarders    = $data[ 'boarders' ];
+        $totals      = $data[ 'totals'   ];
 
         // $building = 'West Acre';
         return Inertia::render('Dashboard', [
@@ -34,6 +37,7 @@ class BoarderController extends Controller
             'dates'         => $dates,
             'term'          => $term,
             'headers'       => $headers,
+            'totals'        => $totals,
         ]);
     }
 
@@ -69,8 +73,8 @@ class BoarderController extends Controller
                                 ->orderBy( 'prefered_forename' )->take(10)->get();
         }
         $dates    = $this->generate_dates();
-        $headers  = $this->generate_cols( $dates );
-        $boarders = $this->prepare_boarders( $boarders, $dates, $headers );
+        $temp     = $this->prepare_boarders( $boarders, $dates[0]['date'] );
+        $boarders = $temp['boarders'];
 
         $data = [
             'boarders' => json_decode($boarders),
@@ -254,7 +258,42 @@ class BoarderController extends Controller
             $boarder->{'registers'}     = $registers;
         }
 
-        return $boarders;
+        $totals      = [];
+        $attendances = Attendance::all();
+        $reg_cols    = RegisterColumn::all();
+        foreach( $attendances as $attendance )
+        {
+            $totals[$attendance->id] = [];
+            foreach( $reg_cols as $reg_col )
+            {
+                $totals[$attendance->id][$reg_col->id] = [];
+                $totals[$attendance->id][$reg_col->id][config('app.width')] = [];
+                foreach( $dates as $date )
+                {
+                    $totals[$attendance->id][$reg_col->id][config('app.width')][$date['formatted']] = 0;
+                }
+            }
+        }
+        foreach( $boarders as $boarder )
+        {
+            foreach( $boarder->registers as $register )
+            {
+                try {
+                    if( $register['width']==config('app.width')){
+                        $totals[ $register['attendance_id'] ][ $register['register_column_id'] ][ $register['width'] ][ $register['date'] ] ++;
+                    }
+                } catch (Exception $e) {
+                    dd($e,$register);
+                }
+            }
+        }
+        
+        $data = [
+            'boarders'  => $boarders,
+            'totals'    => $totals,
+        ];
+
+        return $data;
     }
 
     function generate_dates( $seed_date='' )

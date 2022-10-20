@@ -29,7 +29,7 @@ let dates         = ref()
 let register      = ref()
 let notes         = ref()
 
-let props         = defineProps(['all_boarders','attendances','buildings','dates','term','headers']) 
+let props         = defineProps(['all_boarders','attendances','buildings','dates','term','headers','totals']) 
 
 boarders          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
 dates             = props.dates 
@@ -317,7 +317,9 @@ function store_note( event )
                             
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
                                 <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <BATotalAttendanceSum v-if="col.width==82" :attendance="attendance">-</BATotalAttendanceSum>
+                                    <BATotalAttendanceSum v-if="col.width==82" :attendance="attendance">
+                                        {{ totals[attendance.id][col.id][col.width][header.date]>0 ? totals[attendance.id][col.id][col.width][header.date] : '-' }}
+                                    </BATotalAttendanceSum>
                                     <td v-else class="w-[25px]" :class="[on_mis_data ? '' : 'hidden']"></td>
                                 </template>
                             </template>
