@@ -60,12 +60,6 @@ const update_boarder = function(){
         })
 }
 
-function remove_boarder( building )
-{
-    this.building = building
-    this.boarders.pop();
-}
-
 function change_building( building ){
     
     this.building = building
@@ -130,12 +124,12 @@ function store_note( event )
 {
     if( event==true ){
         let data = { 
-            'attendance_id' : this.register.attendance_id,
-            'pupil_id'      : this.register.pupil_id,
-            'column_id'     : this.register.register_column_id,
-            'date'          : this.register.date,
-            'academic_year' : this.register.academic_year,
-            'notes'         : this.notes,
+            'attendance_id'      : this.register.attendance_id,
+            'pupil_id'           : this.register.pupil_id,
+            'register_column_id' : this.register.register_column_id,
+            'date'               : this.register.date,
+            'academic_year'      : this.register.academic_year,
+            'notes'              : this.notes,
         }
 
         this.boarders.forEach( boarder => {
@@ -150,7 +144,7 @@ function store_note( event )
                 return
             }
         });
-        // console.log( this.attendance )
+        // console.log( data )
 
         axios.post('/boarder/store/attendance', data )
             .then((res) => {
@@ -169,17 +163,38 @@ function update_totals( event ){
     let old_reg = event.old_reg
     let new_reg = event.new_reg
 
-    console.log( old_reg )
-    console.log( new_reg )
-
-    console.log( this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date] )
-    console.log( this.totals[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date] )
-
     this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date]--
     this.totals[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date]++
-    
-    console.log( this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date] )
-    console.log( this.totals[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date] )
+}
+
+function update_totals_col( event ){
+    let new_reg = event
+    // update register at this column to all boarders
+    boarders.forEach( boarder => {
+        boarder.registers.forEach( old_reg => {
+            if( old_reg.academic_year     == new_reg.academic_year && 
+                old_reg.date              == new_reg.date && 
+                old_reg.register_column_id== new_reg.register_column_id && 
+                old_reg.width             == new_reg.width )
+            {
+                this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date]--
+                this.totals[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date]++
+                old_reg.attendance_id = new_reg.attendance_id
+                
+                new_reg.pupil_id = boarder.pupil_id
+                new_reg.notes    = old_reg.notes
+
+                axios.post('/boarder/store/attendance', new_reg )
+                    .then((res) => {
+                        // console.log(res.data.message)
+                    })
+                    .catch((error) => {
+                        console.log( error )
+                    })
+                return
+            }
+        })
+    })
 }
 
 </script>
@@ -198,7 +213,7 @@ function update_totals( event ){
         <header class="bg-white shadow">
             <div class="max-w-7xl h-[50px] mx-auto px-4 sm:px-6 lg:px-8 flex justify-start items-center space-x-6">
                 <h4 class="font-semibold text-xl text-gray-800 ">
-                    Registration {{notes}}
+                    Registration
                 </h4>
                 <div class="flex justify-start items-center h-full">
                     <div class="text-gray-400 text-sm mr-1">Building:</div>
@@ -273,7 +288,7 @@ function update_totals( event ){
                             </td>
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
                                 <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <BAHeaderA v-if="col.width==82" class="relative" @click="on_reg=!on_reg" :attendances="attendances" :on_mis_data="on_mis_data">
+                                    <BAHeaderA v-if="col.width==82" class="relative" @click="on_reg=!on_reg" :attendances="attendances" :on_mis_data="on_mis_data" :header="header" :col="col" :term="term" @batch="update_totals_col($event)">
                                         {{col.column_name}}
                                     </BAHeaderA>
                                     <BAHeaderB v-else :class="on_mis_data ? '' : 'hidden' ">{{col.column_name}}</BAHeaderB>
