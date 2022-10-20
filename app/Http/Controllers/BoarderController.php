@@ -58,27 +58,40 @@ class BoarderController extends Controller
 
     public function change_building()
     {
-        $building_name  = request()->building;
+        $building_name  = request()->building_name;
+        $dates          = request()->dates;
+        $seed_date      = '';
+        foreach( $dates as $date ){
+            if( $date['status']=='current' ){
+                $seed_date = $date['formatted'];
+                break;
+            }
+        }
+        if( !$seed_date ){
+            $seed_date = $dates[0]['formatted'];
+        }
 
         if( $building_name=='All' )
         {
             $boarders = Boarder::where( 'status', 'Current' )
-                                ->orderBy( 'prefered_forename' )->take(10)->get();
+                                ->orderBy( 'prefered_forename' )->take(5)->get();
         }
         else
         {
             $building = Building::where('building_name', $building_name)->first();
             $boarders = Boarder::where( 'status', 'Current' )
                                 ->where( 'building_id', $building->id )
-                                ->orderBy( 'prefered_forename' )->take(10)->get();
+                                ->orderBy( 'prefered_forename' )->take(5)->get();
         }
-        $dates    = $this->generate_dates();
-        $temp     = $this->prepare_boarders( $boarders, $dates[0]['date'] );
-        $boarders = $temp['boarders'];
+        //'boarders','dates','term','headers','totals' --> boarders, registers, totals
+        $temp     = $this->prepare_boarders( $boarders, $seed_date );
+        $boarders = $temp['boarders'];//dd(json_encode($boarders));
+        $totals   = $temp['totals'];
 
         $data = [
-            'boarders' => json_decode($boarders),
-            'message'  => 'OK 200 - Boarders',
+            'boarders' => json_decode(json_encode($boarders)),
+            'totals'   => $totals,
+            'message'  => 'OK 200 - change_building',
         ];
         
         return $data;
@@ -270,10 +283,10 @@ class BoarderController extends Controller
             foreach( $reg_cols as $reg_col )
             {
                 $totals[$attendance->id][$reg_col->id] = [];
-                $totals[$attendance->id][$reg_col->id][config('app.width')] = [];
+                $totals[$attendance->id][$reg_col->id][$reg_col->width] = [];
                 foreach( $dates as $date )
                 {
-                    $totals[$attendance->id][$reg_col->id][config('app.width')][$date['formatted']] = 0;
+                    $totals[$attendance->id][$reg_col->id][$reg_col->width][$date['formatted']] = 0;
                 }
             }
         }

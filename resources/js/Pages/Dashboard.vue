@@ -1,20 +1,20 @@
 <script setup>
 import { ref } from 'vue'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import BaSwitch from '@/Components/BASwitch.vue';
-import BABuildingDropdown from '@/Components/BABuildingDropdown.vue';
-import BATotalAttendanceSum from '@/Components/BATotalAttendanceSum.vue';
+import AuthenticatedLayout   from '@/Layouts/AuthenticatedLayout.vue';
+import BaSwitch              from '@/Components/BASwitch.vue';
+import BABuildingDropdown    from '@/Components/BABuildingDropdown.vue';
+import BATotalAttendanceSum  from '@/Components/BATotalAttendanceSum.vue';
 import BATotalAttendanceType from '@/Components/BATotalAttendanceType.vue';
-import BARegisterOption from '@/Components/BARegisterOption.vue';
-import BAInputInfo from '@/Components/BAInputInfo.vue';
-import BALabelInfo from '@/Components/BALabelInfo.vue';
-import BASelect from '@/Components/BASelect.vue';
-import BAHeaderA from '@/Components/BAHeaderA.vue';
-import BAHeaderB from '@/Components/BAHeaderB.vue';
-import BARegister from '@/Components/BARegister.vue';
-import BAAttendMIS from '@/Components/BAAttendMIS.vue';
-import BATotalBoarder from '@/Components/BATotalBoarder.vue';
-import { useForm, Head } from '@inertiajs/inertia-vue3';
+import BARegisterOption      from '@/Components/BARegisterOption.vue';
+import BAInputInfo           from '@/Components/BAInputInfo.vue';
+import BALabelInfo           from '@/Components/BALabelInfo.vue';
+import BASelect              from '@/Components/BASelect.vue';
+import BAHeaderA             from '@/Components/BAHeaderA.vue';
+import BAHeaderB             from '@/Components/BAHeaderB.vue';
+import BARegister            from '@/Components/BARegister.vue';
+import BAAttendMIS           from '@/Components/BAAttendMIS.vue';
+import BATotalBoarder        from '@/Components/BATotalBoarder.vue';
+import { useForm, Head }     from '@inertiajs/inertia-vue3';
 
 let on_weekly     = ref(false)
 let on_mis_data   = ref(false)
@@ -65,7 +65,8 @@ function change_building( building ){
     this.building = building
 
     let data = { 
-        'building' : building 
+        'building_name' : building,
+        'dates'         : dates 
     }
 
     axios.post('/boarder/change/building', data )
@@ -74,11 +75,33 @@ function change_building( building ){
 
             // remove all Element in array
             this.boarders.splice( 0, this.boarders.length )
+            // this.totals.splice( 0, this.totals.length )
+            console.log( res.data.totals )
 
             // update element
             res.data.boarders.forEach( element => {
                 this.boarders.push( element )
             });
+            
+            //update totals
+            // this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date]--
+            this.boarders.forEach( (boarder, i) => {
+                boarder.registers.forEach( (register, j) => {
+                    // console.log( register )
+                    try {
+                        if( register.width==82 ){
+                            // this.totals[     register.attendance_id ][ register.register_column_id ][ register.width ][ register.date ]++
+                            // res.data.totals[ register.attendance_id ][ register.register_column_id ][ register.width ][ register.date ]
+                        }
+                    } catch (error) {
+                        console.log( error, register, i, j )
+                        // alert( error )
+                    }
+                    // console.log( this.totals[ register.attendance_id ][ register.register_column_id ][ register.width ][ register.date ] )
+                    // console.log( res.data.totals[ 1 ] )
+                  
+                })
+            })
         })
         .catch((error) => {
             console.log( error )
