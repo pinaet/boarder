@@ -27,6 +27,7 @@ let boarders      = ref()
 let totals        = ref()
 let term          = ref()
 let dates         = ref()
+let headers       = ref()
 let register      = ref()
 let notes         = ref()
 
@@ -36,6 +37,7 @@ boarders          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boa
 totals            = props.totals
 dates             = props.dates 
 term              = props.term
+headers           = props.headers
 
 //functions
 const assign_boarder = function( boarder ){
@@ -74,23 +76,8 @@ function change_building( building ){
             console.log( res.data.message )
 
             // remove all Element in array
-            this.boarders.splice( 0, this.boarders.length )
-
-            this.totals.forEach( (att,i) =>{
-                att.forEach( (col,j)=>{
-                    col.splice( j, 1 )
-                })
-                att.splice( i, 1 )
-            })
-            this.totals.splice( 0, this.totals.length )//empty
-
-            // update element
-            res.data.boarders.forEach( element => {
-                this.boarders.push( element )
-            });
-            res.data.totals.forEach( element => {
-                this.totals.push( element )//refresh with new data
-            });
+            this.re_assign_boarders( res.data.boarders )
+            this.re_assign_totals(   res.data.totals   )
         })
         .catch((error) => {
             console.log( error )
@@ -100,25 +87,22 @@ function change_building( building ){
 function change_week( direction ){
 
     let data = { 
-        'term'      : this.term,
-        'direction' : direction
+        'term'          : this.term,
+        'building_name' : this.building,
+        'direction'     : direction
     }
 
     axios.post('/boarder/change/week', data )
         .then((res) => {
             console.log( res.data.message )
-
-            // remove all Element in array
-            this.dates.splice( 0, this.dates.length )
-            // this.term.splice(  0, this.term.length  )
-            // this.dates= res.data.dates
+            console.log( headers )
             this.term = res.data.term
-            // this.term.push( res.data.term )
+            
+            this.re_assign_headers(  res.data.headers  )
+            this.re_assign_dates(    res.data.dates    )
+            this.re_assign_boarders( res.data.boarders )
+            this.re_assign_totals(   res.data.totals   )
 
-            // update element
-            res.data.dates.forEach( element => {
-                this.dates.push( element )
-            });
         })
         .catch((error) => {
             console.log( error )
@@ -172,6 +156,7 @@ function store_note( event )
 }
 
 function update_totals( event ){
+    // console.log( 'update_totals:', event )
     let old_reg = event.old_reg
     let new_reg = event.new_reg
 
@@ -181,6 +166,8 @@ function update_totals( event ){
 
 function update_totals_col( event ){
     let new_reg = event
+    // console.log(old_reg)
+    console.log(new_reg)
     // update register at this column to all boarders
     boarders.forEach( boarder => {
         boarder.registers.forEach( old_reg => {
@@ -195,7 +182,6 @@ function update_totals_col( event ){
                 
                 new_reg.pupil_id = boarder.pupil_id
                 new_reg.notes    = old_reg.notes
-
                 axios.post('/boarder/store/attendance', new_reg )
                     .then((res) => {
                         // console.log(res.data.message)
@@ -207,6 +193,61 @@ function update_totals_col( event ){
             }
         })
     })
+}
+
+function re_assign_headers( new_headers ){
+    console.log( new_headers )
+    this.headers.cols.forEach( (header,i) =>{
+        header.cols.splice( 0, header.cols.length )//empty
+        console.log( 'this.headers.cols.forEach( (header,i)',header,i )
+    })
+    // this.headers = new_headers
+
+    new_headers.cols.forEach( (header, i) => {
+        this.headers.cols[i].col_name = header.col_name          
+        this.headers.cols[i].color    = header.color      
+        header.cols.forEach( col => {
+            this.headers.cols[i].cols.push( col )
+        })   
+        this.headers.cols[i].colspan  = header.colspan          
+        this.headers.cols[i].date     = header.date      
+        this.headers.cols[i].id       = header.id  
+        this.headers.cols[i].max_w    = header.max_w      
+        this.headers.cols[i].min_w    = header.min_w      
+        this.headers.cols[i].status   = header.status
+    });
+    this.headers.max_w = new_headers.max_w
+    this.headers.min_w = new_headers.min_w
+}
+
+function re_assign_dates( new_dates ){
+    this.dates.splice( 0, this.dates.length )
+
+    new_dates.forEach( element => {
+        this.dates.push( element )
+    });
+}
+
+function re_assign_boarders( new_boarders ){
+    this.boarders.splice( 0, this.boarders.length )
+
+    new_boarders.forEach( element => {
+        this.boarders.push( element )
+    });
+}
+
+function re_assign_totals( new_totals ){
+    this.totals.forEach( (att,i) =>{
+        att.forEach( (col,j)=>{
+            col.splice( j, 1 )
+        })
+        att.splice( i, 1 )
+    })
+    this.totals.splice( 0, this.totals.length )//empty
+
+    new_totals.forEach( element => {
+        this.totals.push( element )//refresh with new data
+    });
 }
 
 </script>

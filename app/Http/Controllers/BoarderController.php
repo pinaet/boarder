@@ -71,18 +71,8 @@ class BoarderController extends Controller
             $seed_date = $dates[0]['formatted'];
         }
 
-        if( $building_name=='All' )
-        {
-            $boarders = Boarder::where( 'status', 'Current' )
-                                ->orderBy( 'prefered_forename' )->take(5)->get();
-        }
-        else
-        {
-            $building = Building::where('building_name', $building_name)->first();
-            $boarders = Boarder::where( 'status', 'Current' )
-                                ->where( 'building_id', $building->id )
-                                ->orderBy( 'prefered_forename' )->take(5)->get();
-        }
+        $boarders = $this->get_boarders_by_building( $building_name );
+
         //'boarders','dates','term','headers','totals' --> boarders, registers, totals
         $temp     = $this->prepare_boarders( $boarders, $seed_date );
         $boarders = $temp['boarders'];//dd(json_encode($boarders));
@@ -99,9 +89,11 @@ class BoarderController extends Controller
 
     public function change_week()
     {
-        $term      = request()->term;
-        $direction = request()->direction;
-        $word      = '';
+        $term          = request()->term;
+        $direction     = request()->direction;
+        $building_name = request()->building_name;
+
+        $word          = '';
 
         if( $direction=='previous' )
         {
@@ -113,15 +105,23 @@ class BoarderController extends Controller
         }
         // dd( $direction, $term );
 
-        $seed_date = date( 'Y-m-d', strtotime( $word . ' ' . $term['date'] ) );
+        $seed_date  = date( 'Y-m-d', strtotime( $word . ' ' . $term['date'] ) );
 
-        $dates = $this->generate_dates( $seed_date );
-        $term  = $this->generate_term(  $seed_date );
+        $dates      = $this->generate_dates( $seed_date );
+        $term       = $this->generate_term(  $seed_date );
+        $headers    = $this->generate_cols(  $dates     );
+        
+        $boarders   = $this->get_boarders_by_building( $building_name );
+        $temp       = $this->prepare_boarders( $boarders, $seed_date );
+        $boarders   = $temp['boarders'];
+        $totals     = $temp['totals'];
 
         $data = [
-            // 'boarders' => json_decode($boarders),
+            'boarders' => json_decode(json_encode( $boarders )),
             'dates'    => $dates,
             'term'     => $term,
+            'headers'  => $headers,
+            'totals'   => $totals,
             'message'  => 'OK 200 - change_week',
         ];
         
@@ -373,7 +373,9 @@ class BoarderController extends Controller
                 else{
                     $temp   = date( 'Y-m-d' );
                 }
-                $status = 'current';
+                if( $temp==date( 'Y-m-d' ) ){
+                    $status = 'current';
+                }
             }
             
             // if( $index>0 ) dd($index,$value,$order,$key_word,$temp);
@@ -500,5 +502,23 @@ class BoarderController extends Controller
         ];
         
         return $headers;
+    }
+
+    function get_boarders_by_building( $building_name )
+    {
+        if( $building_name=='All' )
+        {
+            $boarders = Boarder::where( 'status', 'Current' )
+                                ->orderBy( 'prefered_forename' )->take(5)->get();
+        }
+        else
+        {
+            $building = Building::where('building_name', $building_name)->first();
+            $boarders = Boarder::where( 'status', 'Current' )
+                                ->where( 'building_id', $building->id )
+                                ->orderBy( 'prefered_forename' )->take(5)->get();
+        }
+
+        return $boarders;
     }
 }
