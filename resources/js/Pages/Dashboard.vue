@@ -21,7 +21,7 @@ let on_mis_data   = ref(false)
 let on_reg        = ref(false)
 let on_note       = ref(false)
 let on_boarder    = ref(false)
-let building      = ref('West Acre')
+let building      = ref('')
 let c_boarder     = ref()
 let boarders      = ref()
 let totals        = ref()
@@ -31,13 +31,14 @@ let headers       = ref()
 let register      = ref()
 let notes         = ref()
 
-let props         = defineProps(['all_boarders','attendances','buildings','dates','term','headers','totals']) 
+let props         = defineProps(['all_boarders','attendances','buildings','dates','term','headers','totals','building_name']) 
 
 boarders          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
 totals            = props.totals
 dates             = props.dates 
 term              = props.term
 headers           = props.headers
+building          = props.building_name
 
 //functions
 const assign_boarder = function( boarder ){
@@ -95,14 +96,14 @@ function change_week( direction ){
     axios.post('/boarder/change/week', data )
         .then((res) => {
             console.log( res.data.message )
-            console.log( headers )
             this.term = res.data.term
             
             this.re_assign_headers(  res.data.headers  )
             this.re_assign_dates(    res.data.dates    )
-            this.re_assign_boarders( res.data.boarders )
             this.re_assign_totals(   res.data.totals   )
+            this.re_assign_boarders( res.data.boarders )
 
+            // this.re_assign_boarders_the_same( res.data.boarders )
         })
         .catch((error) => {
             console.log( error )
@@ -166,8 +167,6 @@ function update_totals( event ){
 
 function update_totals_col( event ){
     let new_reg = event
-    // console.log(old_reg)
-    console.log(new_reg)
     // update register at this column to all boarders
     boarders.forEach( boarder => {
         boarder.registers.forEach( old_reg => {
@@ -196,12 +195,9 @@ function update_totals_col( event ){
 }
 
 function re_assign_headers( new_headers ){
-    console.log( new_headers )
     this.headers.cols.forEach( (header,i) =>{
         header.cols.splice( 0, header.cols.length )//empty
-        console.log( 'this.headers.cols.forEach( (header,i)',header,i )
     })
-    // this.headers = new_headers
 
     new_headers.cols.forEach( (header, i) => {
         this.headers.cols[i].col_name = header.col_name          
@@ -229,11 +225,55 @@ function re_assign_dates( new_dates ){
 }
 
 function re_assign_boarders( new_boarders ){
-    this.boarders.splice( 0, this.boarders.length )
-
-    new_boarders.forEach( element => {
-        this.boarders.push( element )
+    new_boarders.forEach( (element, i) => {
+        this.boarders.splice(i, 1, element)
     });
+}
+
+function re_assign_boarders_the_same( new_boarders )
+{
+    console.log( new_boarders );
+    // this.boarders.forEach( boarder => {
+    //     boarder.registers.splice( 0, boarder.registers.length )
+    // })
+
+    this.boarders.forEach( boarder => {
+        new_boarders.forEach( new_boarder => {
+            if( new_boarder.pupil_id==boarder.pupil_id )
+            {    
+                new_boarder.registers.forEach( (element, k) => {
+                    boarder.registers.splice(k, 1, element)
+                })
+            }
+        })      
+        // this.boarders[i].admission_no       = new_boarder.admission_no         
+        // this.boarders[i].boarder_type       = new_boarder.boarder_type         
+        // this.boarders[i].building           = new_boarder.building     
+        // this.boarders[i].building_id        = new_boarder.building_id         
+        // this.boarders[i].building_name      = new_boarder.building_name    
+        // this.boarders[i].created_at         = new_boarder.created_at     
+        // this.boarders[i].forename           = new_boarder.forename     
+        // this.boarders[i].form               = new_boarder.form 
+        // this.boarders[i].gender             = new_boarder.gender 
+        // this.boarders[i].house              = new_boarder.house 
+        // this.boarders[i].offsite_permission = new_boarder.offsite_permission             
+        // this.boarders[i].photo              = new_boarder.photo 
+        // this.boarders[i].prefered_forename  = new_boarder.prefered_forename             
+        // this.boarders[i].pupil_id           = new_boarder.pupil_id 
+        // new_boarder.registers.forEach( (element, k) => {
+        //     console.log( this.boarders[i] );
+        //     this.boarders[i].registers.splice(k, 1, element)
+        // });    
+        // new_boarder.registers.forEach( element =>{
+        //     this.boarders[i].registers.push( element )
+        // })  
+        // this.boarders[i].status             = new_boarder.status 
+        // this.boarders[i].surname            = new_boarder.surname     
+        // this.boarders[i].telephone          = new_boarder.telephone     
+        // this.boarders[i].updated_at         = new_boarder.updated_at     
+        // this.boarders[i].updated_by         = new_boarder.updated_by     
+        // this.boarders[i].year_group         = new_boarder.year_group     
+    })
 }
 
 function re_assign_totals( new_totals ){

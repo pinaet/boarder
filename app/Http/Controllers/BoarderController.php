@@ -17,17 +17,19 @@ class BoarderController extends Controller
 {
     public function dashboard()
     {
-        $attendances = Attendance::all();
-        $buildings   = Building::all();
+        $attendances   = Attendance::all();
+        $buildings     = Building::all();
+    
+        $dates         = $this->generate_dates();
+        $term          = $this->generate_term();
+        $headers       = $this->generate_cols( $dates );
 
-        $dates       = $this->generate_dates();
-        $term        = $this->generate_term();
-        $headers     = $this->generate_cols( $dates );
-        // dd($headers);
-        $boarders    = Boarder::where('status','Current')->orderBy('prefered_forename')->take(4)->get();
-        $data        = $this->prepare_boarders( $boarders );
-        $boarders    = $data[ 'boarders' ];
-        $totals      = $data[ 'totals'   ];
+        $building_name = 'West Acre';        
+        $boarders      = $this->get_boarders_by_building( $building_name );
+        
+        $data          = $this->prepare_boarders( $boarders );
+        $boarders      = $data[ 'boarders' ];
+        $totals        = $data[ 'totals'   ];
 
         // $building = 'West Acre';
         return Inertia::render('Dashboard', [
@@ -38,6 +40,7 @@ class BoarderController extends Controller
             'term'          => $term,
             'headers'       => $headers,
             'totals'        => $totals,
+            'building_name' => $building_name,
         ]);
     }
 
