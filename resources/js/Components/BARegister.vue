@@ -6,7 +6,7 @@
 
     const props    = defineProps(['attendances','register',])
 
-    let register   = props.register
+    let   register = props.register
 
     const attendance_color = computed(()=>{
         let data = ''
@@ -33,8 +33,7 @@
     })    
     
     const notes = computed(()=>{
-        return props.register.notes
-        
+        return props.register.notes        
     })    
 
     const emit = defineEmits([
@@ -50,8 +49,9 @@
     }
 
     function save($event)
-    {
-        let data = { 
+    {        
+        // console.log( 'save register: ', $event, register.attendance_id )
+        let new_reg = { 
             'academic_year'      : props.register.academic_year,
             'attendance_id'      : $event,
             'date'               : props.register.date,
@@ -61,20 +61,12 @@
             'width'              : props.register.width,
         }
 
-        props.attendances.forEach( element => {
-            if(element.id==$event){
-                this.attendance = element
-                return
-            }
-        });
-        // console.log( this.attendance )
-
         //emit to update total attendance type
-        let temp = { new_reg: data, old_reg: this.register }
+        let temp = { new_reg: new_reg, old_reg: props.register }
         emit( 'count', temp )
-        this.register.attendance_id = $event
+        props.register.attendance_id = $event
 
-        axios.post('/boarder/store/attendance', data )
+        axios.post('/boarder/store/attendance', new_reg )
             .then((res) => {
                 console.log(res.data.message)
             })

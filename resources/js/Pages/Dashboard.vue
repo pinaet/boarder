@@ -44,7 +44,6 @@ building          = props.building_name
 const assign_boarder = function( boarder ){
     this.on_boarder= !this.on_boarder
     this.c_boarder = boarder
-    console.log( this.c_boarder )
 }
 
 const update_boarder = function(){
@@ -112,7 +111,6 @@ function change_week( direction ){
 
 function show_note( register, event )
 {
-    console.log( register )
     this.register = register
     this.notes    = register.notes
     this.on_note  = event
@@ -135,7 +133,6 @@ function store_note( event )
                 boarder.registers.forEach( register => {
                     if( register.register_column_id==this.register.register_column_id && register.date==this.register.date ){
                         register.notes = this.notes
-                        console.log( boarder )
                         return
                     }
                 })
@@ -155,6 +152,10 @@ function store_note( event )
     this.register= []
     this.notes   = ''
     this.on_note = false
+}
+
+function update_register( event ){
+
 }
 
 function update_totals( event ){
@@ -233,10 +234,6 @@ function re_assign_boarders( new_boarders ){
 
 function re_assign_boarders_the_same( new_boarders )
 {
-    console.log( new_boarders );
-    // this.boarders.forEach( boarder => {
-    //     boarder.registers.splice( 0, boarder.registers.length )
-    // })
 
     this.boarders.forEach( boarder => {
         new_boarders.forEach( new_boarder => {
@@ -246,34 +243,7 @@ function re_assign_boarders_the_same( new_boarders )
                     boarder.registers.splice(k, 1, element)
                 })
             }
-        })      
-        // this.boarders[i].admission_no       = new_boarder.admission_no         
-        // this.boarders[i].boarder_type       = new_boarder.boarder_type         
-        // this.boarders[i].building           = new_boarder.building     
-        // this.boarders[i].building_id        = new_boarder.building_id         
-        // this.boarders[i].building_name      = new_boarder.building_name    
-        // this.boarders[i].created_at         = new_boarder.created_at     
-        // this.boarders[i].forename           = new_boarder.forename     
-        // this.boarders[i].form               = new_boarder.form 
-        // this.boarders[i].gender             = new_boarder.gender 
-        // this.boarders[i].house              = new_boarder.house 
-        // this.boarders[i].offsite_permission = new_boarder.offsite_permission             
-        // this.boarders[i].photo              = new_boarder.photo 
-        // this.boarders[i].prefered_forename  = new_boarder.prefered_forename             
-        // this.boarders[i].pupil_id           = new_boarder.pupil_id 
-        // new_boarder.registers.forEach( (element, k) => {
-        //     console.log( this.boarders[i] );
-        //     this.boarders[i].registers.splice(k, 1, element)
-        // });    
-        // new_boarder.registers.forEach( element =>{
-        //     this.boarders[i].registers.push( element )
-        // })  
-        // this.boarders[i].status             = new_boarder.status 
-        // this.boarders[i].surname            = new_boarder.surname     
-        // this.boarders[i].telephone          = new_boarder.telephone     
-        // this.boarders[i].updated_at         = new_boarder.updated_at     
-        // this.boarders[i].updated_by         = new_boarder.updated_by     
-        // this.boarders[i].year_group         = new_boarder.year_group     
+        })         
     })
 }
 
