@@ -112,6 +112,7 @@ function change_week( direction ){
 
 function show_note( register, event )
 {
+    console.log( register )
     this.register = register
     this.notes    = register.notes
     this.on_note  = event
