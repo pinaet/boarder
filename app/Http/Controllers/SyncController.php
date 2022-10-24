@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Boarder;
-use App\Models\Building;
-use App\Models\Contact;
-use App\Models\SchoolTerm;
 use Exception;
+use App\Models\Boarder;
+use App\Models\Contact;
+use App\Models\Building;
+use App\Models\SchoolTerm;
+use Illuminate\Support\Arr;
+use App\Models\Registration;
 use Illuminate\Http\Request;
+use App\Models\RegisterColumn;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\BoarderController;
 
 class SyncController extends Controller
 {
@@ -336,6 +340,290 @@ class SyncController extends Controller
                 DB::rollBack ();
                 dd($attributes,$e);
             }
+        }
+    }
+
+    public function syncSchoolAttendance( $star_date='' )
+    {
+        $this->syncSchoolSessionAttendance( $star_date );
+        $this->syncSchoolClassAttendance(   $star_date );
+    }
+
+    public function syncSchoolSessionAttendance( $star_date='' )
+    {
+        $sql = "
+            SELECT 
+                psa.PupilID
+                , case when pca.SchoolYear = 0 or pca.SchoolYear is null  then (select max(schoolYear) from SchoolTerms where StartDate <= psa.AttendanceDate) else pca.SchoolYear end as SchoolYear
+                , YLUD.Description as YearGroup
+                , format( psa.AttendanceDate, 'yyyy-MM-dd' ) AttendanceDate
+                , case when psa.AttendanceSession='0001' then N'AM'
+                when psa.AttendanceSession='0002' then N'PM'
+                when psa.AttendanceSession='003' then N'Evening'
+                when psa.AttendanceSession='004' then N'Night'
+                else N'' end as SessionID
+                , AT.AbsenceType as AbsenceType
+                , AT.DisplaySymbol 'AbsenceTypeSymbol'
+                , AT.AbsenceTypeID
+            FROM     dbo.PupilSessionAttendance AS psa 
+                INNER JOIN dbo.LookupDetails AS YLUD ON psa.YearGroup = YLUD.LookupDetailsID AND YLUD.LookupID = 3004
+                LEFT OUTER JOIN (select distinct cast(AttendanceDate as date) as AttendanceDate,SchoolYear FROM dbo.PupilClassAttendance where SchoolYear >1900 ) pca ON psa.AttendanceDate = pca.AttendanceDate
+                INNER JOIN ClusterMaster CM ON CM.CurrentAcademicYear=pca.SchoolYear --ADDED
+                LEFT JOIN AbsenceTypes AT ON AT.AbsenceTypeID=psa.AbsenceTypeID
+                INNER JOIN 
+                (
+                    SELECT A.*
+                    FROM
+                        (
+                        SELECT
+                            cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID		 
+                            ,'Current' StudentStatus
+                            ,PupilPersonalDetails.AdmissionNo
+                            ,PupilPersonalDetails.PreferredForeName 'PreferredName'
+                            ,PupilPersonalDetails.ForeName 'FirstName'
+                            ,PupilPersonalDetails.MiddleName
+                            ,PupilPersonalDetails.Surname
+                            ,YearGroupLookup.Description YearGroup
+                            ,BoarderStatus.BoarderStatusDescription 'BoarderStatus'
+                        FROM CurrentPupil
+                        INNER JOIN PupilPersonalDetails ON CurrentPupil.PupilID=PupilPersonalDetails.PupilID
+                        INNER JOIN PupilCurrentSchool ON PupilCurrentSchool.PupilID=PupilPersonalDetails.PupilID
+                        LEFT JOIN LookupDetails YearGroupLookup ON YearGroupLookup.LookupDetailsID = PupilCurrentSchool.YearGroup AND YearGroupLookup.LookupID = '3004'
+                        LEFT JOIN BoarderStatus ON BoarderStatus.BoarderStatusCode = PupilCurrentSchool.BoarderStatus
+                        union
+                        select
+                            cast( Leaver.PupilID AS VARCHAR(10) ) PupilID
+                            ,'Leaver' StudentStatus
+                            ,PupilPersonalDetails.AdmissionNo
+                            ,PupilPersonalDetails.PreferredForeName 'PreferredName'
+                            ,PupilPersonalDetails.ForeName 'FirstName'
+                            ,PupilPersonalDetails.MiddleName
+                            ,PupilPersonalDetails.Surname
+                            ,YearGroupLookup.Description YearGroup
+                            ,BoarderStatus.BoarderStatusDescription 'BoarderStatus'
+                        FROM Leaver
+                        INNER JOIN PupilPersonalDetails ON Leaver.PupilID=PupilPersonalDetails.PupilID
+                        INNER JOIN PupilCurrentSchool ON PupilCurrentSchool.PupilID=PupilPersonalDetails.PupilID
+                        LEFT JOIN LookupDetails YearGroupLookup ON YearGroupLookup.LookupDetailsID = PupilCurrentSchool.YearGroup AND YearGroupLookup.LookupID = '3004'
+                        LEFT JOIN BoarderStatus ON BoarderStatus.BoarderStatusCode = PupilCurrentSchool.BoarderStatus
+                    ) A
+                    WHERE
+                        BoarderStatus IN ('Weekly Boarder','Full Boarder')
+                ) Boarders ON Boarders.PupilID=psa.PupilID
+            WHERE 
+                format( psa.AttendanceDate, 'yyyy-MM-dd' ) >= '$star_date'
+            ORDER BY PupilID, AttendanceDate
+        ";
+        $session_attendances = DB::connection( 'mis' )->select( $sql );
+
+        /*
+            Registration
+            --------------
+            id
+            pupil_id
+            attendance_id
+            register_column_id**
+            date
+            created_by
+            updated_by
+            year_group
+            academic_year
+            notes
+
+            RegisterColumn
+            --------------
+            +"PupilID": "2279"
+            +"SchoolYear": "2022"
+            +"YearGroup": "12"
+            +"AttendanceDate": "2022-08-18"
+            +"SessionID": "AM"
+            +"AbsenceType": "Present(AM)"
+            +"AbsenceTypeSymbol": "/"
+            +"AbsenceTypeID": "CL1-1"
+
+            RegisterColumn
+            --------------
+            "id" => 3
+            "day_of_week" => 1
+            "display_order" => 3
+            "column_name" => "Morning"
+            "academic_year" => 2021
+            "width" => 25
+            "created_at" => "2022-10-19 08:03:58"
+            "updated_at" => "2022-10-19 08:03:58"
+        */
+
+        $cols  = RegisterColumn::all();
+        foreach( $session_attendances as $attendance ){
+            $c_date = ''; 
+            $c_col  = '';
+
+            //get days of the week by seed_date
+            $dates = (new BoarderController)->generate_dates( $attendance->AttendanceDate );
+
+            //filter date - array
+            $temp  = Arr::where( $dates, function($date) use ($attendance){
+                return $date["formatted"]==$attendance->AttendanceDate ? true : false;
+            });
+            foreach( $temp as $value ){
+                $c_date = $value;
+            }
+
+            //filter column - collection
+            $temp  = $cols->filter( function( $col ) use( $c_date, $attendance ){
+                return ((strtolower($col->column_name)=='morning'&&strtolower($attendance->SessionID)=='am') || 
+                        (strtolower($col->column_name)=='afternoon'&&strtolower($attendance->SessionID)=='pm')) && 
+                       ($col->day_of_week==($c_date['order']+1) ) ? true : false;
+            });
+            foreach( $temp as $value ){
+                $c_col  = $value;
+            }
+            
+            //morning || afternoon
+            $register = Registration::updateOrCreate(
+                [   //where
+                    'pupil_id'           => $attendance->PupilID,   
+                    'date'               => $attendance->AttendanceDate,
+                    'register_column_id' => $c_col->id,    //**
+                ],
+                [   //what to update
+                    'pupil_id'           => $attendance->PupilID,   
+                    'date'               => $attendance->AttendanceDate,
+                    'register_column_id' => $c_col->id,    //**
+                    'attendance_id'      => 0,
+                    'created_by'         => auth()->user()->id,
+                    'updated_by'         => auth()->user()->id,
+                    'year_group'         => $attendance->YearGroup, 
+                    'academic_year'      => $attendance->SchoolYear,  
+                    'notes'              => $attendance->AbsenceTypeSymbol,
+                ] 
+            );
+            // if($key==10)
+            //     dd($c_date,$c_col,$attendance,$register,$key );
+        }
+    }
+
+    public function syncSchoolClassAttendance( $star_date='' )
+    {
+        $sql = "
+            SELECT 
+                pca.PupilID, pca.SchoolYear, YLUD.Description as YearGroup
+                , format( pca.AttendanceDate, 'yyyy-MM-dd' ) AttendanceDate --pca.AttendanceDate
+                ,cast(pca.SubjectID as nvarchar) SubjectID
+                , dbo.SubjectMaster.Name AS [Subject]
+                , pca.PeriodNumber as PeriodID
+                ,AT.AbsenceType as AbsenceType
+                ,AT.DisplaySymbol 'AbsenceTypeSymbol'
+                ,AT.AbsenceTypeID
+            FROM     dbo.PupilClassAttendance pca 
+                INNER JOIN dbo.SubjectMaster ON pca.SubjectID = dbo.SubjectMaster.SubjectID  
+                INNER JOIN dbo.LookupDetails AS YLUD ON pca.YearGroupID = YLUD.LookupDetailsID AND YLUD.LookupID = 3004
+                INNER JOIN ClusterMaster CM ON CM.CurrentAcademicYear=pca.SchoolYear --ADDED
+                LEFT JOIN AbsenceTypes AT ON AT.AbsenceTypeID=pca.AbsenceTypeID
+                INNER JOIN 
+                (
+                    SELECT A.*
+                    FROM
+                        (
+                        SELECT
+                            cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID		 
+                            ,'Current' StudentStatus
+                            ,PupilPersonalDetails.AdmissionNo
+                            ,PupilPersonalDetails.PreferredForeName 'PreferredName'
+                            ,PupilPersonalDetails.ForeName 'FirstName'
+                            ,PupilPersonalDetails.MiddleName
+                            ,PupilPersonalDetails.Surname
+                            ,YearGroupLookup.Description YearGroup
+                            ,BoarderStatus.BoarderStatusDescription 'BoarderStatus'
+                        FROM CurrentPupil
+                        INNER JOIN PupilPersonalDetails ON CurrentPupil.PupilID=PupilPersonalDetails.PupilID
+                        INNER JOIN PupilCurrentSchool ON PupilCurrentSchool.PupilID=PupilPersonalDetails.PupilID
+                        LEFT JOIN LookupDetails YearGroupLookup ON YearGroupLookup.LookupDetailsID = PupilCurrentSchool.YearGroup AND YearGroupLookup.LookupID = '3004'
+                        LEFT JOIN BoarderStatus ON BoarderStatus.BoarderStatusCode = PupilCurrentSchool.BoarderStatus
+                        union
+                        select
+                            cast( Leaver.PupilID AS VARCHAR(10) ) PupilID
+                            ,'Leaver' StudentStatus
+                            ,PupilPersonalDetails.AdmissionNo
+                            ,PupilPersonalDetails.PreferredForeName 'PreferredName'
+                            ,PupilPersonalDetails.ForeName 'FirstName'
+                            ,PupilPersonalDetails.MiddleName
+                            ,PupilPersonalDetails.Surname
+                            ,YearGroupLookup.Description YearGroup
+                            ,BoarderStatus.BoarderStatusDescription 'BoarderStatus'
+                        FROM Leaver
+                        INNER JOIN PupilPersonalDetails ON Leaver.PupilID=PupilPersonalDetails.PupilID
+                        INNER JOIN PupilCurrentSchool ON PupilCurrentSchool.PupilID=PupilPersonalDetails.PupilID
+                        LEFT JOIN LookupDetails YearGroupLookup ON YearGroupLookup.LookupDetailsID = PupilCurrentSchool.YearGroup AND YearGroupLookup.LookupID = '3004'
+                        LEFT JOIN BoarderStatus ON BoarderStatus.BoarderStatusCode = PupilCurrentSchool.BoarderStatus
+                    ) A
+                WHERE
+                    BoarderStatus IN ('Weekly Boarder','Full Boarder')
+            ) Boarders ON Boarders.PupilID=pca.PupilID
+            WHERE 
+                pca.PeriodNumber<=6 AND format( pca.AttendanceDate, 'yyyy-MM-dd' ) >= '$star_date'
+            ORDER BY 
+                PupilID, AttendanceDate, PeriodID
+        ";
+        $class_attendances = DB::connection( 'mis' )->select( $sql );
+
+        $cols  = RegisterColumn::all();
+        foreach ($class_attendances as $key => $attendance) {
+            $c_date = '';
+            $c_col  = '';
+
+            //get days of the week by seed_date
+            $dates = (new BoarderController())->generate_dates($attendance->AttendanceDate);
+
+            //filter date - array
+            $temp  = Arr::where($dates, function ($date) use ($attendance) {
+                return $date["formatted"]==$attendance->AttendanceDate ? true : false;
+            });
+            foreach ($temp as $value) {
+                $c_date = $value;
+            }
+
+            //filter column - collection
+            $temp  = $cols->filter(function ($col) use ($c_date, $attendance) {
+                /*
+                    1     = Reg
+                    2 - 6 = Lesson 1 - 5
+                */
+                return (
+                    (strtolower($col->column_name)=='reg'      && strtolower($attendance->PeriodID)==1) ||
+                    (strtolower($col->column_name)=='lesson 1' && strtolower($attendance->PeriodID)==2) ||
+                    (strtolower($col->column_name)=='lesson 2' && strtolower($attendance->PeriodID)==3) ||
+                    (strtolower($col->column_name)=='lesson 3' && strtolower($attendance->PeriodID)==4) ||
+                    (strtolower($col->column_name)=='lesson 4' && strtolower($attendance->PeriodID)==5) ||
+                    (strtolower($col->column_name)=='lesson 5' && strtolower($attendance->PeriodID)==6))&&
+                    ($col->day_of_week==($c_date['order']+1)
+                ) ? true : false;
+            });
+            foreach ($temp as $value) {
+                $c_col  = $value;
+            }
+
+            //morning || afternoon
+            $register = Registration::updateOrCreate(
+                [   //where
+                    'pupil_id'           => $attendance->PupilID,
+                    'date'               => $attendance->AttendanceDate,
+                    'register_column_id' => $c_col->id,    //**
+                ],
+                [   //what to update
+                    'pupil_id'           => $attendance->PupilID,
+                    'date'               => $attendance->AttendanceDate,
+                    'register_column_id' => $c_col->id,    //**
+                    'attendance_id'      => 0,
+                    'created_by'         => auth()->user()->id,
+                    'updated_by'         => auth()->user()->id,
+                    'year_group'         => $attendance->YearGroup,
+                    'academic_year'      => $attendance->SchoolYear,
+                    'notes'              => $attendance->AbsenceTypeSymbol,
+                ]
+            );
+            // if($key==6)
+            //     dd($c_date,$c_col,$attendance,$register,$key );
         }
     }
 }

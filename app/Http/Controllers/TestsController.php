@@ -9,11 +9,21 @@ use Illuminate\Http\Request;
 use App\Models\RegisterColumn;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\SyncController;
+use App\Models\Boarder;
 
 class TestsController extends Controller
 {
     public function index()
     {
+        /**
+         * generate columns
+         */
+        (new SyncController)->syncSchoolAttendance();
+        dd('syncSchoolAttendance: done');
+
+
+
+
         /**
          * generate columns
          */
