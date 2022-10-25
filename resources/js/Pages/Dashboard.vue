@@ -1,291 +1,300 @@
 <script setup>
-import { ref } from 'vue'
-import AuthenticatedLayout   from '@/Layouts/AuthenticatedLayout.vue';
-import BaSwitch              from '@/Components/BASwitch.vue';
-import BABuildingDropdown    from '@/Components/BABuildingDropdown.vue';
-import BATotalAttendanceSum  from '@/Components/BATotalAttendanceSum.vue';
-import BATotalAttendanceType from '@/Components/BATotalAttendanceType.vue';
-import BARegisterOption      from '@/Components/BARegisterOption.vue';
-import BAInputInfo           from '@/Components/BAInputInfo.vue';
-import BALabelInfo           from '@/Components/BALabelInfo.vue';
-import BASelect              from '@/Components/BASelect.vue';
-import BAHeaderA             from '@/Components/BAHeaderA.vue';
-import BAHeaderB             from '@/Components/BAHeaderB.vue';
-import BARegister            from '@/Components/BARegister.vue';
-import BAAttendMIS           from '@/Components/BAAttendMIS.vue';
-import BATotalBoarder        from '@/Components/BATotalBoarder.vue';
-import { useForm, Head }     from '@inertiajs/inertia-vue3';
+    import { ref } from 'vue'
+    import AuthenticatedLayout   from '@/Layouts/AuthenticatedLayout.vue';
+    import BASwitch              from '@/Components/BASwitch.vue';
+    import BABuildingDropdown    from '@/Components/BABuildingDropdown.vue';
+    import BATotalAttendanceSum  from '@/Components/BATotalAttendanceSum.vue';
+    import BATotalAttendanceType from '@/Components/BATotalAttendanceType.vue';
+    import BARegisterOption      from '@/Components/BARegisterOption.vue';
+    import BAInputInfo           from '@/Components/BAInputInfo.vue';
+    import BALabelInfo           from '@/Components/BALabelInfo.vue';
+    import BASelect              from '@/Components/BASelect.vue';
+    import BAHeaderA             from '@/Components/BAHeaderA.vue';
+    import BAHeaderB             from '@/Components/BAHeaderB.vue';
+    import BARegister            from '@/Components/BARegister.vue';
+    import BAAttendMIS           from '@/Components/BAAttendMIS.vue';
+    import BATotalBoarder        from '@/Components/BATotalBoarder.vue';
+    import { useForm, Head }     from '@inertiajs/inertia-vue3';
 
-let on_weekly     = ref(false)
-let on_mis_data   = ref(false)
-let on_reg        = ref(false)
-let on_note       = ref(false)
-let on_boarder    = ref(false)
-let building      = ref('')
-let c_boarder     = ref()
-let boarders      = ref()
-let totals        = ref()
-let term          = ref()
-let dates         = ref()
-let headers       = ref()
-let register      = ref()
-let notes         = ref()
-let on_loading    = ref(false)
+    const on_weekly   = ref(false)
+    const on_mis_data = ref(false)
+    const on_reg      = ref(false)
+    const on_note     = ref(false)
+    const on_boarder  = ref(false)
+    const building    = ref()
+    const c_boarder   = ref()
+    const boarders    = ref()
+    const totals      = ref()
+    const term        = ref()
+    const dates       = ref()
+    const headers     = ref()
+    const register    = ref()
+    const notes       = ref()
+    const on_loading  = ref(false)
 
-let props         = defineProps(['all_boarders','attendances','buildings','dates','term','headers','totals','building_name']) 
+    const props       = defineProps(['all_boarders','attendances','buildings','dates','term','headers','totals','building_name']) 
 
-boarders          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
-totals            = props.totals
-dates             = props.dates 
-term              = props.term
-headers           = props.headers
-building          = props.building_name
+    boarders.value    = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
+    totals.value      = props.totals
+    dates.value       = props.dates 
+    term.value        = props.term
+    headers.value     = props.headers
+    building.value    = props.building_name
 
-//functions
-const assign_boarder = function( boarder ){
-    this.on_boarder= !this.on_boarder
-    this.c_boarder = boarder
-}
-
-const update_boarder = function(){
-    this.on_loading = true
-    this.on_boarder = false
-
-    let data = { 
-        'boarder' : this.c_boarder 
+    //functions
+    function toggle_weekly( event ){
+        on_loading.value = true
+        on_weekly.value  = event
+        proper_wait()
     }
 
-    axios.post('/boarder/update/profile', data )
-        .then((res) => {
-            console.log( res.data.message )
-            this.proper_wait() 
-        })
-        .catch((error) => {
-            console.log( error )
-            this.proper_wait() 
-        })
-}
-
-function change_building( building ){
-
-    this.on_loading = true
-    
-    this.building   = building
-
-    let data = { 
-        'building_name' : building,
-        'dates'         : dates 
+    function toggle_mis( event ){
+        on_loading.value = true
+        on_mis_data.value= event
+        proper_wait() 
     }
 
-    axios.post('/boarder/change/building', data )
-        .then((res) => {
-            console.log( res.data.message )
-
-            // remove all Element in array
-            this.re_assign_boarders( res.data.boarders )
-            this.re_assign_totals(   res.data.totals   )
-
-            this.proper_wait() 
-        })
-        .catch((error) => {
-            console.log( error )
-
-            this.proper_wait() 
-        })
-}
-
-function change_week( direction ){
-
-    this.on_loading = true
-
-    let data = { 
-        'term'          : this.term,
-        'building_name' : this.building,
-        'direction'     : direction
+    function assign_boarder( boarder ){
+        on_boarder.value= !on_boarder.value
+        c_boarder.value = boarder
     }
 
-    axios.post('/boarder/change/week', data )
-        .then((res) => {
-            
-            console.log( res.data.message )
-            this.term = res.data.term
-            
-            this.re_assign_headers(  res.data.headers  )
-            this.re_assign_dates(    res.data.dates    )
-            this.re_assign_totals(   res.data.totals   )
-            this.re_assign_boarders( res.data.boarders )
-
-            // this.re_assign_boarders_the_same( res.data.boarders )
-            this.proper_wait()
-        })
-        .catch((error) => {
-            console.log( error )
-
-            this.proper_wait() 
-        })
-}
-
-function show_note( register, event )
-{
-    this.register = register
-    this.notes    = register.notes
-    this.on_note  = event
-}
-
-function store_note( event )
-{
-    if( event==true ){
-        this.register.notes = this.notes
+    function update_boarder(){
+        on_loading.value = true
+        on_boarder.value = false
 
         let data = { 
-            'attendance_id'      : this.register.attendance_id,
-            'pupil_id'           : this.register.pupil_id,
-            'register_column_id' : this.register.register_column_id,
-            'date'               : this.register.date,
-            'academic_year'      : this.register.academic_year,
-            'notes'              : this.register.notes,
+            'boarder' : c_boarder.value
         }
 
-        axios.post('/boarder/store/attendance', data )
+        axios.post('/boarder/update/profile', data )
             .then((res) => {
-                //emit to update total attendance type
+                console.log( res.data.message )
+                proper_wait() 
             })
             .catch((error) => {
                 console.log( error )
+                proper_wait() 
             })
     }
-    this.register= []
-    this.notes   = ''
-    this.on_note = false
-}
 
-function update_totals( event ){
-    // console.log( 'update_totals:', event )
-    let old_reg = event.old_reg
-    let new_reg = event.new_reg
+    function change_building( building_name ){
 
-    this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date]--
-    this.totals[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date]++
-}
+        on_loading.value = true
+        
+        building.value   = building_name
 
-function update_totals_col( event ){
-    this.on_loading = true
-    let new_reg = event
-    // update register at this column to all boarders
-    boarders.forEach( boarder => {
-        boarder.registers.forEach( old_reg => {
-            if( old_reg.academic_year     == new_reg.academic_year && 
-                old_reg.date              == new_reg.date && 
-                old_reg.register_column_id== new_reg.register_column_id && 
-                old_reg.width             == new_reg.width )
-            {
-                this.totals[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date]--
-                this.totals[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date]++
-                old_reg.attendance_id = new_reg.attendance_id
+        let data = { 
+            'building_name' : building.value,
+            'dates'         : dates.value 
+        }
+
+        axios.post('/boarder/change/building', data )
+            .then((res) => {
+                console.log( res.data.message )
+
+                // remove all Element in array
+                re_assign_boarders( res.data.boarders )
+                re_assign_totals(   res.data.totals   )
+
+                proper_wait() 
+            })
+            .catch((error) => {
+                console.log( error )
+
+                proper_wait() 
+            })
+    }
+
+    function change_week( direction ){
+
+        on_loading.value = true
+
+        let data = { 
+            'term'          : term.value,
+            'building_name' : building.value,
+            'direction'     : direction
+        }
+
+        axios.post('/boarder/change/week', data )
+            .then((res) => {
                 
-                new_reg.pupil_id = boarder.pupil_id
-                new_reg.notes    = old_reg.notes
-                axios.post('/boarder/store/attendance', new_reg )
-                    .then((res) => {
-                        // console.log(res.data.message)
-                    })
-                    .catch((error) => {
-                        console.log( error )
-                    })
-                return
+                console.log( res.data.message )
+                term.value = res.data.term
+                
+                re_assign_headers(  res.data.headers  )
+                re_assign_dates(    res.data.dates    )
+                re_assign_totals(   res.data.totals   )
+                re_assign_boarders( res.data.boarders )
+
+                // re_assign_boarders_the_same( res.data.boarders )
+                proper_wait()
+            })
+            .catch((error) => {
+                console.log( error )
+
+                proper_wait() 
+            })
+    }
+
+    function show_note( register_, event )
+    {
+        register.value = register_
+        notes.value    = register.value.notes
+        on_note.value  = event
+    }
+
+    function store_note( event )
+    {
+        if( event==true ){
+            register.value.notes = notes.value
+
+            let data = { 
+                'attendance_id'      : register.value.attendance_id,
+                'pupil_id'           : register.value.pupil_id,
+                'register_column_id' : register.value.register_column_id,
+                'date'               : register.value.date,
+                'academic_year'      : register.value.academic_year,
+                'notes'              : register.value.notes,
             }
-        })
-    })
-    this.proper_wait()
-}
 
-//helper functions
-function toggle_weekly( event ){
-    this.on_loading = true
-    this.on_weekly  = event
-    this.proper_wait()
-}
-
-function toggle_mis( event ){
-    this.on_loading = true
-    this.on_mis_data= event
-    this.proper_wait() 
-}
-
-function proper_wait(){
-    let wait_time   = props.all_boarders.length * 100
-    setTimeout(() => {  this.on_loading = false }, wait_time )
-}
-
-function isRegEnd( register, index, registers ){
-    let c_index = index+1>registers.length-1 ? registers.length-1 : index+1
-    return register.date != registers[ c_index ].date
-}
-
-function re_assign_headers( new_headers ){
-    this.headers.cols.forEach( (header,i) =>{
-        header.cols.splice( 0, header.cols.length )//empty
-    })
-
-    new_headers.cols.forEach( (header, i) => {
-        this.headers.cols[i].col_name = header.col_name          
-        this.headers.cols[i].color    = header.color      
-        header.cols.forEach( col => {
-            this.headers.cols[i].cols.push( col )
-        })   
-        this.headers.cols[i].colspan  = header.colspan          
-        this.headers.cols[i].date     = header.date      
-        this.headers.cols[i].id       = header.id  
-        this.headers.cols[i].max_w    = header.max_w      
-        this.headers.cols[i].min_w    = header.min_w      
-        this.headers.cols[i].status   = header.status
-    });
-    this.headers.max_w = new_headers.max_w
-    this.headers.min_w = new_headers.min_w
-}
-
-function re_assign_dates( new_dates ){
-    this.dates.splice( 0, this.dates.length )
-
-    new_dates.forEach( element => {
-        this.dates.push( element )
-    });
-}
-
-function re_assign_boarders( new_boarders ){
-    new_boarders.forEach( (element, i) => {
-        this.boarders.splice(i, 1, element)
-    });
-}
-
-function re_assign_boarders_the_same( new_boarders )
-{
-
-    this.boarders.forEach( boarder => {
-        new_boarders.forEach( new_boarder => {
-            if( new_boarder.pupil_id==boarder.pupil_id )
-            {    
-                new_boarder.registers.forEach( (element, k) => {
-                    boarder.registers.splice(k, 1, element)
+            axios.post('/boarder/store/attendance', data )
+                .then((res) => {
+                    //emit to update total attendance type
                 })
-            }
-        })         
-    })
-}
+                .catch((error) => {
+                    console.log( error )
+                })
+        }
+        register.value= []
+        notes.value   = ''
+        on_note.value = false
+    }
 
-function re_assign_totals( new_totals ){
-    this.totals.forEach( (att,i) =>{
-        att.forEach( (col,j)=>{
-            col.splice( j, 1 )
+    function update_totals( event ){
+        // console.log( 'update_totals:', event )
+        let old_reg = event.old_reg
+        let new_reg = event.new_reg
+
+        totals.value[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date]--
+        totals.value[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date]++
+    }
+
+    function update_totals_col( event ){
+        on_loading.value = true
+        let new_reg = event
+        // update register at this column to all boarders
+        boarders.value.forEach( boarder => {
+            boarder.registers.forEach( old_reg => {
+                if( old_reg.academic_year     == new_reg.academic_year && 
+                    old_reg.date              == new_reg.date && 
+                    old_reg.register_column_id== new_reg.register_column_id && 
+                    old_reg.width             == new_reg.width )
+                {
+                    totals.value[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date]--
+                    totals.value[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date]++
+                    old_reg.attendance_id = new_reg.attendance_id
+                    
+                    new_reg.pupil_id = boarder.pupil_id
+                    new_reg.notes    = old_reg.notes
+                    axios.post('/boarder/store/attendance', new_reg )
+                        .then((res) => {
+                            // console.log(res.data.message)
+                        })
+                        .catch((error) => {
+                            console.log( error )
+                        })
+                    return
+                }
+            })
         })
-        att.splice( i, 1 )
-    })
-    this.totals.splice( 0, this.totals.length )//empty
+        proper_wait()
+    }
 
-    new_totals.forEach( element => {
-        this.totals.push( element )//refresh with new data
-    });
-}
+    //helper functions
+    function proper_wait(){
+        let rate        = 0
+        let size        = props.all_boarders.length
+
+        if(      size > 50 ) rate = 200
+        else if( size > 25 ) rate = 150
+        else                 rate = 100
+
+        let wait_time   = size * rate
+        setTimeout(() => { on_loading.value = false }, wait_time )
+    }
+
+    function isRegEnd( register, index, registers ){
+        let c_index = index+1>registers.length-1 ? registers.length-1 : index+1
+        return register.date != registers[ c_index ].date
+    }
+
+    function re_assign_headers( new_headers ){
+        headers.value.cols.forEach( (header,i) =>{
+            header.cols.splice( 0, header.cols.length )//empty
+        })
+
+        new_headers.cols.forEach( (header, i) => {
+            headers.value.cols[i].col_name = header.col_name          
+            headers.value.cols[i].color    = header.color      
+            header.cols.forEach( col => {
+                headers.value.cols[i].cols.push( col )
+            })   
+            headers.value.cols[i].colspan  = header.colspan          
+            headers.value.cols[i].date     = header.date      
+            headers.value.cols[i].id       = header.id  
+            headers.value.cols[i].max_w    = header.max_w      
+            headers.value.cols[i].min_w    = header.min_w      
+            headers.value.cols[i].status   = header.status
+        });
+        headers.value.max_w = new_headers.max_w
+        headers.value.min_w = new_headers.min_w
+    }
+
+    function re_assign_dates( new_dates ){
+        dates.value.splice( 0, dates.value.length )
+
+        new_dates.forEach( element => {
+            dates.value.push( element )
+        });
+    }
+
+    function re_assign_boarders( new_boarders ){
+        boarders.value.splice( 0, boarders.value.length )
+        
+        new_boarders.forEach( element => {
+            boarders.value.push( element )
+        });
+    }
+
+    function re_assign_boarders_the_same( new_boarders )
+    {
+
+        boarders.value.forEach( boarder => {
+            new_boarders.forEach( new_boarder => {
+                if( new_boarder.pupil_id==boarder.pupil_id )
+                {    
+                    new_boarder.registers.forEach( (element, k) => {
+                        boarder.registers.splice(k, 1, element)
+                    })
+                }
+            })         
+        })
+    }
+
+    function re_assign_totals( new_totals ){
+        totals.value.forEach( (att,i) =>{
+            att.forEach( (col,j)=>{
+                col.splice( j, 1 )
+            })
+            att.splice( i, 1 )
+        })
+        totals.value.splice( 0, totals.value.length )//empty
+
+        new_totals.forEach( element => {
+            totals.value.push( element )//refresh with new data
+        });
+    }
 
 </script>
 
@@ -325,8 +334,8 @@ function re_assign_totals( new_totals ){
                         </div>
                     </div>
                 </div>
-                <BaSwitch :is-on="on_weekly" label="Weekly" @toggle="(value) => toggle_weekly( value )" />
-                <BaSwitch :is-on="on_mis_data" :label="'Show Attendance From ' + $page.props.app.mis" @toggle="toggle_mis( $event )" />
+                <BASwitch :is-on="on_weekly" label="Weekly" @toggle="(value) => toggle_weekly( value )" />
+                <BASwitch :is-on="on_mis_data" :label="'Show Attendance From ' + $page.props.app.mis" @toggle="toggle_mis( $event )" />
             </div>
         </header>
 
