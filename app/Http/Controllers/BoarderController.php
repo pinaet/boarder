@@ -262,7 +262,7 @@ class BoarderController extends Controller
                                 'register_column_id' => $col->id,
                                 'attendance_id'      => 0,
                                 'width'              => $col->width,
-                                'notes'              => '/',
+                                'notes'              => '',
                                 'date'               => $header['date'],
                                 'academic_year'      => $term->academic_year,
                                 'status'             => $header['status'],

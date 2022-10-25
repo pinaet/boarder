@@ -387,7 +387,7 @@ function re_assign_totals( new_totals ){
                             <template v-for="(register,i) in boarder.registers" :key="i" >
                                 <!-- pupil_id, date, column_id -->
                                 <BARegister v-if="register.width==82" :register="register" :attendances="attendances" @note="show_note( register, $event )" @count="update_totals( $event )" :class="register.status!='current'&&!on_weekly ? 'hidden' : ''"></BARegister>
-                                <BAAttendMIS v-else :class="on_mis_data&&on_weekly || register.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&register.status=='current' ? '' : 'hidden' ">/</BAAttendMIS>
+                                <BAAttendMIS v-else :class="on_mis_data&&on_weekly || register.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&register.status=='current' ? '' : 'hidden' ">{{register.notes}}</BAAttendMIS>
                             </template>
 
                         </tr>
