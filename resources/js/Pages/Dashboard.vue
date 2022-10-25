@@ -42,12 +42,24 @@ headers           = props.headers
 building          = props.building_name
 
 //functions
+const toggle_weekly = function( event ){
+    this.on_loading = true
+    this.on_weekly  = event
+    setTimeout(() => {  this.on_loading = false }, 2000);    
+}
+const toggle_mis    = function( event ){
+    this.on_loading = true
+    this.on_mis_data= event
+    setTimeout(() => {  this.on_loading = false }, 2000);   
+}
+
 const assign_boarder = function( boarder ){
     this.on_boarder= !this.on_boarder
     this.c_boarder = boarder
 }
 
 const update_boarder = function(){
+    this.on_loading = true
     this.on_boarder = false
 
     let data = { 
@@ -57,15 +69,19 @@ const update_boarder = function(){
     axios.post('/boarder/update/profile', data )
         .then((res) => {
             console.log( res.data.message )
+            this.on_loading = false
         })
         .catch((error) => {
             console.log( error )
+            this.on_loading = false
         })
 }
 
 function change_building( building ){
+
+    this.on_loading = true
     
-    this.building = building
+    this.building   = building
 
     let data = { 
         'building_name' : building,
@@ -79,9 +95,13 @@ function change_building( building ){
             // remove all Element in array
             this.re_assign_boarders( res.data.boarders )
             this.re_assign_totals(   res.data.totals   )
+
+            this.on_loading = false
         })
         .catch((error) => {
             console.log( error )
+
+            this.on_loading = false
         })
 }
 
@@ -107,7 +127,7 @@ function change_week( direction ){
             this.re_assign_boarders( res.data.boarders )
 
             // this.re_assign_boarders_the_same( res.data.boarders )
-            this.on_loading = false
+            setTimeout(() => {  this.on_loading = false }, 2000);
         })
         .catch((error) => {
             console.log( error )
@@ -126,27 +146,16 @@ function show_note( register, event )
 function store_note( event )
 {
     if( event==true ){
+        this.register.notes = this.notes
+
         let data = { 
             'attendance_id'      : this.register.attendance_id,
             'pupil_id'           : this.register.pupil_id,
             'register_column_id' : this.register.register_column_id,
             'date'               : this.register.date,
             'academic_year'      : this.register.academic_year,
-            'notes'              : this.notes,
+            'notes'              : this.register.notes,
         }
-
-        this.boarders.forEach( boarder => {
-            if(boarder.pupil_id==this.register.pupil_id){
-                boarder.registers.forEach( register => {
-                    if( register.register_column_id==this.register.register_column_id && register.date==this.register.date ){
-                        register.notes = this.notes
-                        return
-                    }
-                })
-                return
-            }
-        });
-        // console.log( data )
 
         axios.post('/boarder/store/attendance', data )
             .then((res) => {
@@ -161,10 +170,6 @@ function store_note( event )
     this.on_note = false
 }
 
-function update_register( event ){
-
-}
-
 function update_totals( event ){
     // console.log( 'update_totals:', event )
     let old_reg = event.old_reg
@@ -175,6 +180,7 @@ function update_totals( event ){
 }
 
 function update_totals_col( event ){
+    this.on_loading = true
     let new_reg = event
     // update register at this column to all boarders
     boarders.forEach( boarder => {
@@ -201,6 +207,7 @@ function update_totals_col( event ){
             }
         })
     })
+    setTimeout(() => {  this.on_loading = false }, 1000);
 }
 
 function re_assign_headers( new_headers ){
@@ -306,8 +313,8 @@ function re_assign_totals( new_totals ){
                         </div>
                     </div>
                 </div>
-                <BaSwitch :is-on="on_weekly" label="Weekly" @toggle="(value) => on_weekly = value" />
-                <BaSwitch :is-on="on_mis_data" :label="'Show Attendance From ' + $page.props.app.mis" @toggle="on_mis_data=$event" />
+                <BaSwitch :is-on="on_weekly" label="Weekly" @toggle="(value) => toggle_weekly( value )" />
+                <BaSwitch :is-on="on_mis_data" :label="'Show Attendance From ' + $page.props.app.mis" @toggle="toggle_weekly( $event )" />
             </div>
         </header>
 
@@ -436,9 +443,9 @@ function re_assign_totals( new_totals ){
             </div>
 
             <!-- Notes Modal -->
-            <div v-show="on_note">
+            <div v-if="on_note">
                 <!-- Notes Container -->
-                <div class="fixed left-0 top-0 h-full w-full z-[51] flex justify-center mt-9 sm:mt-20">
+                <div class="fixed left-0 top-0 h-full w-full z-[1051] flex justify-center mt-9 sm:mt-20">
                     <div class="left-0 top-0 w-[511px] h-fit min-h-[193px] bg-note-gray-1 rounded-lg overflow-clip shadow-md">
                         <div class="bg-harrow-blue-100 h-[33px]">
                             <div class="text-white flex justify-center items-center h-full">
@@ -463,7 +470,7 @@ function re_assign_totals( new_totals ){
             <!-- Boarder Modal-->
             <div v-if="on_boarder">
                 <!-- Boarder Container -->
-                <div class="fixed left-0 top-0 h-full w-full z-[51] flex justify-center mt-2">
+                <div class="fixed left-0 top-0 h-full w-full z-[1051] flex justify-center mt-2">
                     <div class="left-0 top-0 w-[493px] sm:w-[511px] bg-note-gray-1 rounded-lg shadow-md min-h-[565px] h-[94vh] ">
                         <div class="bg-harrow-blue-100 h-[33px] rounded-t-lg">
                             <div class="text-white flex justify-center items-center h-full">
@@ -551,9 +558,9 @@ function re_assign_totals( new_totals ){
             </div>
 
             <!-- Loading Modal -->
-            <div v-show="on_loading">
+            <div v-if="on_loading">
                 <!-- Notes Container -->
-                <div class="fixed left-0 top-0 h-full w-full z-[51] flex justify-center mt-9 sm:mt-20">
+                <div class="fixed left-0 top-0 h-full w-full z-[1051] flex justify-center mt-9 sm:mt-20">
                     <div class="left-0 top-0 w-[511px] h-fit bg-white rounded-lg overflow-clip shadow-md">
                         <div class="bg-harrow-blue-100 h-[33px]">
                             <div class="text-white flex justify-center items-center h-full">
@@ -570,7 +577,7 @@ function re_assign_totals( new_totals ){
             </div>
 
             <!-- Backdrop -->
-            <div v-show="on_note || on_boarder || on_loading" class="fixed left-0 top-0 h-full w-full z-50 bg-black opacity-70">
+            <div v-if="on_note || on_boarder || on_loading" class="fixed left-0 top-0 h-full w-full z-[1050] bg-black opacity-70">
             </div>
             
         </div>

@@ -190,6 +190,17 @@ class BoarderController extends Controller
         $term        = $this->generate_term(  $seed_date );
         $headers     = $this->generate_cols(  $dates     );
 
+
+        //prepare boarder registrations
+        $start_date    = $dates[0]['formatted'];
+        $end_date      = $dates[6]['formatted'];        
+        $pupil_ids     = [];
+        foreach( $boarders as $boarder ){
+            array_push( $pupil_ids, $boarder->pupil_id );
+        }
+        $registrations = Registration::whereIn( 'pupil_id', $pupil_ids )->where('date','>=',$start_date)->where('date','<=',$end_date)->get();
+        // dd( $registrations,$pupil_ids);
+
         foreach( $boarders as $boarder )
         {
             if( env('DB_CONNECTION')=='sqlsrv' ){
@@ -207,19 +218,13 @@ class BoarderController extends Controller
             $boarder->{'building_name'} = $boarder->building->building_name;
             $boarder->{'contacts'}      = $boarder->contacts;
 
-            //prepare boarder registrations
-            $start_date    = $dates[0]['formatted'];
-            $end_date      = $dates[6]['formatted'];
-            
-            $registrations = Registration::where('date','>=',$start_date)->where('date','<=',$end_date)->get();
-
             $registers     = [];
             foreach( $headers['cols'] as $header )
             {
                 foreach( $header['cols'] as $col )
                 {
                     $register = [];
-                    foreach( $registrations as $reg )
+                    foreach( $registrations as $key => $reg )
                     {
                         if( $col->id==$reg->register_column_id && $reg->date==$header['date'] && $reg->pupil_id==$boarder->pupil_id){
                             //assign register value
@@ -234,6 +239,8 @@ class BoarderController extends Controller
                                 'academic_year'      => $term->academic_year,
                                 'status'             => $header['status'],
                             ];
+
+                            $registrations->forget($key);
 
                             break;
                         }
@@ -272,6 +279,7 @@ class BoarderController extends Controller
 
                     array_push( $registers, $register );
                 }
+                // dd( $registrations);
             }
 
             $boarder->{'registers'}     = $registers;
@@ -519,7 +527,7 @@ class BoarderController extends Controller
             $building = Building::where('building_name', $building_name)->first();
             $boarders = Boarder::where( 'status', 'Current' )
                                 ->where( 'building_id', $building->id )
-                                ->orderBy( 'prefered_forename' )->take(5)->get();
+                                ->orderBy( 'prefered_forename' )->take(5)->get();//->take(5)->get();
         }
 
         return $boarders;

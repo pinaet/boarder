@@ -18,7 +18,7 @@ class TestsController extends Controller
         /**
          * generate columns
          */
-        (new SyncController)->syncSchoolAttendance('2022-10-24');
+        (new SyncController)->syncSchoolAttendance('');//'2022-10-24'
         dd('syncSchoolAttendance: done');
 
 
