@@ -42,17 +42,6 @@ headers           = props.headers
 building          = props.building_name
 
 //functions
-const toggle_weekly = function( event ){
-    this.on_loading = true
-    this.on_weekly  = event
-    setTimeout(() => {  this.on_loading = false }, 2000);    
-}
-const toggle_mis    = function( event ){
-    this.on_loading = true
-    this.on_mis_data= event
-    setTimeout(() => {  this.on_loading = false }, 2000);   
-}
-
 const assign_boarder = function( boarder ){
     this.on_boarder= !this.on_boarder
     this.c_boarder = boarder
@@ -69,11 +58,11 @@ const update_boarder = function(){
     axios.post('/boarder/update/profile', data )
         .then((res) => {
             console.log( res.data.message )
-            this.on_loading = false
+            this.proper_wait() 
         })
         .catch((error) => {
             console.log( error )
-            this.on_loading = false
+            this.proper_wait() 
         })
 }
 
@@ -96,12 +85,12 @@ function change_building( building ){
             this.re_assign_boarders( res.data.boarders )
             this.re_assign_totals(   res.data.totals   )
 
-            this.on_loading = false
+            this.proper_wait() 
         })
         .catch((error) => {
             console.log( error )
 
-            this.on_loading = false
+            this.proper_wait() 
         })
 }
 
@@ -127,12 +116,12 @@ function change_week( direction ){
             this.re_assign_boarders( res.data.boarders )
 
             // this.re_assign_boarders_the_same( res.data.boarders )
-            setTimeout(() => {  this.on_loading = false }, 2000);
+            this.proper_wait()
         })
         .catch((error) => {
             console.log( error )
 
-            this.on_loading = false
+            this.proper_wait() 
         })
 }
 
@@ -207,7 +196,30 @@ function update_totals_col( event ){
             }
         })
     })
-    setTimeout(() => {  this.on_loading = false }, 1000);
+    this.proper_wait()
+}
+
+//helper functions
+function toggle_weekly( event ){
+    this.on_loading = true
+    this.on_weekly  = event
+    this.proper_wait()
+}
+
+function toggle_mis( event ){
+    this.on_loading = true
+    this.on_mis_data= event
+    this.proper_wait() 
+}
+
+function proper_wait(){
+    let wait_time   = props.all_boarders.length * 100
+    setTimeout(() => {  this.on_loading = false }, wait_time )
+}
+
+function isRegEnd( register, index, registers ){
+    let c_index = index+1>registers.length-1 ? registers.length-1 : index+1
+    return register.date != registers[ c_index ].date
 }
 
 function re_assign_headers( new_headers ){
@@ -314,7 +326,7 @@ function re_assign_totals( new_totals ){
                     </div>
                 </div>
                 <BaSwitch :is-on="on_weekly" label="Weekly" @toggle="(value) => toggle_weekly( value )" />
-                <BaSwitch :is-on="on_mis_data" :label="'Show Attendance From ' + $page.props.app.mis" @toggle="toggle_weekly( $event )" />
+                <BaSwitch :is-on="on_mis_data" :label="'Show Attendance From ' + $page.props.app.mis" @toggle="toggle_mis( $event )" />
             </div>
         </header>
 
@@ -365,8 +377,8 @@ function re_assign_totals( new_totals ){
                                 </div>
                             </td>
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
-                                <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <BAHeaderA v-if="col.width==82" class="relative" @click="on_reg=!on_reg" :attendances="attendances" :on_mis_data="on_mis_data" :header="header" :col="col" :term="term" @batch="update_totals_col($event)" :class="header.status!='current'&&!on_weekly ? 'hidden' : ''">
+                                <template v-for="(col,j) in headers.cols[i].cols" :key="col.id" >
+                                    <BAHeaderA v-if="col.width==82" class="relative" @click="on_reg=!on_reg" :attendances="attendances" :on_mis_data="on_mis_data" :header="header" :col="col" :term="term" @batch="update_totals_col($event)" :class="[header.status!='current'&&!on_weekly ? 'hidden' : '', j==header.cols.length-1?'border-r':'']">
                                         {{col.column_name}}
                                     </BAHeaderA>
                                     <BAHeaderB v-else :class="on_mis_data&&on_weekly || header.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&header.status=='current' ? '' : 'hidden' ">{{col.column_name}}</BAHeaderB>
@@ -400,7 +412,7 @@ function re_assign_totals( new_totals ){
                             <!-- Registration & Note -->
                             <template v-for="(register,i) in boarder.registers" :key="i" >
                                 <!-- pupil_id, date, column_id -->
-                                <BARegister v-if="register.width==82" :register="register" :attendances="attendances" @note="show_note( register, $event )" @count="update_totals( $event )" :class="register.status!='current'&&!on_weekly ? 'hidden' : ''"></BARegister>
+                                <BARegister v-if="register.width==82" :register="register" :attendances="attendances" @note="show_note( register, $event )" @count="update_totals( $event )" :class="[register.status!='current'&&!on_weekly ? 'hidden' : '', isRegEnd(register,i,boarder.registers)?'border-r':'']"></BARegister>
                                 <BAAttendMIS v-else :class="on_mis_data&&on_weekly || register.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&register.status=='current' ? '' : 'hidden' ">{{register.notes}}</BAAttendMIS>
                             </template>
 
@@ -414,8 +426,8 @@ function re_assign_totals( new_totals ){
                             </td>
                             
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
-                                <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <BATotalBoarder v-if="col.width==82" :class="header.status!='current'&&!on_weekly ? 'hidden' : ''">{{boarders.length}}</BATotalBoarder>
+                                <template v-for="(col,j) in headers.cols[i].cols" :key="col.id" >
+                                    <BATotalBoarder v-if="col.width==82" :class="[header.status!='current'&&!on_weekly ? 'hidden' : '', j==header.cols.length-1?'border-r':'']">{{boarders.length}}</BATotalBoarder>
                                     <td v-else class="w-[25px]" :class="on_mis_data&&on_weekly || header.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&header.status=='current' ? '' : 'hidden' "></td>
                                 </template>
                             </template>
@@ -429,7 +441,7 @@ function re_assign_totals( new_totals ){
                             
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
                                 <template v-for="col in headers.cols[i].cols" :key="col.id" >
-                                    <BATotalAttendanceSum v-if="col.width==82" :attendance="attendance" :class="header.status!='current'&&!on_weekly ? 'hidden' : ''">
+                                    <BATotalAttendanceSum v-if="col.width==82" :attendance="attendance" :class="[header.status!='current'&&!on_weekly ? 'hidden' : '']">
                                         {{ totals[attendance.id][col.id][col.width][header.date]>0 ? totals[attendance.id][col.id][col.width][header.date] : '-' }}
                                     </BATotalAttendanceSum>
                                     <td v-else class="w-[25px]" :class="on_mis_data&&on_weekly || header.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&header.status=='current' ? '' : 'hidden' "></td>

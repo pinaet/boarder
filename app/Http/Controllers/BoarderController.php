@@ -528,6 +528,7 @@ class BoarderController extends Controller
             $boarders = Boarder::where( 'status', 'Current' )
                                 ->where( 'building_id', $building->id )
                                 ->orderBy( 'prefered_forename' )->take(5)->get();//->take(5)->get();
+                                // ->orderBy( 'prefered_forename' )->get();//->take(5)->get();
         }
 
         return $boarders;
