@@ -30,6 +30,7 @@ let dates         = ref()
 let headers       = ref()
 let register      = ref()
 let notes         = ref()
+let on_loading    = ref(false)
 
 let props         = defineProps(['all_boarders','attendances','buildings','dates','term','headers','totals','building_name']) 
 
@@ -86,6 +87,8 @@ function change_building( building ){
 
 function change_week( direction ){
 
+    this.on_loading = true
+
     let data = { 
         'term'          : this.term,
         'building_name' : this.building,
@@ -94,6 +97,7 @@ function change_week( direction ){
 
     axios.post('/boarder/change/week', data )
         .then((res) => {
+            
             console.log( res.data.message )
             this.term = res.data.term
             
@@ -103,9 +107,12 @@ function change_week( direction ){
             this.re_assign_boarders( res.data.boarders )
 
             // this.re_assign_boarders_the_same( res.data.boarders )
+            this.on_loading = false
         })
         .catch((error) => {
             console.log( error )
+
+            this.on_loading = false
         })
 }
 
@@ -543,8 +550,27 @@ function re_assign_totals( new_totals ){
                 </div>
             </div>
 
+            <!-- Loading Modal -->
+            <div v-show="on_loading">
+                <!-- Notes Container -->
+                <div class="fixed left-0 top-0 h-full w-full z-[51] flex justify-center mt-9 sm:mt-20">
+                    <div class="left-0 top-0 w-[511px] h-fit bg-white rounded-lg overflow-clip shadow-md">
+                        <div class="bg-harrow-blue-100 h-[33px]">
+                            <div class="text-white flex justify-center items-center h-full">
+                                <div class="font-bold">Loading...</div>
+                            </div>
+                        </div>
+                        <div class="py-[17px] px-1 sm:px-[17px] flex justify-center items-center">
+                            <div class="w-[478px] h-[100px] p-2 flex justify-center items-center" placeholder="Write some notes...">
+                                <img src="\images\loading-gif-color.gif" width="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Backdrop -->
-            <div v-show="on_note || on_boarder" class="fixed left-0 top-0 h-full w-full z-50 bg-black opacity-70">
+            <div v-show="on_note || on_boarder || on_loading" class="fixed left-0 top-0 h-full w-full z-50 bg-black opacity-70">
             </div>
             
         </div>
