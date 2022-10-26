@@ -101,7 +101,6 @@
 
     function update_boarder(){
         on_boarder.value  = false
-
         let data = { 
             'boarder' : c_boarder.value
         }
@@ -254,7 +253,7 @@
         else if( size > 25 ) rate = 150
         else                 rate = 100
 
-        let wait_time   = size * rate * 0
+        let wait_time   = size * rate * 0 //wait 0 seconds
         setTimeout(() => { on_loading.value = false }, wait_time )
     }
 
