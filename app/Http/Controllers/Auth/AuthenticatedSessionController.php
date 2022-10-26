@@ -62,7 +62,7 @@ class AuthenticatedSessionController extends Controller
                 $ad = ldap_connect($server);
                 
             if($ad) {
-                if( env('LDAP_SKIP')==true )
+                if( env('LDAP_SKIP',false)==true )
                     $b = true;
                 else
                     $b = @ldap_bind($ad, $email, $pass);

@@ -18,29 +18,31 @@ class BoarderController extends Controller
 {
     public function dashboard()
     {
-        $attendances   = Attendance::all();
-        $buildings     = Building::all();
+        $attendances      = Attendance::all();
+        $buildings        = Building::all();
+        $building_permits = (new Building)->get_bulding_permits();
     
-        $dates         = $this->generate_dates();
-        $term          = $this->generate_term();
-        $headers       = $this->generate_cols( $dates );
-
-        $building_name = 'Bradbys';        
-        $boarders      = $this->get_boarders_by_building( $building_name );
+        $dates            = $this->generate_dates();
+        $term             = $this->generate_term();
+        $headers          = $this->generate_cols( $dates );
+    
+        $building_name    = 'Bradbys';        
+        $boarders         = $this->get_boarders_by_building( $building_name );
         
-        $data          = $this->prepare_boarders( $boarders );
-        $boarders      = $data[ 'boarders' ];
-        $totals        = $data[ 'totals'   ];
+        $data             = $this->prepare_boarders( $boarders );
+        $boarders         = $data[ 'boarders' ];
+        $totals           = $data[ 'totals'   ];
 
         return Inertia::render('Dashboard', [
-            'boarders'      => $boarders,
-            'attendances'   => $attendances,
-            'buildings'     => $buildings,
-            'dates'         => $dates,
-            'term'          => $term,
-            'headers'       => $headers,
-            'totals'        => $totals,
-            'building_name' => $building_name,
+            'boarders'          => $boarders,
+            'attendances'       => $attendances,
+            'buildings'         => $buildings,
+            'dates'             => $dates,
+            'term'              => $term,
+            'headers'           => $headers,
+            'totals'            => $totals,
+            'building_name'     => $building_name,
+            'building_permits'  => $building_permits,
         ]);
     }
 

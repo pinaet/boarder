@@ -27,11 +27,10 @@
             </div>
         </div>
         <div v-show="showList" class="absolute top-[37px] -left-[1px] z-[1030] w-36 shadow-md border border-t-0 border-stroke-gray-3 rounded-b-md overflow-clip bg-fill-gray-2">
-            <div @click="update('All')"          class="border-stroke-gray-3 hover:bg-fill-gray-3 h-[38px] flex pl-3 items-center border-b">All</div>
-            <div v-for="(dat, i) in data" :key="dat.id" @click="update( dat.building_name )" 
+            <div v-for="(dat, i) in data" :key="dat.id" @click="update( dat )" 
                 class="border-stroke-gray-3 hover:bg-fill-gray-3 h-[38px] flex pl-3 items-center" 
                 :class=" i==data.length-1 ? '' : 'border-b' ">
-                {{dat.building_name}}
+                {{dat}}
             </div>
         </div>
     </button> 

@@ -34,7 +34,17 @@
     const on_register            = ref(false)
     const on_register_style      = ref('')
      
-    const props                  = defineProps(['boarders','attendances','buildings','dates','term','headers','totals','building_name']) 
+    const props                  = defineProps([
+                                        'boarders',
+                                        'attendances',
+                                        'buildings',
+                                        'dates',
+                                        'term',
+                                        'headers',
+                                        'totals',
+                                        'building_name',
+                                        'building_permits'
+                                   ]) 
      
     boarders.value               = props.boarders //JSON.parse(JSON.stringify(props.boarders)) -- clone array not working
     totals.value                 = props.totals
@@ -348,7 +358,7 @@
                 </h4>
                 <div class="flex justify-start items-center h-full">
                     <div class="text-gray-400 text-sm mr-1">Building:</div>
-                    <BABuildingDropdown :data="buildings" @toggle="change_building($event)">{{building}}</BABuildingDropdown>                
+                    <BABuildingDropdown :data="building_permits" @toggle="change_building($event)">{{building}}</BABuildingDropdown>                
                 </div>
                 <div class="flex justify-start items-center">
                     <div class="text-gray-400 text-sm">Week:</div>
