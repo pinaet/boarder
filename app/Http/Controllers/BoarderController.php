@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Inertia\Inertia;
 use App\Models\Boarder;
 use App\Models\Building;
@@ -10,8 +11,8 @@ use App\Models\SchoolTerm;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 use App\Models\RegisterColumn;
-use Exception;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\PaperformController;
 
 class BoarderController extends Controller
 {
@@ -24,14 +25,13 @@ class BoarderController extends Controller
         $term          = $this->generate_term();
         $headers       = $this->generate_cols( $dates );
 
-        $building_name = 'West Acre';        
+        $building_name = 'Bradbys';        
         $boarders      = $this->get_boarders_by_building( $building_name );
         
         $data          = $this->prepare_boarders( $boarders );
         $boarders      = $data[ 'boarders' ];
         $totals        = $data[ 'totals'   ];
 
-        // $building = 'West Acre';
         return Inertia::render('Dashboard', [
             'all_boarders'  => $boarders,
             'attendances'   => $attendances,
@@ -201,24 +201,21 @@ class BoarderController extends Controller
         $registrations = Registration::whereIn( 'pupil_id', $pupil_ids )->where('date','>=',$start_date)->where('date','<=',$end_date)->get();
         // dd( $registrations,$pupil_ids);
 
+
+
+        /*
+        * boarders
+        */
         foreach( $boarders as $boarder )
         {
-            if( env('DB_CONNECTION')=='sqlsrv' ){
-                // $photo      = DB::raw('CONVERT(VARBINARY(MAX), 0x' . bin2hex($boarder->Photo) . ')'); //To get the value out of the database use hex2bin($attachment)
-                // $sData      = '0x' . bin2hex($boarder->Photo);    
-                // $string     = str_replace(' ','', $boarder->photo);
-                // $sData      = $string;
-                // $sData      = substr( $sData, 2, strlen( $sData ) -2 );
-                // $sData      = base64_encode( pack("H*", $sData) );
-                $sData = base64_encode( $boarder->photo );
-            }
-            else{
-                $sData = base64_encode( $boarder->photo );
-            }
-            $boarder->photo = $sData;
+            $boarder->photo = base64_encode( $boarder->photo );
             $boarder->{'building_name'} = $boarder->building->building_name;
             $boarder->{'contacts'}      = $boarder->contacts;
 
+
+            /*
+            * boarder: registers
+            */  
             $registers     = [];
             foreach( $headers['cols'] as $header )
             {
@@ -227,7 +224,7 @@ class BoarderController extends Controller
                     $register = [];
                     foreach( $registrations as $key => $reg )
                     {
-                        if( $col->id==$reg->register_column_id && $reg->date==$header['date'] && $reg->pupil_id==$boarder->pupil_id){
+                        if( $col->id==$reg->register_column_id && $reg->date==$header['date'] && $reg->pupil_id==$boarder->pupil_id ){
                             //assign register value
                             // dd($boarder,$header,$col,$reg,$attendance);
                             $register = [
@@ -282,10 +279,20 @@ class BoarderController extends Controller
                 }
                 // dd( $registrations);
             }
-
             $boarder->{'registers'}     = $registers;
+
+
+            /*
+            * boarder: absence_request_url
+            */            
+            $boarder->{'absence_request_url'} = (new PaperformController)->paperform( 'leave-request-form', $boarder );
         }
 
+
+
+        /*
+        * totals
+        */
         $totals      = [];
         $attendances = Attendance::all();
         $reg_cols    = RegisterColumn::all();
@@ -322,6 +329,8 @@ class BoarderController extends Controller
             }
         }
         
+
+
         $data = [
             'boarders'  => $boarders,
             'totals'    => $totals,
