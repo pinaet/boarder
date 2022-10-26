@@ -16,52 +16,91 @@
     import BATotalBoarder        from '@/Components/BATotalBoarder.vue';
     import { useForm, Head }     from '@inertiajs/inertia-vue3';
 
-    const on_weekly   = ref(false)
-    const on_mis_data = ref(false)
-    const on_reg      = ref(false)
-    const on_note     = ref(false)
-    const on_boarder  = ref(false)
-    const building    = ref()
-    const c_boarder   = ref()
-    const boarders    = ref()
-    const totals      = ref()
-    const term        = ref()
-    const dates       = ref()
-    const headers     = ref()
-    const register    = ref()
-    const notes       = ref()
-    const on_loading  = ref(false)
+    const on_weekly         = ref(false)
+    const on_mis_data       = ref(false)
+    const on_reg            = ref(false)
+    const on_note           = ref(false)
+    const on_boarder        = ref(false)
+    const building          = ref()
+    const c_boarder         = ref()
+    const boarders          = ref()
+    const totals            = ref()
+    const term              = ref()
+    const dates             = ref()
+    const headers           = ref()
+    const register          = ref()
+    const notes             = ref()
+    const on_loading        = ref(false)
+    const on_register       = ref(false)
+    const on_register_style = ref('')
 
-    const props       = defineProps(['all_boarders','attendances','buildings','dates','term','headers','totals','building_name']) 
+    const props             = defineProps(['all_boarders','attendances','buildings','dates','term','headers','totals','building_name']) 
 
-    boarders.value    = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
-    totals.value      = props.totals
-    dates.value       = props.dates 
-    term.value        = props.term
-    headers.value     = props.headers
-    building.value    = props.building_name
+    boarders.value          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
+    totals.value            = props.totals
+    dates.value             = props.dates 
+    term.value              = props.term
+    headers.value           = props.headers
+    building.value          = props.building_name
 
     //functions
+    function show_register_option( event, element_id ){
+
+        const rect     = document.getElementById( element_id )
+        const left     = rect.getBoundingClientRect().left + 6
+        const top      = rect.getBoundingClientRect().top + 41
+
+        register.value = event
+
+        on_register_style.value = 'top: '+top+'px; left: '+left+'px'
+        on_register.value       = !on_register.value
+    }
+
+    function store_register( event )
+    {                  
+        // console.log( 'save register: ', event, register.value.attendance_id )
+        let new_reg = { 
+            'academic_year'      : register.value.academic_year,
+            'attendance_id'      : event,
+            'date'               : register.value.date,
+            'notes'              : register.value.notes,
+            'pupil_id'           : register.value.pupil_id,
+            'register_column_id' : register.value.register_column_id,
+            'width'              : register.value.width,
+        }
+
+        //emit to update total attendance type
+        let temp = { new_reg: new_reg, old_reg: register.value }
+        update_totals( temp )
+        register.value.attendance_id = event
+
+        axios.post('/boarder/store/attendance', new_reg )
+            .then((res) => {
+                console.log(res.data.message)
+            })
+            .catch((error) => {
+                console.log( error )
+            })
+                
+        register.value    = []
+        on_register.value = false
+    }
+
     function toggle_weekly( event ){
-        on_loading.value = true
-        on_weekly.value  = event
-        proper_wait()
+        on_weekly.value   = event
     }
 
     function toggle_mis( event ){
-        on_loading.value = true
-        on_mis_data.value= event
-        proper_wait() 
+        on_mis_data.value = event
     }
 
     function assign_boarder( boarder ){
-        on_boarder.value= !on_boarder.value
-        c_boarder.value = boarder
+        on_boarder.value  = !on_boarder.value
+        c_boarder.value   = boarder
     }
 
     function update_boarder(){
-        on_loading.value = true
-        on_boarder.value = false
+        on_boarder.value  = false
 
         let data = { 
             'boarder' : c_boarder.value
@@ -70,19 +109,17 @@
         axios.post('/boarder/update/profile', data )
             .then((res) => {
                 console.log( res.data.message )
-                proper_wait() 
             })
             .catch((error) => {
                 console.log( error )
-                proper_wait() 
             })
     }
 
     function change_building( building_name ){
 
-        on_loading.value = true
+        on_loading.value  = true
         
-        building.value   = building_name
+        building.value    = building_name
 
         let data = { 
             'building_name' : building.value,
@@ -108,7 +145,7 @@
 
     function change_week( direction ){
 
-        on_loading.value = true
+        on_loading.value  = true
 
         let data = { 
             'term'          : term.value,
@@ -139,9 +176,9 @@
 
     function show_note( register_, event )
     {
-        register.value = register_
-        notes.value    = register.value.notes
-        on_note.value  = event
+        register.value    = register_
+        notes.value       = register.value.notes
+        on_note.value     = event
     }
 
     function store_note( event )
@@ -172,7 +209,6 @@
     }
 
     function update_totals( event ){
-        // console.log( 'update_totals:', event )
         let old_reg = event.old_reg
         let new_reg = event.new_reg
 
@@ -181,7 +217,6 @@
     }
 
     function update_totals_col( event ){
-        on_loading.value = true
         let new_reg = event
         // update register at this column to all boarders
         boarders.value.forEach( boarder => {
@@ -208,7 +243,6 @@
                 }
             })
         })
-        proper_wait()
     }
 
     //helper functions
@@ -220,7 +254,7 @@
         else if( size > 25 ) rate = 150
         else                 rate = 100
 
-        let wait_time   = size * rate
+        let wait_time   = size * rate * 0
         setTimeout(() => { on_loading.value = false }, wait_time )
     }
 
@@ -269,7 +303,6 @@
 
     function re_assign_boarders_the_same( new_boarders )
     {
-
         boarders.value.forEach( boarder => {
             new_boarders.forEach( new_boarder => {
                 if( new_boarder.pupil_id==boarder.pupil_id )
@@ -419,9 +452,18 @@
                             </td>
 
                             <!-- Registration & Note -->
-                            <template v-for="(register,i) in boarder.registers" :key="i" >
+                            <template v-for="(register,i) in boarder.registers" :key="i">
                                 <!-- pupil_id, date, column_id -->
-                                <BARegister v-if="register.width==82" :register="register" :attendances="attendances" @note="show_note( register, $event )" @count="update_totals( $event )" :class="[register.status!='current'&&!on_weekly ? 'hidden' : '', isRegEnd(register,i,boarder.registers)?'border-r':'']"></BARegister>
+                                <BARegister v-if="register.width==82" 
+                                    :register="register" 
+                                    :attendances="attendances" 
+                                    @note="show_note( register, $event )" 
+                                    @showlist="show_register_option( $event, 'register_'+i+'_'+register.pupil_id )" 
+                                    :class="[
+                                        register.status!='current'&&!on_weekly ? 'hidden' : '', 
+                                        isRegEnd(register,i,boarder.registers)?'border-r':''
+                                    ]"
+                                    :id="'register_'+i+'_'+register.pupil_id"></BARegister>
                                 <BAAttendMIS v-else :class="on_mis_data&&on_weekly || register.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&register.status=='current' ? '' : 'hidden' ">{{register.notes}}</BAAttendMIS>
                             </template>
 
@@ -462,6 +504,14 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Attendance Options -->
+            <BARegisterOption id="register_option" v-show="on_register" 
+                :attendances="attendances"
+                class="z-[1030]"
+                :style="on_register_style"
+                @toggle="store_register($event)">
+            </BARegisterOption>
 
             <!-- Notes Modal -->
             <div v-if="on_note">
