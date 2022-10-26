@@ -1,5 +1,5 @@
 <script setup>
-    let props = defineProps(['label'])
+    const props = defineProps(['label'])
 
     const emit = defineEmits([
         'toggle'

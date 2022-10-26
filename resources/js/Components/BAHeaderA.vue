@@ -2,28 +2,28 @@
     import { ref } from 'vue'
     import BARegisterOption from '@/Components/BARegisterOption.vue';
 
-    let props = defineProps(['attendances','on_mis_data', 'header', 'col', 'term'])
+    const props = defineProps(['attendances','on_mis_data', 'header', 'col', 'term'])
     
-    const emit = defineEmits([
+    const emit  = defineEmits([
         'batch'
     ])
 
-    let on_reg = ref(false)
-    let header = props.header
-    let col    = props.col
-    let term   = props.term
+    const on_reg = ref(false)
+    const header = props.header
+    const col    = props.col
+    const term   = props.term
 
     function update( $event )
     {
         // on_reg=!on_reg
         let data = { 
-            'academic_year'      : term.academic_year,
+            'academic_year'      : props.term.academic_year,
             'attendance_id'      : $event,
-            'date'               : header.date,
+            'date'               : props.header.date,
             'notes'              : '',
             'pupil_id'           : '',
-            'register_column_id' : col.id,
-            'width'              : col.width,
+            'register_column_id' : props.col.id,
+            'width'              : props.col.width,
         }
         // console.log( data )
 

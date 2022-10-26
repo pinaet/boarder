@@ -6,7 +6,7 @@
 
     const props    = defineProps(['attendances','register',])
 
-    let   register = props.register
+    const register = props.register
 
     const attendance_color = computed(()=>{
         let data = ''
