@@ -33,7 +33,7 @@ class BoarderController extends Controller
         $totals        = $data[ 'totals'   ];
 
         return Inertia::render('Dashboard', [
-            'all_boarders'  => $boarders,
+            'boarders'      => $boarders,
             'attendances'   => $attendances,
             'buildings'     => $buildings,
             'dates'         => $dates,
@@ -527,19 +527,33 @@ class BoarderController extends Controller
 
     function get_boarders_by_building( $building_name )
     {
-        if( $building_name=='All' )
-        {
-            $boarders = Boarder::where( 'status', 'Current' )
-                                // ->orderBy( 'prefered_forename' )->take(5)->get();
-                                ->orderBy( 'prefered_forename' )->get();
+        if( env('APP_ENV')=='production'){
+            if( $building_name=='All' )
+            {
+                $boarders = Boarder::where( 'status', 'Current' )
+                                    ->orderBy( 'prefered_forename' )->get();
+            }
+            else
+            {
+                $building = Building::where('building_name', $building_name)->first();
+                $boarders = Boarder::where( 'status', 'Current' )
+                                    ->where( 'building_id', $building->id )
+                                    ->orderBy( 'prefered_forename' )->get();
+            }
         }
-        else
-        {
-            $building = Building::where('building_name', $building_name)->first();
-            $boarders = Boarder::where( 'status', 'Current' )
-                                ->where( 'building_id', $building->id )
-                                // ->orderBy( 'prefered_forename' )->take(5)->get();
-                                ->orderBy( 'prefered_forename' )->get();
+        else{
+            if( $building_name=='All' )
+            {
+                $boarders = Boarder::where( 'status', 'Current' )
+                                    ->orderBy( 'prefered_forename' )->take( env('BOARDER_SIZE',5) )->get();
+            }
+            else
+            {
+                $building = Building::where('building_name', $building_name)->first();
+                $boarders = Boarder::where( 'status', 'Current' )
+                                    ->where( 'building_id', $building->id )
+                                    ->orderBy( 'prefered_forename' )->take( env('BOARDER_SIZE',5) )->get();
+            }
         }
 
         return $boarders;

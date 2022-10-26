@@ -16,32 +16,32 @@
     import BATotalBoarder        from '@/Components/BATotalBoarder.vue';
     import { useForm, Head }     from '@inertiajs/inertia-vue3';
 
-    const on_weekly         = ref(false)
-    const on_mis_data       = ref(false)
-    const on_reg            = ref(false)
-    const on_note           = ref(false)
-    const on_boarder        = ref(false)
-    const building          = ref()
-    const c_boarder         = ref()
-    const boarders          = ref()
-    const totals            = ref()
-    const term              = ref()
-    const dates             = ref()
-    const headers           = ref()
-    const register          = ref()
-    const notes             = ref()
-    const on_loading        = ref(false)
-    const on_register       = ref(false)
-    const on_register_style = ref('')
-
-    const props             = defineProps(['all_boarders','attendances','buildings','dates','term','headers','totals','building_name']) 
-
-    boarders.value          = props.all_boarders //JSON.parse(JSON.stringify(props.all_boarders)) -- clone array not working
-    totals.value            = props.totals
-    dates.value             = props.dates 
-    term.value              = props.term
-    headers.value           = props.headers
-    building.value          = props.building_name
+    const on_weekly              = ref(false)
+    const on_mis_data            = ref(false)
+    const on_reg                 = ref(false)
+    const on_note                = ref(false)
+    const on_boarder             = ref(false)
+    const building               = ref()
+    const c_boarder              = ref()
+    const boarders               = ref()
+    const totals                 = ref()
+    const term                   = ref()
+    const dates                  = ref()
+    const headers                = ref()
+    const register               = ref()
+    const notes                  = ref()
+    const on_loading             = ref(false)
+    const on_register            = ref(false)
+    const on_register_style      = ref('')
+     
+    const props                  = defineProps(['boarders','attendances','buildings','dates','term','headers','totals','building_name']) 
+     
+    boarders.value               = props.boarders //JSON.parse(JSON.stringify(props.boarders)) -- clone array not working
+    totals.value                 = props.totals
+    dates.value                  = props.dates 
+    term.value                   = props.term
+    headers.value                = props.headers
+    building.value               = props.building_name
 
     //functions
     function show_register_option( event, element_id ){
@@ -247,7 +247,7 @@
     //helper functions
     function proper_wait(){
         let rate        = 0
-        let size        = props.all_boarders.length
+        let size        = props.boarders.length
 
         if(      size > 50 ) rate = 200
         else if( size > 25 ) rate = 150
@@ -618,9 +618,18 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex justify-end">
-                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-[#828282]" @click="on_boarder=false">Cancel</button>
-                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-3 mb-3 mr-4 border border-[#c3c8d2] bg-harrow-gold-100" @click="update_boarder()">Save</button>
+                            <div class="flex justify-between">
+                                <a class="w-[181px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-harrow-blue-100 flex justify-center items-center" 
+                                target="_blank" 
+                                :href="c_boarder.absence_request_url">
+                                <!-- briefcase -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2 mr-2" viewBox="0 0 512 512"><path fill="white" d="M320 336c0 8.84-7.16 16-16 16h-96c-8.84 0-16-7.16-16-16v-48H0v144c0 25.6 22.4 48 48 48h416c25.6 0 48-22.4 48-48V288H320v48zm144-208h-80V80c0-25.6-22.4-48-48-48H176c-25.6 0-48 22.4-48 48v48H48c-25.6 0-48 22.4-48 48v80h512v-80c0-25.6-22.4-48-48-48zm-144 0H192V96h128v32z"/></svg>
+                                    Absence Request
+                                </a>
+                                <div class="flex justify-end">
+                                    <button class="w-[81px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-[#828282]" @click="on_boarder=false">Cancel</button>
+                                    <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-3 mb-3 mr-4 border border-[#c3c8d2] bg-harrow-gold-100" @click="update_boarder()">Save</button>
+                                </div>
                             </div>
                         </div>
                     </div>
