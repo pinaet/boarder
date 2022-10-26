@@ -351,6 +351,8 @@ class SyncController extends Controller
 
     public function syncSchoolSessionAttendance( $star_date='' )
     {
+        set_time_limit( 3000 );
+
         $sql = "
             SELECT 
                 psa.PupilID
