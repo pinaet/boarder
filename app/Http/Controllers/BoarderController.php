@@ -21,17 +21,35 @@ class BoarderController extends Controller
         $attendances      = Attendance::all();
         $buildings        = Building::all();
         $building_permits = (new Building)->get_bulding_permits();
+
+        /*
+        * check if user has access to any boarding house
+        */
+        if( count($building_permits)<1 ){
+            Auth::logout( auth()->user() );
+            $message = "
+                Sorry, you don't have to any boarding house
+            ";
+            return Inertia::render('Login/Error', [
+                'title' => 'No boarding house to access',
+                'message' => $message,
+                'url' => url('/login'),
+                'type' => 'danger'
+            ]);
+        }
     
-        $dates            = $this->generate_dates();
-        $term             = $this->generate_term();
-        $headers          = $this->generate_cols( $dates );
-    
-        $building_name    = 'Bradbys';        
-        $boarders         = $this->get_boarders_by_building( $building_name );
+        /*
+        * assign building_name for the user with the least boarders num
+        */
+        $building_name    = $building_permits[0]=='All'? $building_permits[1] : $building_permits[0];
+        $boarders         = (new Boarder)->get_boarders_by_building( $building_name );
         
         $data             = $this->prepare_boarders( $boarders );
         $boarders         = $data[ 'boarders' ];
         $totals           = $data[ 'totals'   ];
+        $dates            = $data[ 'dates'    ];
+        $term             = $data[ 'term'     ];
+        $headers          = $data[ 'headers'  ];
 
         return Inertia::render('Dashboard', [
             'boarders'          => $boarders,
@@ -111,15 +129,14 @@ class BoarderController extends Controller
         // dd( $direction, $term );
 
         $seed_date  = date( 'Y-m-d', strtotime( $word . ' ' . $term['date'] ) );
-
-        $dates      = $this->generate_dates( $seed_date );
-        $term       = $this->generate_term(  $seed_date );
-        $headers    = $this->generate_cols(  $dates     );
         
-        $boarders   = $this->get_boarders_by_building( $building_name );
+        $boarders   = (new Boarder)->get_boarders_by_building( $building_name );
         $temp       = $this->prepare_boarders( $boarders, $seed_date );
-        $boarders   = $temp['boarders'];
-        $totals     = $temp['totals'];
+        $boarders   = $temp[ 'boarders' ];
+        $totals     = $temp[ 'totals'   ];
+        $dates      = $temp[ 'dates'    ];
+        $term       = $temp[ 'term'     ];
+        $headers    = $temp[ 'headers'  ];
 
         $data = [
             'boarders' => json_decode(json_encode( $boarders )),
@@ -330,12 +347,13 @@ class BoarderController extends Controller
                 }
             }
         }
-        
-
 
         $data = [
             'boarders'  => $boarders,
             'totals'    => $totals,
+            'dates'     => $dates,
+            'term'      => $term,
+            'headers'   => $headers,    
         ];
 
         return $data;
@@ -525,39 +543,5 @@ class BoarderController extends Controller
         ];
         
         return $headers;
-    }
-
-    function get_boarders_by_building( $building_name )
-    {
-        if( env('APP_ENV')=='production'){
-            if( $building_name=='All' )
-            {
-                $boarders = Boarder::where( 'status', 'Current' )
-                                    ->orderBy( 'prefered_forename' )->get();
-            }
-            else
-            {
-                $building = Building::where('building_name', $building_name)->first();
-                $boarders = Boarder::where( 'status', 'Current' )
-                                    ->where( 'building_id', $building->id )
-                                    ->orderBy( 'prefered_forename' )->get();
-            }
-        }
-        else{
-            if( $building_name=='All' )
-            {
-                $boarders = Boarder::where( 'status', 'Current' )
-                                    ->orderBy( 'prefered_forename' )->take( env('BOARDER_SIZE',5) )->get();
-            }
-            else
-            {
-                $building = Building::where('building_name', $building_name)->first();
-                $boarders = Boarder::where( 'status', 'Current' )
-                                    ->where( 'building_id', $building->id )
-                                    ->orderBy( 'prefered_forename' )->take( env('BOARDER_SIZE',5) )->get();
-            }
-        }
-
-        return $boarders;
     }
 }

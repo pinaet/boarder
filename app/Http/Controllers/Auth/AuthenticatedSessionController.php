@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\AllowedUser;
+use App\Models\BlockedUser;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -72,10 +73,24 @@ class AuthenticatedSessionController extends Controller
                 if($b) {
                     $getAccess   = false;
 
-                    $allowed_users       = AllowedUser::all();
-                    foreach( $allowed_users as $person ){
+                    /*
+                    * check if user has any permission
+                    */
+                    $user = User::where('email',$email)->get();
+                    foreach( $user as $dat ){
+                        $user = $dat;
+                    }
+                    if( count($user->role)>0 ){
+                        $getAccess   = true;
+                    }
+
+                    /*
+                    * check if user is blocked from access
+                    */
+                    $blocked_users   = BlockedUser::all();
+                    foreach( $blocked_users as $person ){
                         if( $person->email==$email ){
-                            $getAccess   = true;
+                            $getAccess   = false;
                             break;
                         }
                     }

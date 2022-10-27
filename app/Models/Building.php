@@ -11,9 +11,11 @@ class Building extends Model
 
     protected $guarded = [];
 
-    public function get_bulding_permits()
+    public function get_bulding_permits($user='')
     {
-        $user        = auth()->user();
+        if(!$user){
+            $user    = auth()->user();
+        }
         $buildings   = $this->all();
         $length      = count($buildings);
         $buildings_u = [];
@@ -32,7 +34,7 @@ class Building extends Model
         }
 
         if( count($buildings_u)==$length ){
-            array_unshift( $buildings_u, 'All' );
+            array_unshift( $buildings_u, 'All' );//insert to the beginning of array
         }
 
         return $buildings_u;
