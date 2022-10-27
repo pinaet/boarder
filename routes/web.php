@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\TestsController;
 use App\Http\Controllers\BoarderController;
+use App\Http\Controllers\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,12 +39,13 @@ Route::get('/Error', function () {
     ]);
 });
 
-Route::get( '/dashboard', [BoarderController::class, 'dashboard'] )->middleware(['auth', 'verified'])->name('dashboard');
+Route::get(  '/dashboard', [BoarderController::class, 'dashboard'] )->middleware(['auth', 'verified'])->name('dashboard');
 Route::post( '/boarder/update/profile', [BoarderController::class, 'update_profile'] )->middleware(['auth', 'verified']);
 Route::post( '/boarder/change/building', [BoarderController::class, 'change_building'] )->middleware(['auth', 'verified']);
 Route::post( '/boarder/change/week', [BoarderController::class, 'change_week'] )->middleware(['auth', 'verified']);
-
 Route::post( '/boarder/store/attendance', [BoarderController::class, 'store_attendance'] )->middleware(['auth', 'verified']);
+Route::get( '/setting', [SettingController::class, 'index'] )->middleware(['auth', 'verified'])->name('setting');
+Route::post( '/setting/sync', [SettingController::class, 'sync'] )->middleware(['auth', 'verified']);
 
 
 Route::resource('chirps', ChirpController::class)

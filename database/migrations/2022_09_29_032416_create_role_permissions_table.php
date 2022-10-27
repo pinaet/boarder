@@ -21,7 +21,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('role_id')->constrained();
             $table->foreignId('permission_content_id')->constrained();
-            $table->string('permission'); //v,u,d
+            $table->string('permission')->nullable(); //v,u,d
             $table->timestamps();
         });
 

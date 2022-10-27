@@ -1,13 +1,15 @@
 <script setup>
-import { ref } from 'vue';
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/inertia-vue3';
+    import { ref } from 'vue';
+    import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+    import Dropdown from '@/Components/Dropdown.vue';
+    import DropdownLink from '@/Components/DropdownLink.vue';
+    import NavLink from '@/Components/NavLink.vue';
+    import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+    import { Link } from '@inertiajs/inertia-vue3';
 
-const showingNavigationDropdown = ref(false);
+    const props = defineProps(['setting_permits'])
+
+    const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
@@ -35,9 +37,9 @@ const showingNavigationDropdown = ref(false);
                                     Registration
                                 </NavLink>
                             </div>
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('chirps.index')" :active="route().current('chirps.index')">
-                                    Settings
+                            <div v-if="Object.keys(setting_permits).length>0" class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <NavLink :href="route('setting')" :active="route().current('setting')">
+                                    Setting
                                 </NavLink>
                             </div>
                         </div>

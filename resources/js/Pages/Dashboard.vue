@@ -14,6 +14,8 @@
     import BARegister            from '@/Components/BARegister.vue';
     import BAAttendMIS           from '@/Components/BAAttendMIS.vue';
     import BATotalBoarder        from '@/Components/BATotalBoarder.vue';
+    import BABlackdrop           from '@/Components/BABlackdrop.vue';
+    import BALoading             from '@/Components/BALoading.vue';
     import { useForm, Head }     from '@inertiajs/inertia-vue3';
 
     const on_weekly              = ref(false)
@@ -43,7 +45,8 @@
                                         'headers',
                                         'totals',
                                         'building_name',
-                                        'building_permits'
+                                        'building_permits',
+                                        'setting_permits',
                                    ]) 
      
     boarders.value               = props.boarders //JSON.parse(JSON.stringify(props.boarders)) -- clone array not working
@@ -343,7 +346,7 @@
 <template>
     <Head title="Registration" />
 
-    <AuthenticatedLayout>
+    <AuthenticatedLayout :setting_permits="setting_permits">
         <!-- <template #header>
             <h4 class="font-semibold text-xl text-gray-800 leading-tight">
                 Registration
@@ -647,27 +650,12 @@
             </div>
 
             <!-- Loading Modal -->
-            <div v-if="on_loading">
-                <!-- Notes Container -->
-                <div class="fixed left-0 top-0 h-full w-full z-[1051] flex justify-center mt-9 sm:mt-20">
-                    <div class="left-0 top-0 w-[511px] h-fit bg-white rounded-lg overflow-clip shadow-md">
-                        <div class="bg-harrow-blue-100 h-[33px]">
-                            <div class="text-white flex justify-center items-center h-full">
-                                <div class="font-bold">Loading...</div>
-                            </div>
-                        </div>
-                        <div class="py-[17px] px-1 sm:px-[17px] flex justify-center items-center">
-                            <div class="w-[478px] h-[100px] p-2 flex justify-center items-center" placeholder="Write some notes...">
-                                <img src="\images\loading-gif-color.gif" width="100">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <BALoading v-if="on_loading">
+            </BALoading>
 
             <!-- Backdrop -->
-            <div v-if="on_note || on_boarder || on_loading" class="fixed left-0 top-0 h-full w-full z-[1050] bg-black opacity-70">
-            </div>
+            <BABlackdrop v-if="on_note || on_boarder || on_loading">
+            </BABlackdrop>
             
         </div>
     </AuthenticatedLayout>

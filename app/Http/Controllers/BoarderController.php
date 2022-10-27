@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Models\RegisterColumn;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PaperformController;
+use App\Models\PermissionContent;
 
 class BoarderController extends Controller
 {
@@ -51,6 +52,11 @@ class BoarderController extends Controller
         $term             = $data[ 'term'     ];
         $headers          = $data[ 'headers'  ];
 
+        /*
+        * get settings permission
+        */
+        $setting_permits  = (new PermissionContent)->get_setting_permissions();
+
         return Inertia::render('Dashboard', [
             'boarders'          => $boarders,
             'attendances'       => $attendances,
@@ -61,6 +67,7 @@ class BoarderController extends Controller
             'totals'            => $totals,
             'building_name'     => $building_name,
             'building_permits'  => $building_permits,
+            'setting_permits'   => $setting_permits,
         ]);
     }
 
@@ -94,7 +101,7 @@ class BoarderController extends Controller
             $seed_date = $dates[0]['formatted'];
         }
 
-        $boarders = $this->get_boarders_by_building( $building_name );
+        $boarders = (new Boarder)->get_boarders_by_building( $building_name );
 
         //'boarders','dates','term','headers','totals' --> boarders, registers, totals
         $temp     = $this->prepare_boarders( $boarders, $seed_date );

@@ -43,6 +43,10 @@ return new class extends Migration
             'Junior Girls',
             'The Grove',
             'West Acre',
+            'Staff',
+            'Role',
+            'House',
+            'Sync',
         );
         foreach ($contents as $content) {
             PermissionContent::create(['permission_content_name'=>$content]);
