@@ -1,10 +1,11 @@
 <?php
 
-use App\Models\PermissionContent;
+use App\Models\Building;
 use App\Models\RolePermission;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\PermissionContent;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -52,6 +53,16 @@ return new class extends Migration
             $role_permission = [
                 'role_id' => 1,
                 'permission_content_id' => $permission_content->id,
+                'permission' => 'update'
+            ];
+            RolePermission::create($role_permission);
+        }
+
+        $buildings = Building::all();
+        foreach( $buildings as $building ) {
+            $role_permission = [
+                'role_id' => 2,
+                'permission_content_id' => $building->id,
                 'permission' => 'update'
             ];
             RolePermission::create($role_permission);

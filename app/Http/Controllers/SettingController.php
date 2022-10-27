@@ -44,4 +44,16 @@ class SettingController extends Controller
         
         return $data;
     }
+
+    public function staff()
+    {
+        /*
+        * get settings permission
+        */
+        $setting_permits  = (new PermissionContent)->get_setting_permissions();
+        
+        return Inertia::render('Setting/Staff', [
+            'setting_permits'   => $setting_permits,
+        ]);
+    }
 }

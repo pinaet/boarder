@@ -50,5 +50,10 @@ return new class extends Migration
         $attributes['created_by'] = 1;       
         $attributes['updated_by'] = 1;
         Role::create($attributes);
+
+        $attributes['role_name']  = 'BoardingStaff';   
+        $attributes['created_by'] = 1;       
+        $attributes['updated_by'] = 1;
+        Role::create($attributes);
     }
 };

@@ -52,7 +52,24 @@ return new class extends Migration
         $attributes['user_id']    = 1;       
         $attributes['role_id']    = 1;   
         $attributes['created_by'] = 1;       
-        $attributes['updated_by'] = 1;
-        UserRole::create($attributes);
+        $attributes['updated_by'] = 1;          UserRole::create($attributes);
+
+        $attributes['user_id']    = 2;          UserRole::create($attributes);
+
+        $attributes['user_id']    = 3;          UserRole::create($attributes);
+
+        $attributes['user_id']    = 4;          UserRole::create($attributes);
+        
+        $attributes['user_id']    = 5;       
+        $attributes['role_id']    = 2;          UserRole::create($attributes);
+        
+        $attributes['user_id']    = 6;          UserRole::create($attributes);
+        $attributes['user_id']    = 7;          UserRole::create($attributes);
+        $attributes['user_id']    = 8;          UserRole::create($attributes);
+        $attributes['user_id']    = 9;          UserRole::create($attributes);
+        $attributes['user_id']    =10;          UserRole::create($attributes);
+        $attributes['user_id']    =11;          UserRole::create($attributes);
+        $attributes['user_id']    =12;          UserRole::create($attributes);
+        $attributes['user_id']    =13;          UserRole::create($attributes);
     }
 };

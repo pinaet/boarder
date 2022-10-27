@@ -38,7 +38,7 @@
                                 </NavLink>
                             </div>
                             <div v-if="Object.keys(setting_permits).length>0" class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('setting')" :active="route().current('setting')">
+                                <NavLink :href="route('setting')" :active="route().current('setting') || route().current('setting.staff')">
                                     Setting
                                 </NavLink>
                             </div>
