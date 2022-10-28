@@ -73,8 +73,6 @@
         }
 
         register.value = event
-        console.log( 'show_register_option register.value: ', register.value )
-        console.log( 'show_register_option event: ', event )
 
         on_register_style.value = 'top: '+top+'px; left: '+left+'px'
         on_register.value       = !on_register.value
