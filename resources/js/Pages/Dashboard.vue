@@ -20,7 +20,7 @@
 
     const on_weekly              = ref(false)
     const on_mis_data            = ref(false)
-    const on_reg                 = ref(false)
+    const on_register_mode       = ref(false)
     const on_note                = ref(false)
     const on_boarder             = ref(false)
     const building               = ref()
@@ -57,46 +57,65 @@
     building.value               = props.building_name
 
     //functions
-    function show_register_option( event, element_id ){
+    function show_register_option( event, element_id, mode ){
 
         const rect     = document.getElementById( element_id )
-        const left     = rect.getBoundingClientRect().left + 6
-        const top      = rect.getBoundingClientRect().top + 41
+        let   left     = rect.getBoundingClientRect().left
+        let   top      = rect.getBoundingClientRect().top
+
+        if( mode=='single' ){
+            left    += 6    
+            top     += 41
+        }
+        else{
+            left    += 0    
+            top     += on_mis_data.value ? 66 : 31
+        }
 
         register.value = event
+        console.log( 'show_register_option register.value: ', register.value )
+        console.log( 'show_register_option event: ', event )
 
         on_register_style.value = 'top: '+top+'px; left: '+left+'px'
         on_register.value       = !on_register.value
+        on_register_mode.value  = mode
     }
 
     function store_register( event )
-    {                  
-        // console.log( 'save register: ', event, register.value.attendance_id )
-        let new_reg = { 
-            'academic_year'      : register.value.academic_year,
-            'attendance_id'      : event,
-            'date'               : register.value.date,
-            'notes'              : register.value.notes,
-            'pupil_id'           : register.value.pupil_id,
-            'register_column_id' : register.value.register_column_id,
-            'width'              : register.value.width,
+    {          
+        if( on_register_mode.value=='single' ){       
+            // console.log( 'save register: ', event, register.value.attendance_id )
+            let new_reg = { 
+                'academic_year'      : register.value.academic_year,
+                'attendance_id'      : event,
+                'date'               : register.value.date,
+                'notes'              : register.value.notes,
+                'pupil_id'           : register.value.pupil_id,
+                'register_column_id' : register.value.register_column_id,
+                'width'              : register.value.width,
+            }
+
+            //emit to update total attendance type
+            let temp = { new_reg: new_reg, old_reg: register.value }
+            update_totals( temp )
+            register.value.attendance_id = event
+
+            axios.post('/boarder/store/attendance', new_reg )
+                .then((res) => {
+                    console.log(res.data.message)
+                })
+                .catch((error) => {
+                    console.log( error )
+                })
+        } 
+        else{
+            register.value.attendance_id = event
+            update_totals_col( register.value )
         }
-
-        //emit to update total attendance type
-        let temp = { new_reg: new_reg, old_reg: register.value }
-        update_totals( temp )
-        register.value.attendance_id = event
-
-        axios.post('/boarder/store/attendance', new_reg )
-            .then((res) => {
-                console.log(res.data.message)
-            })
-            .catch((error) => {
-                console.log( error )
-            })
                 
-        register.value    = []
-        on_register.value = false
+        register.value          = []
+        on_register.value       = false
+        on_register_mode.value  = ''
     }
 
     function toggle_weekly( event ){
@@ -432,7 +451,15 @@
                             </td>
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
                                 <template v-for="(col,j) in headers.cols[i].cols" :key="col.id" >
-                                    <BAHeaderA v-if="col.width==82" class="relative" @click="on_reg=!on_reg" :attendances="attendances" :on_mis_data="on_mis_data" :header="header" :col="col" :term="term" @batch="update_totals_col($event)" :class="[header.status!='current'&&!on_weekly ? 'hidden' : '', j==header.cols.length-1?'border-r':'']">
+                                    <BAHeaderA 
+                                        v-if="col.width==82" 
+                                        :header="header" 
+                                        :col="col" 
+                                        :term="term" 
+                                        @toggle="show_register_option( $event, 'col_register_'+i+'_'+j, 'multi' )" 
+                                        :class="[header.status!='current'&&!on_weekly ? 'hidden' : '', j==header.cols.length-1?'border-r':'']"
+                                        :id="'col_register_'+i+'_'+j"
+                                    >
                                         {{col.column_name}}
                                     </BAHeaderA>
                                     <BAHeaderB v-else :class="on_mis_data&&on_weekly || header.status=='current'&&on_mis_data || on_mis_data&&on_weekly&&header.status=='current' ? '' : 'hidden' ">{{col.column_name}}</BAHeaderB>
@@ -470,7 +497,7 @@
                                     :register="register" 
                                     :attendances="attendances" 
                                     @note="show_note( register, $event )" 
-                                    @showlist="show_register_option( $event, 'register_'+i+'_'+register.pupil_id )" 
+                                    @showlist="show_register_option( $event, 'register_'+i+'_'+register.pupil_id, 'single' )" 
                                     :class="[
                                         register.status!='current'&&!on_weekly ? 'hidden' : '', 
                                         isRegEnd(register,i,boarder.registers)?'border-r':''
