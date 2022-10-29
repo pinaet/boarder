@@ -16,11 +16,17 @@ class TestsController extends Controller
     public function index()
     {
         /**
+         * date
+         */
+        dd(date('Y-m-d H:i:s'));
+
+
+
+        /**
          * generate columns
          */
         (new SyncController)->syncSchoolAttendance('');//'2022-10-24'
         dd('syncSchoolAttendance: done');
-
 
 
 

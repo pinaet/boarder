@@ -606,148 +606,148 @@
                         
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Attendance Options -->
-            <BARegisterOption id="register_option" v-show="on_register" 
-                :attendances="attendances"
-                class="z-[1030]"
-                :style="on_register_style"
-                @toggle="store_register($event)">
-            </BARegisterOption>
-
-            <!-- Notes Modal -->
-            <div v-if="on_note">
-                <!-- Notes Container -->
-                <div class="fixed left-0 top-0 h-full w-full z-[1051] flex justify-center mt-9 sm:mt-20">
-                    <div class="left-0 top-0 w-[511px] h-fit min-h-[193px] bg-note-gray-1 rounded-lg overflow-clip shadow-md">
-                        <div class="bg-harrow-blue-100 h-[33px]">
-                            <div class="text-white flex justify-center items-center h-full">
-                                <div>
-                                    <!-- sticky-note -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[16px] h-[16px]" viewBox="0 0 448 512"><path fill="#fff" d="M312 320h136V56c0-13.3-10.7-24-24-24H24C10.7 32 0 42.7 0 56v400c0 13.3 10.7 24 24 24h264V344c0-13.2 10.8-24 24-24zm129 55l-98 98c-4.5 4.5-10.6 7-17 7h-6V352h128v6.1c0 6.3-2.5 12.4-7 16.9z"/></svg>
-                                </div>
-                                <div class="pl-2 font-bold">Notes</div>
-                            </div>
-                        </div>
-                        <div class="py-[14px] px-1 sm:px-[17px]">
-                            <textarea class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2" v-model="notes" placeholder="Write some notes..."></textarea>
-                            <div class="flex justify-end">
-                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 border border-[#c3c8d2] bg-[#828282]" @click="store_note(false)">Cancel</button>
-                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 ml-2 mr-[1px] border border-[#c3c8d2] bg-harrow-gold-100" @click="store_note(true)">Save</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Boarder Modal-->
-            <div v-if="on_boarder">
-                <!-- Boarder Container -->
-                <div class="fixed left-0 top-0 h-full w-full z-[1051] flex justify-center mt-2">
-                    <div class="left-0 top-0 w-[493px] sm:w-[511px] bg-note-gray-1 rounded-lg shadow-md min-h-[565px] h-[94vh] ">
-                        <div class="bg-harrow-blue-100 h-[33px] rounded-t-lg">
-                            <div class="text-white flex justify-center items-center h-full">
-                                <div>
-                                    <!-- user-alt -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" viewBox="0 0 512 512"><path fill="#fff" d="M256 288c79.5 0 144-64.5 144-144S335.5 0 256 0 112 64.5 112 144s64.5 144 144 144zm128 32h-55.1c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16H128C57.3 320 0 377.3 0 448v16c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48v-16c0-70.7-57.3-128-128-128z"/></svg>
-                                </div>
-                                <div class="pl-2 font-bold">Boarder</div>
-                            </div>
-                        </div>
-                        <div class="pt-[14px] px-3 sm:px-[23px]">
-                            <div class="w-[465px] bg-white border border-harrow-gold-100 rounded-lg text-info-gray-3 h-[465px] overflow-y-scroll">
-                                <div class="w-full h-[288px] flex px-[18px] pt-[22px] border-b border-harrow-gold-100">
-                                    <div class="overflow-clip pr-[18px] w-[165px]">
-                                        <img class="w-[147px] h-[191px] border-[#C3C8D2] bg-slate-50 object-cover object-top rounded-lg border" :src="c_boarder.photo.length<20? '/images/anonymous.png' : 'data:image/png;base64,' +  c_boarder.photo"/>
-                                    </div>
-                                    <div class=" pl-[18px] flex-col w-[282px]">
-                                        <table class="w-full">
-                                            <tr class="w-full">
-                                                <td colspan="2">
-                                                    <BALabelInfo label="Admission No">{{c_boarder.admission_no}}</BALabelInfo>
-                                                </td>
-                                            </tr>
-                                            <tr class=" pt-2.5">
-                                                <td class="w-[141px] pt-2.5">
-                                                    <BALabelInfo label="Prefered Forename">{{c_boarder.prefered_forename}}</BALabelInfo>
-                                                </td>
-                                                <td class="w-[141px] pt-2.5 max-w-[120px]">
-                                                    <BALabelInfo label="Surname">{{c_boarder.surname}}</BALabelInfo>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="pt-2.5">
-                                                    <BALabelInfo label="Year Group">{{c_boarder.year_group}}</BALabelInfo>
-                                                </td>
-                                                <td class="pt-2.5">
-                                                    <BALabelInfo label="Form">{{c_boarder.form}}</BALabelInfo>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="pt-2.5">
-                                                    <BALabelInfo label="Gender">{{c_boarder.gender=='M'?'Male':'Female'}}</BALabelInfo>
-                                                </td>
-                                                <td class="pt-2.5">
-                                                    <BAInputInfo :value="c_boarder.telephone" @trigger="c_boarder.telephone=$event">Telephone:</BAInputInfo>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2" class="pt-2.5">
-                                                    <BAInputInfo :value="c_boarder.offsite_permission" @trigger="c_boarder.offsite_permission=$event">Offsite Permission:</BAInputInfo>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="w-full h-[75px] flex px-[18px] pt-3 ">
-                                    <div class="h-full w-[165px] flex items-start pl-[22px] flex-col">
-                                        <BALabelInfo label="Boarder Type">{{c_boarder.boarder_type}}</BALabelInfo>
-                                    </div>
-                                    <div class="h-full pl-[18px] flex-col w-[282px]">
-                                        <BASelect :value="c_boarder.building_name" :data="buildings" @trigger="c_boarder.building_name=$event">Building:</BASelect>
-                                    </div>
-                                </div>
-                                <div v-for="(contact, i) in c_boarder.contacts" :key="contact.contact_id" class="w-full h-[100px] flex border-t border-harrow-gold-100">
-                                    <div class="h-full min-w-[173px] flex flex-col justify-center items-center bg-harrow-blue-100 text-white font-bold" :class="i==c_boarder.contacts.length-1?'rounded-bl-lg' : '' ">
-                                        <div>{{contact.relationship}}</div>
-                                        <div class="flex justify-center items-center mt-4">
-                                            <div class="text-xs font-normal mr-[2px]">Tel.</div>
-                                            <div>{{contact.contact_no?contact.contact_no:'(Not available)'}}</div>
-                                        </div>
-                                    </div>
-                                    <div class="h-full flex flex-col justify-evenly pl-4 max-w-[267px] rounded-br-lg">
-                                        <BALabelInfo label="Contact Name" >{{contact.contact_name?contact.contact_name:'(Not available)'}}</BALabelInfo>
-                                        <BALabelInfo label="Email" class="">{{contact.email?contact.email:'(Not available)'}}</BALabelInfo>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex justify-between">
-                                <a class="w-[181px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-harrow-gold-100 flex justify-center items-center" 
-                                target="_blank" 
-                                :href="c_boarder.absence_request_url">
-                                <!-- briefcase -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 mr-2" viewBox="0 0 512 512"><path fill="white" d="M320 336c0 8.84-7.16 16-16 16h-96c-8.84 0-16-7.16-16-16v-48H0v144c0 25.6 22.4 48 48 48h416c25.6 0 48-22.4 48-48V288H320v48zm144-208h-80V80c0-25.6-22.4-48-48-48H176c-25.6 0-48 22.4-48 48v48H48c-25.6 0-48 22.4-48 48v80h512v-80c0-25.6-22.4-48-48-48zm-144 0H192V96h128v32z"/></svg>
-                                    Absence Request
-                                </a>
-                                <div class="flex justify-end">
-                                    <button class="w-[81px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-[#828282]" @click="on_boarder=false">Cancel</button>
-                                    <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-3 mb-3 mr-4 border border-[#c3c8d2] bg-harrow-gold-100" @click="update_boarder()">Save</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Loading Modal -->
-            <BALoading v-if="on_loading">
-            </BALoading>
-
-            <!-- Backdrop -->
-            <BABlackdrop v-if="on_note || on_boarder || on_loading">
-            </BABlackdrop>
-            
+            </div>            
         </div>
+        
+
+        <!-- Attendance Options -->
+        <BARegisterOption id="register_option" v-show="on_register" 
+            :attendances="attendances"
+            class="z-[1030]"
+            :style="on_register_style"
+            @toggle="store_register($event)">
+        </BARegisterOption>
+
+        <!-- Notes Modal -->
+        <div v-if="on_note">
+            <!-- Notes Container -->
+            <div class="fixed left-0 top-0 h-full w-full z-[1051] flex justify-center mt-9 sm:mt-20">
+                <div class="left-0 top-0 w-[511px] h-fit min-h-[193px] bg-note-gray-1 rounded-lg overflow-clip shadow-md">
+                    <div class="bg-harrow-blue-100 h-[33px]">
+                        <div class="text-white flex justify-center items-center h-full">
+                            <div>
+                                <!-- sticky-note -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-[16px] h-[16px]" viewBox="0 0 448 512"><path fill="#fff" d="M312 320h136V56c0-13.3-10.7-24-24-24H24C10.7 32 0 42.7 0 56v400c0 13.3 10.7 24 24 24h264V344c0-13.2 10.8-24 24-24zm129 55l-98 98c-4.5 4.5-10.6 7-17 7h-6V352h128v6.1c0 6.3-2.5 12.4-7 16.9z"/></svg>
+                            </div>
+                            <div class="pl-2 font-bold">Notes</div>
+                        </div>
+                    </div>
+                    <div class="py-[14px] px-1 sm:px-[17px]">
+                        <textarea class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2" v-model="notes" placeholder="Write some notes..."></textarea>
+                        <div class="flex justify-end">
+                            <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 border border-[#c3c8d2] bg-[#828282]" @click="store_note(false)">Cancel</button>
+                            <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 ml-2 mr-[1px] border border-[#c3c8d2] bg-harrow-gold-100" @click="store_note(true)">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boarder Modal-->
+        <div v-if="on_boarder">
+            <!-- Boarder Container -->
+            <div class="fixed left-0 top-0 h-full w-full z-[1051] flex justify-center mt-2">
+                <div class="left-0 top-0 w-[493px] sm:w-[511px] bg-note-gray-1 rounded-lg shadow-md min-h-[565px] h-[94vh] ">
+                    <div class="bg-harrow-blue-100 h-[33px] rounded-t-lg">
+                        <div class="text-white flex justify-center items-center h-full">
+                            <div>
+                                <!-- user-alt -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" viewBox="0 0 512 512"><path fill="#fff" d="M256 288c79.5 0 144-64.5 144-144S335.5 0 256 0 112 64.5 112 144s64.5 144 144 144zm128 32h-55.1c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16H128C57.3 320 0 377.3 0 448v16c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48v-16c0-70.7-57.3-128-128-128z"/></svg>
+                            </div>
+                            <div class="pl-2 font-bold">Boarder</div>
+                        </div>
+                    </div>
+                    <div class="pt-[14px] px-3 sm:px-[23px]">
+                        <div class="w-[465px] bg-white border border-harrow-gold-100 rounded-lg text-info-gray-3 h-[465px] overflow-y-scroll">
+                            <div class="w-full h-[288px] flex px-[18px] pt-[22px] border-b border-harrow-gold-100">
+                                <div class="overflow-clip pr-[18px] w-[165px]">
+                                    <img class="w-[147px] h-[191px] border-[#C3C8D2] bg-slate-50 object-cover object-top rounded-lg border" :src="c_boarder.photo.length<20? '/images/anonymous.png' : 'data:image/png;base64,' +  c_boarder.photo"/>
+                                </div>
+                                <div class=" pl-[18px] flex-col w-[282px]">
+                                    <table class="w-full">
+                                        <tr class="w-full">
+                                            <td colspan="2">
+                                                <BALabelInfo label="Admission No">{{c_boarder.admission_no}}</BALabelInfo>
+                                            </td>
+                                        </tr>
+                                        <tr class=" pt-2.5">
+                                            <td class="w-[141px] pt-2.5">
+                                                <BALabelInfo label="Prefered Forename">{{c_boarder.prefered_forename}}</BALabelInfo>
+                                            </td>
+                                            <td class="w-[141px] pt-2.5 max-w-[120px]">
+                                                <BALabelInfo label="Surname">{{c_boarder.surname}}</BALabelInfo>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="pt-2.5">
+                                                <BALabelInfo label="Year Group">{{c_boarder.year_group}}</BALabelInfo>
+                                            </td>
+                                            <td class="pt-2.5">
+                                                <BALabelInfo label="Form">{{c_boarder.form}}</BALabelInfo>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="pt-2.5">
+                                                <BALabelInfo label="Gender">{{c_boarder.gender=='M'?'Male':'Female'}}</BALabelInfo>
+                                            </td>
+                                            <td class="pt-2.5">
+                                                <BAInputInfo :value="c_boarder.telephone" @trigger="c_boarder.telephone=$event">Telephone:</BAInputInfo>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="pt-2.5">
+                                                <BAInputInfo :value="c_boarder.offsite_permission" @trigger="c_boarder.offsite_permission=$event">Offsite Permission:</BAInputInfo>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="w-full h-[75px] flex px-[18px] pt-3 ">
+                                <div class="h-full w-[165px] flex items-start pl-[22px] flex-col">
+                                    <BALabelInfo label="Boarder Type">{{c_boarder.boarder_type}}</BALabelInfo>
+                                </div>
+                                <div class="h-full pl-[18px] flex-col w-[282px]">
+                                    <BASelect :value="c_boarder.building_name" :data="buildings" @trigger="c_boarder.building_name=$event">Building:</BASelect>
+                                </div>
+                            </div>
+                            <div v-for="(contact, i) in c_boarder.contacts" :key="contact.contact_id" class="w-full h-[100px] flex border-t border-harrow-gold-100">
+                                <div class="h-full min-w-[173px] flex flex-col justify-center items-center bg-harrow-blue-100 text-white font-bold" :class="i==c_boarder.contacts.length-1?'rounded-bl-lg' : '' ">
+                                    <div>{{contact.relationship}}</div>
+                                    <div class="flex justify-center items-center mt-4">
+                                        <div class="text-xs font-normal mr-[2px]">Tel.</div>
+                                        <div>{{contact.contact_no?contact.contact_no:'(Not available)'}}</div>
+                                    </div>
+                                </div>
+                                <div class="h-full flex flex-col justify-evenly pl-4 max-w-[267px] rounded-br-lg">
+                                    <BALabelInfo label="Contact Name" >{{contact.contact_name?contact.contact_name:'(Not available)'}}</BALabelInfo>
+                                    <BALabelInfo label="Email" class="">{{contact.email?contact.email:'(Not available)'}}</BALabelInfo>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <a class="w-[181px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-harrow-gold-100 flex justify-center items-center" 
+                            target="_blank" 
+                            :href="c_boarder.absence_request_url">
+                            <!-- briefcase -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 mr-2" viewBox="0 0 512 512"><path fill="white" d="M320 336c0 8.84-7.16 16-16 16h-96c-8.84 0-16-7.16-16-16v-48H0v144c0 25.6 22.4 48 48 48h416c25.6 0 48-22.4 48-48V288H320v48zm144-208h-80V80c0-25.6-22.4-48-48-48H176c-25.6 0-48 22.4-48 48v48H48c-25.6 0-48 22.4-48 48v80h512v-80c0-25.6-22.4-48-48-48zm-144 0H192V96h128v32z"/></svg>
+                                Absence Request
+                            </a>
+                            <div class="flex justify-end">
+                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-[#828282]" @click="on_boarder=false">Cancel</button>
+                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-3 mb-3 mr-4 border border-[#c3c8d2] bg-harrow-gold-100" @click="update_boarder()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Modal -->
+        <BALoading v-if="on_loading">
+        </BALoading>
+
+        <!-- Backdrop -->
+        <BABlackdrop v-if="on_note || on_boarder || on_loading">
+        </BABlackdrop>
     </AuthenticatedLayout>
 </template>

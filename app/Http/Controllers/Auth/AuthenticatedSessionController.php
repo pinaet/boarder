@@ -102,7 +102,6 @@ class AuthenticatedSessionController extends Controller
                             $user = User::where('email', $email)->first();
                             if ($user) {
                                 $user->username = $username;
-                                $user->save();
                             }
                         }
 
@@ -113,6 +112,9 @@ class AuthenticatedSessionController extends Controller
                             request()['password'] = bcrypt( $pass );
                             $user = User::create(request()->all());
                         }
+
+                        $user->last_login = date('Y-m-d H:i:s');
+                        $user->save();
 
                         Auth::login( $user );
 

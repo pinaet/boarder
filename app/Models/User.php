@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Role;
 use App\Models\Chirp;
+use App\Models\BlockedUser;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +26,8 @@ class User extends Authenticatable
         'username',
         'telephone',
         'password',
+        'photo',
+        'last_login',
     ];
 
     /**
@@ -67,5 +70,10 @@ class User extends Authenticatable
     public function allowed()
     {
         return $this->hasOne(AllowedUser::class, 'email');
+    }
+
+    public function blocked()
+    {
+        return $this->hasOne(BlockedUser::class, 'email', 'email');
     }
 }
