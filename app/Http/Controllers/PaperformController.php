@@ -41,6 +41,7 @@ class PaperformController extends Controller
             config( $config_path.'year_group'   ) => $boarder->year_group,//'reception',//$boarder->YearGroup,
             config( $config_path.'form'         ) => $boarder->form,
             config( $config_path.'boarder'      ) => 'Yes',
+            config( $config_path.'boarder_house') => $boarder->building_name,
             config( $config_path.'nickname'     ) => $boarder->prefered_forename,
             config( $config_path.'parent_name'  ) => $user->name,  
             config( $config_path.'parent_email' ) => $user->email,

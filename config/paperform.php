@@ -16,6 +16,7 @@ return [
         'year_group'                => 'year_group',        
         'form'                      => 'form',      
         'boarder'                   => 'boarder',
+        'boarder_house'             => 'boarder_house',
         'nickname'                  => 'nickname',
         'parent_name'               => 'parent_name',   
         'parent_email'              => 'parent_email',      

@@ -471,7 +471,7 @@
                         <tr v-for="(boarder, index) in boarders" :key="boarder.pupil_id" class="sticky flex h-[66px]" :style="['z-index:'+(boarders.length-index),on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
                             <td class="w-[232px] sticky left-0 z-20 pt-1 text-sm text-info-gray-2 border-l border-b bg-white">  
                                 <div class="p-2.5 pr-0 flex justify-center items-center">
-                                    <img class="object-cover object-top w-10 h-10 bg-slate-300 rounded-full mr-2.5 " :src="'data:image/png;base64,' +  boarder.photo" />
+                                    <img class="object-cover object-top w-10 h-10 bg-slate-50 rounded-full mr-2.5 " :src="boarder.photo.length<20? '/images/anonymous.png' : 'data:image/png;base64,' +  boarder.photo" />
                                     <div class="text-left flex-col w-[145px]">
                                         <div class="font-bold truncate">{{boarder.prefered_forename+' '+boarder.surname}}</div>
                                         <div class="text-info-gray-1">{{boarder.year_group}}, {{boarder.form}}, {{boarder.gender=='M'?'Male':'Female'}}</div>
@@ -593,7 +593,7 @@
                             <div class="w-[465px] bg-white border border-harrow-gold-100 rounded-lg text-info-gray-3 h-[465px] overflow-y-scroll">
                                 <div class="w-full h-[288px] flex px-[18px] pt-[22px] border-b border-harrow-gold-100">
                                     <div class="overflow-clip pr-[18px] w-[165px]">
-                                        <img class="w-[147px] h-[191px] border-[#C3C8D2] bg-slate-50 object-cover object-top rounded-lg border" :src="'data:image/png;base64,' +  c_boarder.photo"/>
+                                        <img class="w-[147px] h-[191px] border-[#C3C8D2] bg-slate-50 object-cover object-top rounded-lg border" :src="c_boarder.photo.length<20? '/images/anonymous.png' : 'data:image/png;base64,' +  c_boarder.photo"/>
                                     </div>
                                     <div class=" pl-[18px] flex-col w-[282px]">
                                         <table class="w-full">
@@ -657,11 +657,11 @@
                                 </div>
                             </div>
                             <div class="flex justify-between">
-                                <a class="w-[181px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-harrow-blue-100 flex justify-center items-center" 
+                                <a class="w-[181px] h-[29px] rounded-md font-bold text-white m-3 border border-[#c3c8d2] bg-harrow-gold-100 flex justify-center items-center" 
                                 target="_blank" 
                                 :href="c_boarder.absence_request_url">
                                 <!-- briefcase -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2 mr-2" viewBox="0 0 512 512"><path fill="white" d="M320 336c0 8.84-7.16 16-16 16h-96c-8.84 0-16-7.16-16-16v-48H0v144c0 25.6 22.4 48 48 48h416c25.6 0 48-22.4 48-48V288H320v48zm144-208h-80V80c0-25.6-22.4-48-48-48H176c-25.6 0-48 22.4-48 48v48H48c-25.6 0-48 22.4-48 48v80h512v-80c0-25.6-22.4-48-48-48zm-144 0H192V96h128v32z"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 mr-2" viewBox="0 0 512 512"><path fill="white" d="M320 336c0 8.84-7.16 16-16 16h-96c-8.84 0-16-7.16-16-16v-48H0v144c0 25.6 22.4 48 48 48h416c25.6 0 48-22.4 48-48V288H320v48zm144-208h-80V80c0-25.6-22.4-48-48-48H176c-25.6 0-48 22.4-48 48v48H48c-25.6 0-48 22.4-48 48v80h512v-80c0-25.6-22.4-48-48-48zm-144 0H192V96h128v32z"/></svg>
                                     Absence Request
                                 </a>
                                 <div class="flex justify-end">
