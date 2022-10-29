@@ -87,7 +87,7 @@
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Registration
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('chirps.index')" :active="route().current('chirps.index')">
+                        <ResponsiveNavLink :href="route('setting')" :active="route().current('setting') || route().current('setting.staff')">
                             Settings
                         </ResponsiveNavLink>
                     </div>

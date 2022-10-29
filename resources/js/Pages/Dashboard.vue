@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from 'vue'
+    import { ref, computed } from 'vue'
     import AuthenticatedLayout   from '@/Layouts/AuthenticatedLayout.vue';
     import BASwitch              from '@/Components/BASwitch.vue';
     import BABuildingDropdown    from '@/Components/BABuildingDropdown.vue';
@@ -35,6 +35,8 @@
     const on_loading             = ref(false)
     const on_register            = ref(false)
     const on_register_style      = ref('')
+    const on_responsive          = ref(false)
+    const on_small_window        = ref(false)
      
     const props                  = defineProps([
                                         'boarders',
@@ -55,6 +57,24 @@
     term.value                   = props.term
     headers.value                = props.headers
     building.value               = props.building_name
+    
+
+
+    /*
+    * responsive 
+    */
+    on_small_window.value = window.innerWidth <=640 ? true : false
+    window.addEventListener('resize', function(event){
+        on_small_window.value = event.currentTarget.innerWidth <=640 ? true : false
+    }, true);
+
+    /*
+     * computed
+     */
+    const add_small_window = computed(()=>{
+        //hide column Building(114px) and Type(78px)
+        return on_small_window.value ?  114+78 : 0       
+    })
 
     //functions
     function show_register_option( event, element_id, mode ){
@@ -372,32 +392,50 @@
         
         <!-- Page Heading -->
         <header class="bg-white shadow">
-            <div class="max-w-7xl h-[50px] mx-auto px-4 sm:px-6 lg:px-8 flex justify-start items-center space-x-6">
-                <h4 class="font-semibold text-xl text-gray-800 ">
-                    Registration
-                </h4>
-                <div class="flex justify-start items-center h-full">
-                    <div class="text-gray-400 text-sm mr-1">Building:</div>
-                    <BABuildingDropdown :data="building_permits" @toggle="change_building($event)">{{building}}</BABuildingDropdown>                
-                </div>
-                <div class="flex justify-start items-center">
-                    <div class="text-gray-400 text-sm">Week:</div>
-                    <div class="flex justify-evenly items-center">
-                        <div class="pt-1 mx-2 ">
-                            <button class="w-5 h-5 shadow-md rounded-full border-2 bg-white hover:bg-harrow-gold-20" @click="change_week( 'previous' )">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#828282" d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256S114.6 512 256 512s256-114.6 256-256zM116.7 244.7l112-112c4.6-4.6 11.5-5.9 17.4-3.5s9.9 8.3 9.9 14.8l0 64 96 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32l-96 0 0 64c0 6.5-3.9 12.3-9.9 14.8s-12.9 1.1-17.4-3.5l-112-112c-6.2-6.2-6.2-16.4 0-22.6z"/></svg>
-                            </button>
-                        </div>
-                        <p class="w-[320px] text-base text-center font-bold text-harrow-gold-100">{{dates[0].date_long +' - '+ dates[6].date_long}}</p>
-                        <div class="pt-1 mx-2 ">
-                            <button class="w-5 h-5 shadow-md rounded-full border-2 bg-white hover:bg-harrow-gold-20" @click="change_week( 'next' )">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#828282" d="M0 256C0 397.4 114.6 512 256 512s256-114.6 256-256S397.4 0 256 0S0 114.6 0 256zm395.3 11.3l-112 112c-4.6 4.6-11.5 5.9-17.4 3.5s-9.9-8.3-9.9-14.8l0-64-96 0c-17.7 0-32-14.3-32-32l0-32c0-17.7 14.3-32 32-32l96 0 0-64c0-6.5 3.9-12.3 9.9-14.8s12.9-1.1 17.4 3.5l112 112c6.2 6.2 6.2 16.4 0 22.6z"/></svg>
-                            </button>
+            <div class="max-w-7xl min-h-[50px] h-fit mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-start sm:items-center items-start space-x-6 space-y-2 sm:space-y-0 sm:py-0 sm:pb-0 py-1">
+                <div class="w-full sm:w-fit flex justify-between items-center">
+                    <div class="flex justify-between items-center space-x-6">
+                        <h4 class="font-semibold text-xl text-gray-800 ">
+                            Registration
+                        </h4>
+                        <div class="flex justify-start items-center h-full">
+                            <div class="text-gray-400 text-sm mr-1">Building:</div>
+                            <BABuildingDropdown :data="building_permits" @toggle="change_building($event)">{{building}}</BABuildingDropdown>                
                         </div>
                     </div>
+                    <!-- Hamburger -->
+                    <div class="-mr-2 sm:hidden flex items-center ">
+                        <button @click="on_responsive = ! on_responsive" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path :class="{'hidden': on_responsive, 'inline-flex': ! on_responsive }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                <path :class="{'hidden': ! on_responsive, 'inline-flex': on_responsive }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <BASwitch :is-on="on_weekly" label="Weekly" @toggle="(value) => toggle_weekly( value )" />
-                <BASwitch :is-on="on_mis_data" :label="'Show Attendance From ' + $page.props.app.mis" @toggle="toggle_mis( $event )" />
+                <div
+                    :class="{'flex': on_responsive, 'hidden': ! on_responsive}" 
+                    class="sm:hidden md:flex flex-col sm:flex-row justify-start sm:items-center items-start space-x-0 sm:space-x-6 space-y-2 sm:space-y-0 sm:py-0 sm:pb-0 py-1 pb-2"
+                    >
+                    <div class="flex justify-start items-center">
+                        <div class="text-gray-400 text-sm">Week:</div>
+                        <div class="flex justify-evenly items-center">
+                            <div class="pt-1 mx-2 ">
+                                <button class="w-5 h-5 shadow-md rounded-full border-2 bg-white hover:bg-harrow-gold-20" @click="change_week( 'previous' )">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#828282" d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256S114.6 512 256 512s256-114.6 256-256zM116.7 244.7l112-112c4.6-4.6 11.5-5.9 17.4-3.5s9.9 8.3 9.9 14.8l0 64 96 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32l-96 0 0 64c0 6.5-3.9 12.3-9.9 14.8s-12.9 1.1-17.4-3.5l-112-112c-6.2-6.2-6.2-16.4 0-22.6z"/></svg>
+                                </button>
+                            </div>
+                            <p class="w-[320px] text-base text-center font-bold text-harrow-gold-100">{{dates[0].date_long +' - '+ dates[6].date_long}}</p>
+                            <div class="pt-1 mx-2 ">
+                                <button class="w-5 h-5 shadow-md rounded-full border-2 bg-white hover:bg-harrow-gold-20" @click="change_week( 'next' )">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#828282" d="M0 256C0 397.4 114.6 512 256 512s256-114.6 256-256S397.4 0 256 0S0 114.6 0 256zm395.3 11.3l-112 112c-4.6 4.6-11.5 5.9-17.4 3.5s-9.9-8.3-9.9-14.8l0-64-96 0c-17.7 0-32-14.3-32-32l0-32c0-17.7 14.3-32 32-32l96 0 0-64c0-6.5 3.9-12.3 9.9-14.8s12.9-1.1 17.4 3.5l112 112c6.2 6.2 6.2 16.4 0 22.6z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <BASwitch :is-on="on_weekly" label="Weekly" @toggle="(value) => toggle_weekly( value )" />
+                    <BASwitch :is-on="on_mis_data" :label="'Show Attendance From ' + $page.props.app.mis" @toggle="toggle_mis( $event )" />
+                </div>
             </div>
         </header>
 
@@ -414,10 +452,13 @@
         <!-- Boarder Columns -->
         <div class="flex flex-col h-[78vh] max-w-7xl mx-auto sm:pl-6 sm:pr-6 lg:pl-8 ">
             <div class="w-full flex-grow overflow-auto rounded" :class="on_mis_data ? '  border-harrow-gold-100' : ''">
-                <table class="relative table-fixed border-collapse " :style="[on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
+                <table class="relative table-fixed border-collapse " :style="[on_mis_data? 'width:'+(headers.max_w-add_small_window): 'width:'+(headers.min_w-add_small_window)]">
                     <thead class="sticky top-0" :style="'z-index:'+(boarders.length+1)">
-                        <tr class="h-[31px] text-sm text-info-gray-1 flex" :style="[on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
-                            <th colspan="3"  class="w-[424px] sticky top-0 left-0 font-normal text-center bg-fill-gray-1 border border-stroke-gray-1 flex justify-center items-center" :style="'z-index:'+(boarders.length+2)">
+                        <tr class="h-[31px] text-sm text-info-gray-1 flex" :style="[on_mis_data? 'width:'+(headers.max_w-add_small_window): 'width:'+(headers.min_w-add_small_window)]">
+                            <th colspan="3" 
+                                :class="{'w-[232px]': on_small_window, 'w-[424px]': ! on_small_window}" 
+                                class="sticky top-0 left-0 font-normal text-center bg-fill-gray-1 border border-stroke-gray-1 flex justify-center items-center" :style="'z-index:'+(boarders.length+2)"
+                            >
                                 {{boarders.length}} Boarders
                             </th>
                             <th v-for="col in headers.cols" :key="col.id" :colspan="col.colspan" class="sticky top-0 font-normal text-center border border-stroke-gray-2 flex justify-center items-center" :style="[on_mis_data? 'width: '+col.max_w+'px': 'width: '+col.min_w+'px', col.status=='current' ? 'background-color: '+col.color : col.id%2==0?'background-color: #F2F2F2':'background-color: #E0E0E0']" :class="col.status!='current'&&!on_weekly ? 'hidden' : ''">
@@ -426,22 +467,33 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class=" sticky top-[31px] flex border-stroke-gray-1 " :style="['z-index:'+(boarders.length+1), on_mis_data? 'height:66px; width:'+headers.max_w: 'height:31px; width:'+headers.min_w]">
-                            <td class="w-[232px] h-full sticky left-0 text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1 border-l border-b" :style="'z-index:'+(boarders.length+2)">
+                        <tr class=" sticky top-[31px] flex border-stroke-gray-1 " 
+                            :style="['z-index:'+(boarders.length+1), on_mis_data? 'height:66px; width:'+(headers.max_w-add_small_window): 'height:31px; width:'+(headers.min_w-add_small_window)]"
+                        >
+                            <td 
+                                :class="{'border-r': on_small_window}" 
+                                class="w-[232px] h-full sticky left-0 text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1 border-l border-b" :style="'z-index:'+(boarders.length+2)"
+                            >
                                 <div class="flex w-auto justify-center items-center">
                                     <!-- user-alt -->
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-[15px] h-[15px]"><path fill="#4F4F4F" d="M256 288c79.5 0 144-64.5 144-144S335.5 0 256 0S112 64.5 112 144s64.5 144 144 144zm-94.7 32C72.2 320 0 392.2 0 481.3c0 17 13.8 30.7 30.7 30.7H481.3c17 0 30.7-13.8 30.7-30.7C512 392.2 439.8 320 350.7 320H161.3z"/></svg>
                                     <p class="font-bold ml-1 pt-[2px]">Name</p>
                                 </div>
                             </td>
-                            <td class="w-[114px] h-full sticky left-[232px] text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1 border-b" :style="'z-index:'+(boarders.length+2)">
+                            <td 
+                                :class="{'hidden': on_small_window, 'w-[114px]': ! on_small_window}" 
+                                class="h-full sticky left-[232px] text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1 border-b" :style="'z-index:'+(boarders.length+2)"
+                            >
                                 <div class="flex w-auto justify-center items-center">
                                     <!-- home -->
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="w-[18px] h-[18px]"><path fill="#4F4F4F" d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg>
                                     <p class="font-bold ml-1 pt-[2px]">Building</p>
                                 </div>
                             </td>
-                            <td class="w-[78px] h-full sticky left-[346px] pt-1 text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1 border-b border-r" :style="'z-index:'+(boarders.length+2)">
+                            <td 
+                                :class="{'hidden': on_small_window, 'w-[78px]': ! on_small_window}" 
+                                class="h-full sticky left-[346px] pt-1 text-sm flex justify-center items-center text-info-gray-2 bg-fill-gray-1 border-b border-r" :style="'z-index:'+(boarders.length+2)"
+                            >
                                 <div class="flex w-auto justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="w-[18px] h-[18px]"><path fill="#4F4F4F" d="M184 48H328c4.4 0 8 3.6 8 8V96H176V56c0-4.4 3.6-8 8-8zm-56 8V96H64C28.7 96 0 124.7 0 160v96H192 352h8.2c32.3-39.1 81.1-64 135.8-64c5.4 0 10.7 .2 16 .7V160c0-35.3-28.7-64-64-64H384V56c0-30.9-25.1-56-56-56H184c-30.9 0-56 25.1-56 56zM320 352H224c-17.7 0-32-14.3-32-32V288H0V416c0 35.3 28.7 64 64 64H360.2C335.1 449.6 320 410.5 320 368c0-5.4 .2-10.7 .7-16l-.7 0zm320 16c0-79.5-64.5-144-144-144s-144 64.5-144 144s64.5 144 144 144s144-64.5 144-144zM496 288c8.8 0 16 7.2 16 16v48h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H496c-8.8 0-16-7.2-16-16V304c0-8.8 7.2-16 16-16z"/></svg>
                                     <p class="font-bold ml-1 pt-[2px]">Type</p>
@@ -468,8 +520,11 @@
 
 
                         <!-- Data -->
-                        <tr v-for="(boarder, index) in boarders" :key="boarder.pupil_id" class="sticky flex h-[66px]" :style="['z-index:'+(boarders.length-index),on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
-                            <td class="w-[232px] sticky left-0 z-20 pt-1 text-sm text-info-gray-2 border-l border-b bg-white">  
+                        <tr v-for="(boarder, index) in boarders" :key="boarder.pupil_id" class="sticky flex h-[66px]" :style="['z-index:'+(boarders.length-index),on_mis_data? 'width:'+(headers.max_w-add_small_window): 'width:'+(headers.min_w-add_small_window)]">
+                            <td 
+                                :class="{'border-r pr-2': on_small_window}" 
+                                class="w-[232px] sticky left-0 z-20 pt-1 text-sm text-info-gray-2 border-l border-b bg-white"
+                            >  
                                 <div class="p-2.5 pr-0 flex justify-center items-center">
                                     <img class="object-cover object-top w-10 h-10 bg-slate-50 rounded-full mr-2.5 " :src="boarder.photo.length<20? '/images/anonymous.png' : 'data:image/png;base64,' +  boarder.photo" />
                                     <div class="text-left flex-col w-[145px]">
@@ -481,10 +536,16 @@
                                     </button>
                                 </div>
                             </td>
-                            <td class="w-[114px] sticky left-[232px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-white border-b">
+                            <td 
+                                :class="{'hidden': on_small_window, 'w-[114px]': ! on_small_window}" 
+                                class="sticky left-[232px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-white border-b"
+                            >
                                 {{boarder.building_name}}
                             </td>
-                            <td class="w-[78px] sticky left-[346px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-white border-b border-r">
+                            <td 
+                                :class="{'hidden': on_small_window, 'w-[78px]': ! on_small_window}" 
+                                class="sticky left-[346px] z-20 pt-1 text-sm text-center flex justify-center items-center text-info-gray-2 bg-white border-b border-r"
+                            >
                                 {{boarder.boarder_type}}
                             </td>
 
@@ -507,8 +568,10 @@
                         </tr>
 
                         <!-- Table Footer : Boarder Total -->
-                        <tr class="h-[26px] flex" :style="[on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
-                            <td colspan="3" class="w-[424px] h-full sticky left-0 bg-fill-gray-1 border-l border-b border-r border-stroke-gray-1 flex justify-start items-center pl-4">
+                        <tr class="h-[26px] flex" :style="[on_mis_data? 'width:'+(headers.max_w-add_small_window): 'width:'+(headers.min_w-add_small_window)]">
+                            <td colspan="3" 
+                                :class="{'w-[232px]': on_small_window, 'w-[424px]': ! on_small_window}" 
+                                class="h-full sticky left-0 bg-fill-gray-1 border-l border-b border-r border-stroke-gray-1 flex justify-start items-center pl-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-[21px] h-[15px]" viewBox="0 0 640 512"><!-- users --><path fill="#4F4F4F" d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z"/></svg>
                                 <div class="pl-1  font-bold text-info-gray-2 text-[14px] flex items-center">Boarder Total</div>
                             </td>
@@ -523,8 +586,11 @@
 
 
                         <!-- Table Footer : Attendance Total -->
-                        <tr v-for="attendance in attendances" :key="attendance.id" class="h-[26px] flex" :style="[on_mis_data? 'width:'+headers.max_w: 'width:'+headers.min_w]">
-                            <BATotalAttendanceType class="sticky left-0" :attendance="attendance"></BATotalAttendanceType>
+                        <tr v-for="attendance in attendances" :key="attendance.id" class="h-[26px] flex" :style="[on_mis_data? 'width:'+(headers.max_w-add_small_window): 'width:'+(headers.min_w-add_small_window)]">
+                            <BATotalAttendanceType 
+                                :class="{'w-[232px]': on_small_window, 'w-[424px]': ! on_small_window}" 
+                                class="sticky left-0" :attendance="attendance"
+                            ></BATotalAttendanceType>
                             
                             
                             <template v-for="(header,i) in headers.cols" :key="header.id" >
