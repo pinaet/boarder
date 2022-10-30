@@ -9,7 +9,9 @@ class BlockedUser extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected   $guarded    = [];
+
+    public      $timestamps = false;
 
     public function user()
     {

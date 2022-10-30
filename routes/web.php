@@ -47,6 +47,7 @@ Route::post( '/boarder/store/attendance', [BoarderController::class, 'store_atte
 Route::get( '/setting', [SettingController::class, 'index'] )->middleware(['auth', 'verified'])->name('setting');
 Route::post( '/setting/sync', [SettingController::class, 'sync'] )->middleware(['auth', 'verified']);
 Route::get( '/setting/staff', [SettingController::class, 'staff'] )->middleware(['auth', 'verified'])->name('setting.staff');
+Route::post( '/setting/staff/save', [SettingController::class, 'staff_save'] )->middleware(['auth', 'verified']);
 
 
 Route::resource('chirps', ChirpController::class)
