@@ -16,6 +16,29 @@ use App\Http\Controllers\BoarderController;
 
 class SyncController extends Controller
 {
+    public function syncAll( $mode='recent' )
+    {
+        $start_date = '';
+        if( $mode=='recent' ){
+            $start_date = date('Y-m-d', strtotime( '- 3 days' ) );
+        }
+
+        /*
+        * sync data from mis
+        */
+        (new SyncController)->syncBoarders();
+        (new SyncController)->syncContacts();
+        (new SyncController)->syncSchoolTerms();
+        (new SyncController)->syncSchoolAttendance( $start_date );
+        
+        $data = [
+            'message'  => 'OK 200 - sync completed',
+        ];
+
+        return $data;
+    }
+
+
     public function syncBoarders()
     {
         //boarders
@@ -493,8 +516,8 @@ class SyncController extends Controller
                     'date'               => $attendance->AttendanceDate,
                     'register_column_id' => $c_col->id,    //**
                     'attendance_id'      => 0,
-                    'created_by'         => auth()->user()->id,
-                    'updated_by'         => auth()->user()->id,
+                    'created_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
+                    'updated_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
                     'year_group'         => $attendance->YearGroup, 
                     'academic_year'      => $attendance->SchoolYear,  
                     'notes'              => $attendance->AbsenceTypeSymbol,
@@ -617,8 +640,8 @@ class SyncController extends Controller
                     'date'               => $attendance->AttendanceDate,
                     'register_column_id' => $c_col->id,    //**
                     'attendance_id'      => 0,
-                    'created_by'         => auth()->user()->id,
-                    'updated_by'         => auth()->user()->id,
+                    'created_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
+                    'updated_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
                     'year_group'         => $attendance->YearGroup,
                     'academic_year'      => $attendance->SchoolYear,
                     'notes'              => $attendance->AbsenceTypeSymbol,

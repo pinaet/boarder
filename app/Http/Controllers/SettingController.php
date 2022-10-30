@@ -25,23 +25,11 @@ class SettingController extends Controller
     {
         $mode       = request()->mode;
 
-        $start_date = '';
-        if( $mode=='recent' ){
-            $start_date = date('Y-m-d', strtotime( '- 3 days' ) );
-        }
-
         /*
         * sync data from mis
         */
-        (new SyncController)->syncBoarders();
-        (new SyncController)->syncContacts();
-        (new SyncController)->syncSchoolTerms();
-        (new SyncController)->syncSchoolAttendance( $start_date );
+        $data = (new SyncController)->syncAll( $mode );
         
-
-        $data = [
-            'message'  => 'OK 200 - sync completed',
-        ];
         
         return $data;
     }
