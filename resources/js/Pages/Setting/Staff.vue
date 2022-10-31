@@ -32,16 +32,6 @@
     console.log(admins.value)
 
 
-    /*
-     * computed
-     */
-    const username = computed(()=>{
-        //hide column Building(114px) and Type(78px)
-        let data = c_admin.value.email.split('@')[0]
-        return ! data ? '-' : data
-    })
-
-
 
     //functions
     const show_admin_modal = function( event ){
@@ -111,7 +101,7 @@
     }
     
     const save_admin = function(){
-        c_admin.value.username = username
+        c_admin.value.username = c_admin.value.email.split('@')[0]
 
         if(c_admin.value.role_name==''){
             alert('Please select role for the user!')
@@ -319,7 +309,7 @@
                                     <table class="w-full">
                                         <tr class="w-full">
                                             <td>
-                                                <BALabelInfo label="Username">{{ username }}</BALabelInfo>
+                                                <BALabelInfo label="Username">{{ ! c_admin.username ? '-' : c_admin.username }}</BALabelInfo>
                                             </td>
                                         </tr>
                                         <tr>
