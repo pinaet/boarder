@@ -48,6 +48,7 @@ Route::get( '/setting', [SettingController::class, 'index'] )->middleware(['auth
 Route::post( '/setting/sync', [SettingController::class, 'sync'] )->middleware(['auth', 'verified']);
 Route::get( '/setting/staff', [SettingController::class, 'staff'] )->middleware(['auth', 'verified'])->name('setting.staff');
 Route::post( '/setting/staff/save', [SettingController::class, 'staff_save'] )->middleware(['auth', 'verified']);
+Route::post( '/setting/staff/delete', [SettingController::class, 'staff_delete'] )->middleware(['auth', 'verified']);
 
 
 Route::resource('chirps', ChirpController::class)

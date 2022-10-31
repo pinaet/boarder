@@ -22,12 +22,14 @@
                                    ]) 
 
     const c_admin                = ref()
-    const   c_admin_bak            = ref()
+    const c_admin_bak            = ref()
     const on_admin               = ref(false)
     const on_admin_mode          = ref()
     const on_loading             = ref(false)
                     
-    console.log(props.admins)
+    const admins                 = ref()
+    admins.value                 = props.admins
+    console.log(admins.value)
 
 
     /*
@@ -36,7 +38,7 @@
     const username = computed(()=>{
         //hide column Building(114px) and Type(78px)
         let data = c_admin.value.email.split('@')[0]
-        return data
+        return ! data ? '-' : data
     })
 
 
@@ -60,10 +62,10 @@
         else{
             //edit existing admin
             c_admin.value       = event
-            c_admin_bak.value         = JSON.parse(JSON.stringify(event))
+            c_admin_bak.value   = JSON.parse(JSON.stringify(event))
             on_admin_mode.value = 'update'
         }
-        console.log( c_admin.value, on_admin_mode.value )
+        // console.log( c_admin.value, on_admin_mode.value )
 
         on_admin.value = ! on_admin.value
     }
@@ -86,7 +88,7 @@
                 // Simply Print the Base64 Encoded String,
                 // without additional data: Attributes.
                 c_admin.value.photo = base64String.substr(base64String.indexOf(',') + 1)
-                // console.log( c_admin.value )
+                console.log( c_admin.value )
             }
         }
         input.click();
@@ -96,30 +98,68 @@
     const cancel_admin = function(){
 
         //update back
-        c_admin.value.email     = c_admin_bak.value.email
-        c_admin.value.name      = c_admin_bak.value.name
-        c_admin.value.photo     = c_admin_bak.value.photo
-        c_admin.value.role_name = c_admin_bak.value.role_name
-        c_admin.value.telephone = c_admin_bak.value.telephone
-        c_admin.value.username  = c_admin_bak.value.username
+        if( on_admin_mode.value=='update' ){
+            c_admin.value.email     = c_admin_bak.value.email
+            c_admin.value.name      = c_admin_bak.value.name
+            c_admin.value.photo     = c_admin_bak.value.photo
+            c_admin.value.role_name = c_admin_bak.value.role_name
+            c_admin.value.telephone = c_admin_bak.value.telephone
+            c_admin.value.username  = c_admin_bak.value.username
+        }
 
         on_admin.value          = false
     }
     
     const save_admin = function(){
-        let data = { 
-            'c_admin'      : c_admin.value
+        c_admin.value.username = username
+
+        if(c_admin.value.role_name==''){
+            alert('Please select role for the user!')
         }
+        else{
+            let data = { 
+                'c_admin'      : c_admin.value,
+            }
 
-        axios.post('/setting/staff/save', data )
-            .then((res) => {
-                console.log(res.data.message)
-            })
-            .catch((error) => {
-                console.log( error )
-            })
+            axios.post('/setting/staff/save', data )
+                .then((res) => {
+                    console.log(res.data.message)
+                    if( on_admin_mode.value=='create' ){
+                        admins.value.push( res.data.admin )
+                    }
+                })
+                .catch((error) => {
+                    console.log( error )
+                })
 
-        on_admin.value          = false
+            on_admin.value          = false
+        }
+    }
+    
+    const delete_admin = function(event){
+
+        let ans = confirm( 'Please confirm to delete ' + event.name )
+        if( ans ){
+            let data = { 
+                'c_admin'      : event,
+            }
+
+            axios.post('/setting/staff/delete', data )
+                .then((res) => {
+                    console.log(res.data.message)
+                    admins.value.forEach((admin,i) => {
+                        if( admin.id==res.data.admin.id ){
+                            console.log( admin, res.data.admin,  i, admins.value[i] )
+                            admins.value.splice( i, 1 )
+                            return
+                        }
+                    })
+                })
+                .catch((error) => {
+                    console.log( error )
+                })
+
+        }
     }
     
 </script>
@@ -238,6 +278,9 @@
                             <td class="w-[79px] text-sm text-center flex justify-center items-center text-info-gray-2 border-b border-r">
                                     <button @click="show_admin_modal(admin)">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 ml-1 p-0"><path fill="#a39163" d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM325.8 139.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-21.4 21.4-71-71 21.4-21.4c15.6-15.6 40.9-15.6 56.6 0zM119.9 289L225.1 183.8l71 71L190.9 359.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z"/></svg>
+                                    </button>
+                                    <button @click="delete_admin(admin)" class="ml-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-4 ml-1 p-0"><!-- trash-alt --><path fill="#a39163" d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"/></svg>
                                     </button>
                             </td>
 
