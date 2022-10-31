@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->longText('photo')->nullable(); 
             $table->timestamp('last_login')->nullable(); 
+            $table->string('telephone')->nullable()->change();
+            $table->string('password')->nullable()->change();
         });
     }
 
@@ -28,6 +30,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn(['photo','last_login']);
+            $table->string('telephone')->change();
+            $table->string('password')->change();
         });
     }
 };

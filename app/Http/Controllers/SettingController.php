@@ -65,6 +65,23 @@ class SettingController extends Controller
         ]);
     }
 
+    public function role()
+    {
+        /*
+        * get settings permission
+        */
+        $setting_permits  = (new PermissionContent)->get_setting_permissions();
+        $roles            = Role::all();
+        $contents         = PermissionContent::all();
+
+        
+        return Inertia::render('Setting/Role', [
+            'setting_permits'   => $setting_permits,
+            'roles'             => $roles,
+            'contents'          => $contents,
+        ]);
+    }
+
     public function staff_save()
     {        
         $c_admin = request()->c_admin;
