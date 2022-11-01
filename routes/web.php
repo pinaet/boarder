@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\TestsController;
 use App\Http\Controllers\BoarderController;
@@ -39,18 +40,20 @@ Route::get('/Error', function () {
     ]);
 });
 
-Route::get(  '/dashboard', [BoarderController::class, 'dashboard'] )->middleware(['auth', 'verified'])->name('dashboard');
-Route::post( '/boarder/update/profile', [BoarderController::class, 'update_profile'] )->middleware(['auth', 'verified']);
-Route::post( '/boarder/change/building', [BoarderController::class, 'change_building'] )->middleware(['auth', 'verified']);
-Route::post( '/boarder/change/week', [BoarderController::class, 'change_week'] )->middleware(['auth', 'verified']);
-Route::post( '/boarder/store/attendance', [BoarderController::class, 'store_attendance'] )->middleware(['auth', 'verified']);
-Route::get( '/setting', [SettingController::class, 'index'] )->middleware(['auth', 'verified'])->name('setting');
-Route::post( '/setting/sync', [SettingController::class, 'sync'] )->middleware(['auth', 'verified']);
-Route::get( '/setting/staff', [SettingController::class, 'staff'] )->middleware(['auth', 'verified'])->name('setting.staff');
-Route::post( '/setting/staff/save', [SettingController::class, 'staff_save'] )->middleware(['auth', 'verified']);
-Route::post( '/setting/staff/delete', [SettingController::class, 'staff_delete'] )->middleware(['auth', 'verified']);
+Route::get(  '/dashboard'               , [ BoarderController::class , 'dashboard'        ] )->middleware(['auth', 'verified'])->name('dashboard');
+Route::post( '/boarder/update/profile'  , [ BoarderController::class , 'update_profile'   ] )->middleware(['auth', 'verified']);
+Route::post( '/boarder/change/building' , [ BoarderController::class , 'change_building'  ] )->middleware(['auth', 'verified']);
+Route::post( '/boarder/change/week'     , [ BoarderController::class , 'change_week'      ] )->middleware(['auth', 'verified']);
+Route::post( '/boarder/store/attendance', [ BoarderController::class , 'store_attendance' ] )->middleware(['auth', 'verified']);
 
-Route::get( '/setting/role', [SettingController::class, 'role'] )->middleware(['auth', 'verified'])->name('setting.role');
+Route::get(  '/setting'                 , [ SettingController::class , 'index'            ] )->middleware(['auth', 'verified'])->name('setting');
+Route::post( '/setting/sync'            , [ SettingController::class , 'sync'             ] )->middleware(['auth', 'verified']);
+Route::get(  '/setting/staff'           , [ SettingController::class , 'staff'            ] )->middleware(['auth', 'verified'])->name('setting.staff');
+Route::post( '/setting/staff/save'      , [ SettingController::class , 'staff_save'       ] )->middleware(['auth', 'verified']);
+Route::post( '/setting/staff/delete'    , [ SettingController::class , 'staff_delete'     ] )->middleware(['auth', 'verified']);
+Route::get(  '/setting/role'            , [ SettingController::class , 'role'             ] )->middleware(['auth', 'verified'])->name('setting.role');
+Route::post( '/setting/role/save'       , [ RoleController::class    , 'role_save'        ] )->middleware(['auth', 'verified']);
+Route::post( '/setting/role/delete'     , [ RoleController::class    , 'role_delete'      ] )->middleware(['auth', 'verified']);
 
 
 Route::resource('chirps', ChirpController::class)

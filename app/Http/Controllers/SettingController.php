@@ -10,6 +10,7 @@ use App\Models\BlockedUser;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PermissionContent;
+use App\Models\RolePermission;
 
 class SettingController extends Controller
 {
@@ -74,6 +75,9 @@ class SettingController extends Controller
         $roles            = Role::all();
         $contents         = PermissionContent::all();
 
+        foreach( $roles as $role ){
+            $role = $role->refine_role( $role, $contents );
+        }
         
         return Inertia::render('Setting/Role', [
             'setting_permits'   => $setting_permits,
