@@ -43,6 +43,7 @@
             }
             contents.value.forEach( content => {
                 let temp = { 
+                    'content_id'              : content.id,
                     'enabled'                 : false,
                     'permission_content_name' : content.permission_content_name,
                     'can_update'              : false,
