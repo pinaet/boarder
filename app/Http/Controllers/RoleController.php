@@ -11,19 +11,21 @@ class RoleController extends Controller
 {
     function role_save()
     {    
-        $user   = auth()->user();
-        $c_role = request()->c_role;
+        $user        = auth()->user();
+        $c_role      = request()->c_role;
         
-        $role   = Role::updateOrCreate(
-            [   //where
-                'id'         => $c_role['id'],
-            ],
-            [
-                'role_name'  => $c_role['role_name'],
-                'created_by' => $user->id,
-                'updated_by' => $user->id,
-            ] //what to update
-        );
+        $role        = Role::find($c_role['id']);
+        $attribuites = [
+            'role_name'  => $c_role['role_name'],
+            'created_by' => $user->id,
+            'updated_by' => $user->id,
+        ];
+        if( $role ){
+            $role->update( $attribuites );
+        }
+        else{
+            $role   = Role::create( $attribuites );
+        }
 
         //set or update user role
         foreach( $c_role['contents'] as $role_content ){
