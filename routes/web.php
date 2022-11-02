@@ -55,6 +55,9 @@ Route::get(  '/setting/role'            , [ SettingController::class , 'role'   
 Route::post( '/setting/role/save'       , [ RoleController::class    , 'role_save'        ] )->middleware(['auth', 'verified']);
 Route::post( '/setting/role/delete'     , [ RoleController::class    , 'role_delete'      ] )->middleware(['auth', 'verified']);
 
+Route::get(  '/setting/login-as'        , [ SettingController::class , 'login_as'         ] )->middleware(['auth', 'verified'])->name('login.as');
+Route::post( '/setting/login-as/change' , [ SettingController::class , 'login_as_change'  ] )->middleware(['auth', 'verified'])->name('login.as.change');
+
 
 Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy'])

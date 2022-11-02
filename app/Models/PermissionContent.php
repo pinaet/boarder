@@ -35,6 +35,11 @@ class PermissionContent extends Model
             }
         }
 
-        return $role->permission_contents;
+        $permission_contents = [];
+        foreach( $role->permission_contents as $i => $permission_content ){
+            array_push( $permission_contents, $permission_content );
+        }
+
+        return $permission_contents;
     }
 }

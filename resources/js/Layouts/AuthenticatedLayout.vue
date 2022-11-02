@@ -10,6 +10,22 @@
     const props = defineProps(['setting_permits'])
 
     const showingNavigationDropdown = ref(false);
+
+    const login_as = ref(false)
+    const setting_permits = ref()
+
+    setting_permits.value = props.setting_permits
+
+        console.log( setting_permits.value )
+    if( Object.keys(props.setting_permits).length>0 ){
+        props.setting_permits.forEach((permit,i) => {
+            if( permit.permission_content_name=='Login As' ){
+                login_as.value = true
+                return 
+            }
+        })
+        console.log( props.setting_permits )
+    }
 </script>
 
 <template>
@@ -61,6 +77,9 @@
                                     </template>
 
                                     <template #content>
+                                        <DropdownLink v-if="login_as" :href="route('login.as')" method="get" as="button">
+                                            Login As
+                                        </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Log Out
                                         </DropdownLink>

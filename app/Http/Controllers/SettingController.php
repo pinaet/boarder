@@ -10,7 +10,8 @@ use App\Models\BlockedUser;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PermissionContent;
-use App\Models\RolePermission;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class SettingController extends Controller
 {
@@ -84,6 +85,38 @@ class SettingController extends Controller
             'roles'             => $roles,
             'contents'          => $contents,
         ]);
+    }
+
+    public function login_as()
+    {
+        /*
+        * get settings permission
+        */
+        $setting_permits  = (new PermissionContent)->get_setting_permissions();
+        
+        return Inertia::render('Setting/LoginAs', [
+            'setting_permits'   => $setting_permits,
+        ]);
+    }
+
+    public function login_as_change(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => ['required','max:50']
+        ]);
+
+        $user = User::where('username',$validated['username'])->orWhere('email',$validated['username'])->first();
+
+        if($user){
+            Auth::login( $user );
+            return redirect(route('setting'));
+        }
+        else{
+            return redirect()->back()->withErrors([
+                'message' => 'User not found!'
+            ]);
+        }
+
     }
 
     public function staff_save()

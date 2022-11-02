@@ -135,7 +135,7 @@
 </script>
 
 <template>
-    <Head title="Setting" />
+    <Head title="Setting - Role" />
 
     <AuthenticatedLayout :setting_permits="setting_permits">
         
