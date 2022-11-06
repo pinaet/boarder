@@ -30,7 +30,7 @@ class SyncController extends Controller
         (new SyncController)->syncContacts();
         (new SyncController)->syncSchoolTerms();
         (new SyncController)->syncSchoolAttendance( $start_date );
-        
+
         $data = [
             'message'  => 'OK 200 - sync completed',
         ];
@@ -47,7 +47,7 @@ class SyncController extends Controller
             FROM
                 (
                 SELECT
-                    cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID		 
+                    cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID
                     ,'Current' StudentStatus
                     ,ec.CandidateNumber 'ExamNumber'
                     ,PupilPersonalDetails.AdmissionNo
@@ -115,7 +115,7 @@ class SyncController extends Controller
             ) A
                 LEFT JOIN PupilPhoto PP ON PP.PupilID=A.PupilID
             WHERE
-                BoarderStatus IN ('Weekly Boarder','Full Boarder')
+                BoarderStatus IN ('Weekly Boarder','Full Boarder','Temporary Boarder')
             ORDER BY
                 A.PupilID
         ";
@@ -146,7 +146,7 @@ class SyncController extends Controller
                         break;
                     }
                 }
-    
+
                 //create
                 $attributes = array(
                     'pupil_id'           => $boarder->PupilID,
@@ -157,17 +157,17 @@ class SyncController extends Controller
                     'prefered_forename'  => $boarder->PreferredName,
                     'forename'           => $boarder->FirstName,
                     'surname'            => $boarder->Surname,
-                    'year_group'         => $boarder->YearGroup,        
+                    'year_group'         => $boarder->YearGroup,
                     'house'              => $boarder->House,
                     'form'               => $boarder->Form,
                     'gender'             => $boarder->Gender,
                     'boarder_type'       => $boarder->BoarderStatus,
-                    'photo'              => $photo, 
+                    'photo'              => $photo,
                     'status'             => $boarder->StudentStatus,
                     'updated_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
                 );
                 DB::beginTransaction ();
-                try { 
+                try {
                     Boarder::create($attributes);
                     DB::commit();
                 } catch (Exception $e) {
@@ -183,7 +183,7 @@ class SyncController extends Controller
                     'prefered_forename'  => $boarder->PreferredName,
                     'forename'           => $boarder->FirstName,
                     'surname'            => $boarder->Surname,
-                    'year_group'         => $boarder->YearGroup,        
+                    'year_group'         => $boarder->YearGroup,
                     'house'              => $boarder->House,
                     'form'               => $boarder->Form,
                     'gender'             => $boarder->Gender,
@@ -212,7 +212,7 @@ class SyncController extends Controller
             FROM
                 (
                 SELECT
-                    cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID		 
+                    cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID
                     ,'Current' StudentStatus
                     ,BoarderStatus.BoarderStatusDescription 'BoarderStatus'
                     ,CM.ContactID
@@ -228,7 +228,7 @@ class SyncController extends Controller
                 LEFT JOIN PupilContacts PC ON PC.PupilID=PupilPersonalDetails.PupilID
                 LEFT JOIN ContactMaster CM ON CM.ContactID=PC.ContactId
                 LEFT JOIN ContactEmailInformation CEI ON CEI.ContactID=CM.ContactID AND CEI.EmailType='Main'
-                LEFT JOIN ContactTelephoneInformation CTI ON CTI.ContactID=CM.ContactID AND CTI.TelephoneType='Main' 
+                LEFT JOIN ContactTelephoneInformation CTI ON CTI.ContactID=CM.ContactID AND CTI.TelephoneType='Main'
                 LEFT JOIN LookupDetails lRelationshipToPupil ON lRelationshipToPupil.LookupDetailsID=PC.RelationshipToPupil AND lRelationshipToPupil.LookupID='2100'
                 union
                 select
@@ -248,7 +248,7 @@ class SyncController extends Controller
                 LEFT JOIN PupilContacts PC ON PC.PupilID=PupilPersonalDetails.PupilID
                 LEFT JOIN ContactMaster CM ON CM.ContactID=PC.ContactId
                 LEFT JOIN ContactEmailInformation CEI ON CEI.ContactID=CM.ContactID AND CEI.EmailType='Main'
-                LEFT JOIN ContactTelephoneInformation CTI ON CTI.ContactID=CM.ContactID AND CTI.TelephoneType='Main' 
+                LEFT JOIN ContactTelephoneInformation CTI ON CTI.ContactID=CM.ContactID AND CTI.TelephoneType='Main'
                 LEFT JOIN LookupDetails lRelationshipToPupil ON lRelationshipToPupil.LookupDetailsID=PC.RelationshipToPupil AND lRelationshipToPupil.LookupID='2100'
             ) A
             WHERE
@@ -257,7 +257,7 @@ class SyncController extends Controller
                 A.PupilID
         ";
         $contacts = DB::connection('mis')->select( $sql_contact );
-        
+
         foreach($contacts as $contact)
         {
             //find contact
@@ -269,7 +269,7 @@ class SyncController extends Controller
                 'contact_name' => $contact->ContactName,
                 'email'        => $contact->EmailID,
                 'contact_no'   => $contact->TelephoneNumber,
-            );          
+            );
             if( $current_contact->count()==0 )
             {
                 //create
@@ -301,16 +301,16 @@ class SyncController extends Controller
         //School Terms
         SchoolTerm::truncate();
         $sql = "
-            SELECT 
-                SchoolYear, 
-                Name Term, 
+            SELECT
+                SchoolYear,
+                Name Term,
                 StartDate,
-                EndDate	
-            FROM 
+                EndDate
+            FROM
                 SchoolTerms
         ";
         $school_terms = DB::connection('mis')->select( $sql );
-        
+
         foreach($school_terms as $school_term)
         {
             //find school_term
@@ -319,7 +319,7 @@ class SyncController extends Controller
                 'term'          => 'Term '.(int)$school_term->Term,
                 'start_date'    => $school_term->StartDate,
                 'end_date'      => $school_term->EndDate,
-            );  
+            );
 
             //create
             DB::beginTransaction();
@@ -334,16 +334,16 @@ class SyncController extends Controller
 
         // Term Breaks
         $sql = "
-            SELECT 
-                SchoolYear, 
-                Name Term, 
+            SELECT
+                SchoolYear,
+                Name Term,
                 StartDate,
-                EndDate	
-            FROM 
+                EndDate
+            FROM
                 TermBreaks
         ";
         $school_terms = DB::connection('mis')->select( $sql );
-        
+
         foreach($school_terms as $school_term)
         {
             //find school_term
@@ -352,7 +352,7 @@ class SyncController extends Controller
                 'term'          => $school_term->Term,
                 'start_date'    => $school_term->StartDate,
                 'end_date'      => $school_term->EndDate,
-            );  
+            );
 
             //create
             DB::beginTransaction();
@@ -377,7 +377,7 @@ class SyncController extends Controller
         set_time_limit( 3000 );
 
         $sql = "
-            SELECT 
+            SELECT
                 psa.PupilID
                 , case when pca.SchoolYear = 0 or pca.SchoolYear is null  then (select max(schoolYear) from SchoolTerms where StartDate <= psa.AttendanceDate) else pca.SchoolYear end as SchoolYear
                 , YLUD.Description as YearGroup
@@ -390,18 +390,18 @@ class SyncController extends Controller
                 , AT.AbsenceType as AbsenceType
                 , AT.DisplaySymbol 'AbsenceTypeSymbol'
                 , AT.AbsenceTypeID
-            FROM     dbo.PupilSessionAttendance AS psa 
+            FROM     dbo.PupilSessionAttendance AS psa
                 INNER JOIN dbo.LookupDetails AS YLUD ON psa.YearGroup = YLUD.LookupDetailsID AND YLUD.LookupID = 3004
                 LEFT OUTER JOIN (select distinct cast(AttendanceDate as date) as AttendanceDate,SchoolYear FROM dbo.PupilClassAttendance where SchoolYear >1900 ) pca ON psa.AttendanceDate = pca.AttendanceDate
                 INNER JOIN ClusterMaster CM ON CM.CurrentAcademicYear=pca.SchoolYear --ADDED
                 LEFT JOIN AbsenceTypes AT ON AT.AbsenceTypeID=psa.AbsenceTypeID
-                INNER JOIN 
+                INNER JOIN
                 (
                     SELECT A.*
                     FROM
                         (
                         SELECT
-                            cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID		 
+                            cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID
                             ,'Current' StudentStatus
                             ,PupilPersonalDetails.AdmissionNo
                             ,PupilPersonalDetails.PreferredForeName 'PreferredName'
@@ -435,7 +435,7 @@ class SyncController extends Controller
                     WHERE
                         BoarderStatus IN ('Weekly Boarder','Full Boarder')
                 ) Boarders ON Boarders.PupilID=psa.PupilID
-            WHERE 
+            WHERE
                 format( psa.AttendanceDate, 'yyyy-MM-dd' ) >= '$star_date'
             ORDER BY PupilID, AttendanceDate
         ";
@@ -480,7 +480,7 @@ class SyncController extends Controller
 
         $cols  = RegisterColumn::all();
         foreach( $session_attendances as $attendance ){
-            $c_date = ''; 
+            $c_date = '';
             $c_col  = '';
 
             //get days of the week by seed_date
@@ -496,32 +496,32 @@ class SyncController extends Controller
 
             //filter column - collection
             $temp  = $cols->filter( function( $col ) use( $c_date, $attendance ){
-                return ((strtolower($col->column_name)=='morning'&&strtolower($attendance->SessionID)=='am') || 
-                        (strtolower($col->column_name)=='afternoon'&&strtolower($attendance->SessionID)=='pm')) && 
+                return ((strtolower($col->column_name)=='morning'&&strtolower($attendance->SessionID)=='am') ||
+                        (strtolower($col->column_name)=='afternoon'&&strtolower($attendance->SessionID)=='pm')) &&
                        ($col->day_of_week==($c_date['order']+1) ) ? true : false;
             });
             foreach( $temp as $value ){
                 $c_col  = $value;
             }
-            
+
             //morning || afternoon
             $register = Registration::updateOrCreate(
                 [   //where
-                    'pupil_id'           => $attendance->PupilID,   
+                    'pupil_id'           => $attendance->PupilID,
                     'date'               => $attendance->AttendanceDate,
                     'register_column_id' => $c_col->id,    //**
                 ],
                 [   //what to update
-                    'pupil_id'           => $attendance->PupilID,   
+                    'pupil_id'           => $attendance->PupilID,
                     'date'               => $attendance->AttendanceDate,
                     'register_column_id' => $c_col->id,    //**
                     'attendance_id'      => 0,
                     'created_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
                     'updated_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
-                    'year_group'         => $attendance->YearGroup, 
-                    'academic_year'      => $attendance->SchoolYear,  
+                    'year_group'         => $attendance->YearGroup,
+                    'academic_year'      => $attendance->SchoolYear,
                     'notes'              => $attendance->AbsenceTypeSymbol,
-                ] 
+                ]
             );
             // if($key==10)
             //     dd($c_date,$c_col,$attendance,$register,$key );
@@ -531,7 +531,7 @@ class SyncController extends Controller
     public function syncSchoolClassAttendance( $star_date='' )
     {
         $sql = "
-            SELECT 
+            SELECT
                 pca.PupilID, pca.SchoolYear, YLUD.Description as YearGroup
                 , format( pca.AttendanceDate, 'yyyy-MM-dd' ) AttendanceDate --pca.AttendanceDate
                 ,cast(pca.SubjectID as nvarchar) SubjectID
@@ -540,18 +540,18 @@ class SyncController extends Controller
                 ,AT.AbsenceType as AbsenceType
                 ,AT.DisplaySymbol 'AbsenceTypeSymbol'
                 ,AT.AbsenceTypeID
-            FROM     dbo.PupilClassAttendance pca 
-                INNER JOIN dbo.SubjectMaster ON pca.SubjectID = dbo.SubjectMaster.SubjectID  
+            FROM     dbo.PupilClassAttendance pca
+                INNER JOIN dbo.SubjectMaster ON pca.SubjectID = dbo.SubjectMaster.SubjectID
                 INNER JOIN dbo.LookupDetails AS YLUD ON pca.YearGroupID = YLUD.LookupDetailsID AND YLUD.LookupID = 3004
                 INNER JOIN ClusterMaster CM ON CM.CurrentAcademicYear=pca.SchoolYear --ADDED
                 LEFT JOIN AbsenceTypes AT ON AT.AbsenceTypeID=pca.AbsenceTypeID
-                INNER JOIN 
+                INNER JOIN
                 (
                     SELECT A.*
                     FROM
                         (
                         SELECT
-                            cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID		 
+                            cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID
                             ,'Current' StudentStatus
                             ,PupilPersonalDetails.AdmissionNo
                             ,PupilPersonalDetails.PreferredForeName 'PreferredName'
@@ -585,9 +585,9 @@ class SyncController extends Controller
                 WHERE
                     BoarderStatus IN ('Weekly Boarder','Full Boarder')
             ) Boarders ON Boarders.PupilID=pca.PupilID
-            WHERE 
+            WHERE
                 pca.PeriodNumber<=6 AND format( pca.AttendanceDate, 'yyyy-MM-dd' ) >= '$star_date'
-            ORDER BY 
+            ORDER BY
                 PupilID, AttendanceDate, PeriodID
         ";
         $class_attendances = DB::connection( 'mis' )->select( $sql );
