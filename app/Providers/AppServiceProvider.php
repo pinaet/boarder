@@ -20,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
                 'url' => config('app.url'),
                 'mis' => env('MIS_NAME')
             ],
+            'session' => [
+                'lifetime' => config( 'session.lifetime' )
+            ]
         ]);
         // I'm using config, but your could use env
 

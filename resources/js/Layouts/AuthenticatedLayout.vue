@@ -5,7 +5,7 @@
     import DropdownLink from '@/Components/DropdownLink.vue';
     import NavLink from '@/Components/NavLink.vue';
     import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-    import { Link } from '@inertiajs/inertia-vue3';
+    import { Link, Head } from '@inertiajs/inertia-vue3';
 
     const props = defineProps(['setting_permits'])
 
@@ -16,7 +16,6 @@
 
     setting_permits.value = props.setting_permits
 
-        console.log( setting_permits.value )
     if( Object.keys(props.setting_permits).length>0 ){
         props.setting_permits.forEach((permit,i) => {
             if( permit.permission_content_name=='Login As' ){
@@ -24,11 +23,13 @@
                 return 
             }
         })
-        console.log( props.setting_permits )
     }
 </script>
 
 <template>
+    <Head>
+        <meta http-equiv="refresh" :content="$inertia.page.props.session.lifetime*60">
+    </Head>
     <div>
         <div class="min-h-screen bg-gray-100">
             <nav class="bg-white border-b border-gray-100">

@@ -228,7 +228,8 @@ class BoarderController extends Controller
         // dd( $registrations,$pupil_ids);
 
 
-
+        $boarder_time = '';
+        $start_time = microtime(TRUE);
         /*
         * boarders
         */
@@ -313,9 +314,13 @@ class BoarderController extends Controller
             */            
             $boarder->{'absence_request_url'} = (new PaperformController)->paperform( 'leave-request-form', $boarder );
         }
+        $end_time = microtime(TRUE);
+        $boarder_time = $end_time - $start_time;
 
 
 
+        $totals_time = '';
+        $start_time = microtime(TRUE);
         /*
         * totals
         */
@@ -354,6 +359,9 @@ class BoarderController extends Controller
                 }
             }
         }
+        $end_time = microtime(TRUE);
+        $totals_time = $end_time - $start_time;
+        // dd( $boarder_time, $totals_time);
 
         $data = [
             'boarders'  => $boarders,
