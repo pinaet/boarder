@@ -252,7 +252,7 @@ class SyncController extends Controller
                 LEFT JOIN LookupDetails lRelationshipToPupil ON lRelationshipToPupil.LookupDetailsID=PC.RelationshipToPupil AND lRelationshipToPupil.LookupID='2100'
             ) A
             WHERE
-                BoarderStatus IN ('Weekly Boarder','Full Boarder') AND ContactID IS NOT NULL
+                BoarderStatus IN ('Weekly Boarder','Full Boarder','Temporary Boarder') AND ContactID IS NOT NULL
             ORDER BY
                 A.PupilID
         ";
@@ -433,7 +433,7 @@ class SyncController extends Controller
                         LEFT JOIN BoarderStatus ON BoarderStatus.BoarderStatusCode = PupilCurrentSchool.BoarderStatus
                     ) A
                     WHERE
-                        BoarderStatus IN ('Weekly Boarder','Full Boarder')
+                        BoarderStatus IN ('Weekly Boarder','Full Boarder','Temporary Boarder')
                 ) Boarders ON Boarders.PupilID=psa.PupilID
             WHERE
                 format( psa.AttendanceDate, 'yyyy-MM-dd' ) >= '$star_date'
@@ -583,7 +583,7 @@ class SyncController extends Controller
                         LEFT JOIN BoarderStatus ON BoarderStatus.BoarderStatusCode = PupilCurrentSchool.BoarderStatus
                     ) A
                 WHERE
-                    BoarderStatus IN ('Weekly Boarder','Full Boarder')
+                    BoarderStatus IN ('Weekly Boarder','Full Boarder','Temporary Boarder')
             ) Boarders ON Boarders.PupilID=pca.PupilID
             WHERE
                 pca.PeriodNumber<=6 AND format( pca.AttendanceDate, 'yyyy-MM-dd' ) >= '$star_date'
