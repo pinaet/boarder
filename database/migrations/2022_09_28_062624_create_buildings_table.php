@@ -44,7 +44,7 @@ return new class extends Migration
         $attributes['building_name']     = 'Bradbys';       
         $attributes['description']       = 'Bradbys';   
         $attributes['member_gender']     = 'M';       
-        $attributes['member_year_group'] = 'Y4,Y5,Y6,Y7,Y8,Y9';
+        $attributes['member_year_group'] = 'Y4,Y5,Y6,Y7,Y8,Y9,10';
         Building::create($attributes);
         
         $attributes['building_name']     = 'Junior Girls';       
@@ -56,7 +56,7 @@ return new class extends Migration
         $attributes['building_name']     = 'The Grove';       
         $attributes['description']       = 'The Grove';   
         $attributes['member_gender']     = 'M';       
-        $attributes['member_year_group'] = '10,11,12,13';
+        $attributes['member_year_group'] = '11,12,13';
         Building::create($attributes);
         
         $attributes['building_name']     = 'West Acre';       
