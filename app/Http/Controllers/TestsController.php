@@ -16,6 +16,37 @@ class TestsController extends Controller
     public function index()
     {
         /**
+         * update boarder 'status' and 'boarder_type'
+            pupil_id
+            admission_no
+            prefered_forename
+            forename
+            surname
+            year_group
+            house
+            form
+            gender
+            boarder_type
+            photo
+            status
+         */
+        $boarders     = Boarder::all();
+        $all_students = collect(DB::connection('mis')->select( (new SyncController)->getBoarderQuery( 'all') ));
+        foreach( $boarders as $boarder )
+        {
+            $student = $all_students->where('PupilID',$boarder->pupil_id)->first();
+            if( $student && ( $boarder->boarder_type != $student->BoarderStatus || $boarder->status != $student->StudentStatus ) )
+            {
+                $boarder->boarder_type  = $student->BoarderStatus;
+                $boarder->status        = $student->StudentStatus;
+                $boarder->save();
+                dd(2, $boarder, $student);
+            }
+        }
+        dd(1, 'update boarder status and boarder_type');
+
+
+        /**
          * date
          */
         dd(date('Y-m-d H:i:s'));

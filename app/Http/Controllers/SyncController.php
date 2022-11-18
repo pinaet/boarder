@@ -38,14 +38,9 @@ class SyncController extends Controller
         return $data;
     }
 
-
-    public function syncBoarders()
+    public function getBoarderQuery( $mode='' )
     {
-        //boarders
         $sql_boarder = "
-            SELECT A.*, PP.Photo
-            FROM
-                (
                 SELECT
                     cast( CurrentPupil.PupilID AS VARCHAR(10) ) PupilID
                     ,'Current' StudentStatus
@@ -112,16 +107,31 @@ class SyncController extends Controller
                 LEFT OUTER JOIN PupilLanguageDetails AS PupilLanguageDetails ON Leaver.SchoolID = PupilLanguageDetails.SchoolID AND Leaver.PupilID = PupilLanguageDetails.PupilID
                 LEFT OUTER JOIN LookupDetails AS PupilLanguageDetailsFirstLanguageLookupDetails ON PupilLanguageDetailsFirstLanguageLookupDetails.LookupDetailsID = PupilLanguageDetails.FirstLanguage AND PupilLanguageDetailsFirstLanguageLookupDetails.LookupID = '2103'
                 left join ExamCandidates ec on ec.PupilID = PupilPersonalDetails.PupilID
+        ";
+        if( $mode=='' ){
+            $sql_boarder = "
+            SELECT A.*, PP.Photo
+            FROM
+                (
+                    $sql_boarder
             ) A
                 LEFT JOIN PupilPhoto PP ON PP.PupilID=A.PupilID
             WHERE
                 BoarderStatus IN ('Weekly Boarder','Full Boarder','Temporary Boarder')
             ORDER BY
-                A.PupilID
-        ";
-        $boarders = DB::connection('mis')->select( $sql_boarder );
-        $buildings = Building::all();
-        $building = $buildings[0];
+                A.PupilID";
+        }
+
+        return $sql_boarder;
+    }
+
+
+    public function syncBoarders()
+    {
+        //boarders
+        $boarders   = DB::connection('mis')->select( $this->getBoarderQuery() );
+        $buildings  = Building::all();
+        $building   = $buildings[0];
         foreach($boarders as $boarder)
         {
             $photo = '';
@@ -200,6 +210,22 @@ class SyncController extends Controller
                     DB::rollBack ();
                     dd($attributes,$e);
                 }
+            }
+        }
+
+        /*
+        Update boarder 'status' and 'boarder_type'
+        */
+        $boarders     = Boarder::all();
+        $all_students = collect(DB::connection('mis')->select( (new SyncController)->getBoarderQuery( 'all') ));
+        foreach( $boarders as $boarder )
+        {
+            $student  = $all_students->where('PupilID',$boarder->pupil_id)->first();
+            if( $student && ( $boarder->boarder_type != $student->BoarderStatus || $boarder->status != $student->StudentStatus ) )
+            {
+                $boarder->boarder_type  = $student->BoarderStatus;
+                $boarder->status        = $student->StudentStatus;
+                $boarder->save();
             }
         }
     }

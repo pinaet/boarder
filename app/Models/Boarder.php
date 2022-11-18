@@ -11,7 +11,9 @@ class Boarder extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $guarded      = [];
+
+    protected $primaryKey   = 'pupil_id';
 
     public function updated_by_user()
     {
