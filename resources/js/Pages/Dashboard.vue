@@ -666,8 +666,11 @@
                                 <div class=" pl-[18px] flex-col w-[282px]">
                                     <table class="w-full">
                                         <tr class="w-full">
-                                            <td colspan="2">
+                                            <td >
                                                 <BALabelInfo label="Admission No">{{c_boarder.admission_no}}</BALabelInfo>
+                                            </td>
+                                            <td >
+                                                <BALabelInfo label="Gender">{{c_boarder.gender=='M'?'Male':'Female'}}</BALabelInfo>
                                             </td>
                                         </tr>
                                         <tr class=" pt-2.5">
@@ -687,10 +690,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="pt-2.5">
-                                                <BALabelInfo label="Gender">{{c_boarder.gender=='M'?'Male':'Female'}}</BALabelInfo>
-                                            </td>
-                                            <td class="pt-2.5">
+                                            <td colspan="2" class="pt-2.5">
                                                 <BAInputInfo :value="c_boarder.telephone" @trigger="c_boarder.telephone=$event">Telephone:</BAInputInfo>
                                             </td>
                                         </tr>
