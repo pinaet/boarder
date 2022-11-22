@@ -39,6 +39,8 @@ class Boarder extends Model
             if( $building_name=='All' )
             {
                 $boarders = Boarder::where( 'status', 'Current' )
+                                    ->orderBy( 'building_id' )
+                                    ->orderBy( 'year_group' )
                                     ->orderBy( 'prefered_forename' )->get();
             }
             else
@@ -46,6 +48,8 @@ class Boarder extends Model
                 $building = Building::where('building_name', $building_name)->first();
                 $boarders = Boarder::where( 'status', 'Current' )
                                     ->where( 'building_id', $building->id )
+                                    ->orderBy( 'building_id' )
+                                    ->orderBy( 'year_group' )
                                     ->orderBy( 'prefered_forename' )->get();
             }
         }
@@ -53,6 +57,8 @@ class Boarder extends Model
             if( $building_name=='All' )
             {
                 $boarders = Boarder::where( 'status', 'Current' )
+                                    ->orderBy( 'building_id' )
+                                    ->orderBy( 'year_group' )
                                     ->orderBy( 'prefered_forename' )->take( env('BOARDER_SIZE',5) )->get();
             }
             else
@@ -60,6 +66,8 @@ class Boarder extends Model
                 $building = Building::where('building_name', $building_name)->first();
                 $boarders = Boarder::where( 'status', 'Current' )
                                     ->where( 'building_id', $building->id )
+                                    ->orderBy( 'building_id' )
+                                    ->orderBy( 'year_group' )
                                     ->orderBy( 'prefered_forename' )->take( env('BOARDER_SIZE',5) )->get();
             }
         }
