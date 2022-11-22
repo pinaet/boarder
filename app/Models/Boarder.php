@@ -30,6 +30,11 @@ class Boarder extends Model
         return $this->hasMany(Contact::class, 'pupil_id', 'pupil_id');
     }
 
+    public function year_groups()
+    {
+        return $this->belongsTo(YearGroup::class, 'year_group', 'year_group');
+    }
+
 
     
 
@@ -40,7 +45,9 @@ class Boarder extends Model
             {
                 $boarders = Boarder::where( 'status', 'Current' )
                                     ->orderBy( 'building_id' )
-                                    ->orderBy( 'year_group' )
+                                    ->join( 'year_groups', 'year_groups.year_group', '=', 'boarders.year_group')
+                                    ->orderBy( 'building_id' )
+                                    ->orderBy( 'year_groups.display_order' )
                                     ->orderBy( 'prefered_forename' )->get();
             }
             else
@@ -48,8 +55,9 @@ class Boarder extends Model
                 $building = Building::where('building_name', $building_name)->first();
                 $boarders = Boarder::where( 'status', 'Current' )
                                     ->where( 'building_id', $building->id )
+                                    ->join( 'year_groups', 'year_groups.year_group', '=', 'boarders.year_group')
                                     ->orderBy( 'building_id' )
-                                    ->orderBy( 'year_group' )
+                                    ->orderBy( 'year_groups.display_order' )
                                     ->orderBy( 'prefered_forename' )->get();
             }
         }
@@ -58,7 +66,9 @@ class Boarder extends Model
             {
                 $boarders = Boarder::where( 'status', 'Current' )
                                     ->orderBy( 'building_id' )
-                                    ->orderBy( 'year_group' )
+                                    ->join( 'year_groups', 'year_groups.year_group', '=', 'boarders.year_group')
+                                    ->orderBy( 'building_id' )
+                                    ->orderBy( 'year_groups.display_order' )
                                     ->orderBy( 'prefered_forename' )->take( env('BOARDER_SIZE',5) )->get();
             }
             else
@@ -66,8 +76,9 @@ class Boarder extends Model
                 $building = Building::where('building_name', $building_name)->first();
                 $boarders = Boarder::where( 'status', 'Current' )
                                     ->where( 'building_id', $building->id )
+                                    ->join( 'year_groups', 'year_groups.year_group', '=', 'boarders.year_group')
                                     ->orderBy( 'building_id' )
-                                    ->orderBy( 'year_group' )
+                                    ->orderBy( 'year_groups.display_order' )
                                     ->orderBy( 'prefered_forename' )->take( env('BOARDER_SIZE',5) )->get();
             }
         }
