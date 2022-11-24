@@ -44,6 +44,8 @@ class Boarder extends Model
             if( $building_name=='All' )
             {
                 $boarders = Boarder::where( 'status', 'Current' )
+                                    ->where( 'boarder_type', '<>', 'Not a boarder' )
+                                    ->where( 'boarder_type', '<>', '' )
                                     ->orderBy( 'building_id' )
                                     ->join( 'year_groups', 'year_groups.year_group', '=', 'boarders.year_group')
                                     ->orderBy( 'building_id' )
@@ -54,6 +56,8 @@ class Boarder extends Model
             {
                 $building = Building::where('building_name', $building_name)->first();
                 $boarders = Boarder::where( 'status', 'Current' )
+                                    ->where( 'boarder_type', '<>', 'Not a boarder' )
+                                    ->where( 'boarder_type', '<>', '' )
                                     ->where( 'building_id', $building->id )
                                     ->join( 'year_groups', 'year_groups.year_group', '=', 'boarders.year_group')
                                     ->orderBy( 'building_id' )
@@ -65,6 +69,8 @@ class Boarder extends Model
             if( $building_name=='All' )
             {
                 $boarders = Boarder::where( 'status', 'Current' )
+                                    ->where( 'boarder_type', '<>', 'Not a boarder' )
+                                    ->where( 'boarder_type', '<>', '' )
                                     ->orderBy( 'building_id' )
                                     ->join( 'year_groups', 'year_groups.year_group', '=', 'boarders.year_group')
                                     ->orderBy( 'building_id' )
@@ -75,6 +81,8 @@ class Boarder extends Model
             {
                 $building = Building::where('building_name', $building_name)->first();
                 $boarders = Boarder::where( 'status', 'Current' )
+                                    ->where( 'boarder_type', '<>', 'Not a boarder' )
+                                    ->where( 'boarder_type', '<>', '' )
                                     ->where( 'building_id', $building->id )
                                     ->join( 'year_groups', 'year_groups.year_group', '=', 'boarders.year_group')
                                     ->orderBy( 'building_id' )
