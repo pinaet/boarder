@@ -10,11 +10,25 @@ use App\Models\RegisterColumn;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\SyncController;
 use App\Models\Boarder;
+use App\Models\PermissionContent;
+use App\Models\RolePermission;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class TestsController extends Controller
 {
     public function index()
     {
+        /**
+         * join query
+         */
+        // select all 'Bradbys/The Grove' boarders to 'The Grove' with conditions year_group in '11,12,13' and gender='M'
+        $boarders           = Boarder::join(   'buildings', 'buildings.id', '=', 'boarders.building_id' )
+                                     ->where(  'buildings.building_name', 'Bradbys/The Grove')
+                                     ->whereIn('boarders.year_group', ['11','12','13'])
+                                     ->where(  'buildings.gender', 'M')
+                                     ->get();
+        dd('join query');
+
         /**
          * update boarder 'status' and 'boarder_type'
             pupil_id

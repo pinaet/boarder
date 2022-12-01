@@ -16,19 +16,19 @@ class Building extends Model
         if(!$user){
             $user    = auth()->user();
         }
-        $buildings   = $this->all();
+        $buildings   = $this->orderBy('building_name')->get();
         $length      = count($buildings);
         $buildings_u = [];
 
         //get list of allowed content
-        foreach( $user->role[0]->permission_contents as $permission_content )
+        foreach( $buildings as $building )
         {
-            foreach( $buildings as $j => $building )
+            foreach( $user->role[0]->permission_contents as $j => $permission_content )
             {
                 if( $building->building_name==$permission_content->permission_content_name ){
                     array_push( $buildings_u, $building->building_name );
                     //cut
-                    $buildings->forget($j);
+                    $user->role[0]->permission_contents->forget($j);
                 }
             }
         }
