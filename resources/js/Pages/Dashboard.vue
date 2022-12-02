@@ -16,7 +16,9 @@
     import BATotalBoarder        from '@/Components/BATotalBoarder.vue';
     import BABlackdrop           from '@/Components/BABlackdrop.vue';
     import BALoading             from '@/Components/BALoading.vue';
-    import { useForm, Head }     from '@inertiajs/inertia-vue3';
+    import { useForm, 
+             Head, 
+             usePage  }          from '@inertiajs/inertia-vue3';
 
     const on_weekly              = ref(false)
     const on_mis_data            = ref(false)
@@ -58,7 +60,7 @@
     headers.value                = props.headers
     building.value               = props.building_name
     
-
+    // console.log( usePage().props.value.auth.user )
 
     /*
     * responsive 
@@ -85,7 +87,7 @@
 
         if( mode=='single' ){
             left    += 6    
-            top     += 41
+            top     += 40
         }
         else{
             left    += 0    
@@ -100,7 +102,7 @@
     }
 
     function store_register( event )
-    {          
+    {
         if( on_register_mode.value=='single' ){       
             // console.log( 'save register: ', event, register.value.attendance_id )
             let new_reg = { 
@@ -111,12 +113,14 @@
                 'pupil_id'           : register.value.pupil_id,
                 'register_column_id' : register.value.register_column_id,
                 'width'              : register.value.width,
+                'registered_by'      : usePage().props.value.auth.user.username
             }
 
             //emit to update total attendance type
             let temp = { new_reg: new_reg, old_reg: register.value }
             update_totals( temp )
             register.value.attendance_id = event
+            register.value.registered_by = usePage().props.value.auth.user.username
 
             axios.post('/boarder/store/attendance', new_reg )
                 .then((res) => {
@@ -128,6 +132,7 @@
         } 
         else{
             register.value.attendance_id = event
+            register.value.registered_by = usePage().props.value.auth.user.username
             update_totals_col( register.value )
         }
                 
@@ -634,9 +639,14 @@
                     </div>
                     <div class="py-[14px] px-1 sm:px-[17px]">
                         <textarea class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2" v-model="notes" placeholder="Write some notes..."></textarea>
-                        <div class="flex justify-end">
-                            <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 border border-[#c3c8d2] bg-[#828282]" @click="store_note(false)">Cancel</button>
-                            <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 ml-2 mr-[1px] border border-[#c3c8d2] bg-harrow-gold-100" @click="store_note(true)">Save</button>
+                        <div class="flex justify-between items-center">
+                            <div class="text-base pl-2 text-gray-500">
+                                by {{ notes ? register.noted_by : '-' }}
+                            </div>
+                            <div>
+                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 border border-[#c3c8d2] bg-[#828282]" @click="store_note(false)">Cancel</button>
+                                <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 ml-2 mr-[1px] border border-[#c3c8d2] bg-harrow-gold-100" @click="store_note(true)">Save</button>
+                            </div>
                         </div>
                     </div>
                 </div>

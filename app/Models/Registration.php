@@ -22,7 +22,7 @@ class Registration extends Model
 
     public function attendance()
     {
-        return $this->belongsTo(Attendance::class);
+        return $this->belongsTo(Attendance::class,'attendance_id');
     }
 
     public function register_column()
@@ -30,14 +30,14 @@ class Registration extends Model
         return $this->belongsTo(RegisterColumn::class);
     }
 
-    public function created_by_user()
+    public function registered_by_user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'registered_by');
     }
 
-    public function updated_by_user()
+    public function noted_by_user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'noted_by');
     }
 
 }

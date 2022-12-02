@@ -47,8 +47,8 @@
 
 
 <template >    
-    <td class="w-[82px] bg-white border-l border-b ">
-        <div class="w-full h-full text-xs p-1 flex items-center justify-evenly space-x-1 relative">
+    <td class="w-[82px] bg-white border-l border-b flex flex-col">
+        <div class="w-full h-full text-xs pt-1 px-1 flex items-center justify-evenly space-x-1 relative">
             <button @click="show_register()" class="w-[40px] h-[26px] rounded-md px-1 flex items-center justify-evenly space-x-1 " :style="'background-color: '+attendance_color">
                 <div class="w-[25px] flex justify-center items-center h-full">
                     {{attendance_symbol}}
@@ -61,5 +61,8 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-4 h-4"><path :fill="!notes?'#BDBDBD':'#4F4F4F'" d="M312 320h136V56c0-13.3-10.7-24-24-24H24C10.7 32 0 42.7 0 56v400c0 13.3 10.7 24 24 24h264V344c0-13.2 10.8-24 24-24zm129 55l-98 98c-4.5 4.5-10.6 7-17 7h-6V352h128v6.1c0 6.3-2.5 12.4-7 16.9z"/></svg>
             </button>
         </div>
+        <p class="text-xs text-gray-300 pb-1 px-1 text-center w-full truncate">
+            {{register.registered_by}}
+        </p>
     </td>
 </template>

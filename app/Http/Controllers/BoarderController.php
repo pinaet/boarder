@@ -166,8 +166,8 @@ class BoarderController extends Controller
             attendance_id
             register_column_id
             date
-            created_by
-            updated_by
+            registered_by
+            noted_by
             year_group
             academic_year
             notes
@@ -190,8 +190,8 @@ class BoarderController extends Controller
             ],
             [
                 'attendance_id' => $attendance_id,
-                'created_by'    => auth()->user()->id,
-                'updated_by'    => auth()->user()->id,
+                'registered_by' => auth()->user()->id,
+                'noted_by'      => auth()->user()->id,
                 'year_group'    => $boarder->year_group,
                 'academic_year' => $academic_year,
                 'notes'         => $notes,
@@ -225,7 +225,6 @@ class BoarderController extends Controller
             array_push( $pupil_ids, $boarder->pupil_id );
         }
         $registrations = Registration::whereIn( 'pupil_id', $pupil_ids )->where('date','>=',$start_date)->where('date','<=',$end_date)->get();
-        // dd( $registrations,$pupil_ids);
 
 
         $boarder_time = '';
@@ -263,6 +262,7 @@ class BoarderController extends Controller
                                 'date'               => $reg->date,
                                 'academic_year'      => $term->academic_year,
                                 'status'             => $header['status'],
+                                'noted_by'           => $reg->noted_by_user->username,
                             ];
 
                             $registrations->forget($key);
@@ -283,6 +283,7 @@ class BoarderController extends Controller
                                 'date'               => $header['date'],
                                 'academic_year'      => $term->academic_year,
                                 'status'             => $header['status'],
+                                'noted_by'           => '-'
                             ];
                         }
                         else
@@ -298,6 +299,7 @@ class BoarderController extends Controller
                                 'date'               => $header['date'],
                                 'academic_year'      => $term->academic_year,
                                 'status'             => $header['status'],
+                                'noted_by'           => '-'
                             ];
                         }
                     }

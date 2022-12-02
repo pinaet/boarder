@@ -475,8 +475,8 @@ class SyncController extends Controller
             attendance_id
             register_column_id**
             date
-            created_by
-            updated_by
+            registered_by
+            noted_by
             year_group
             academic_year
             notes
@@ -542,8 +542,8 @@ class SyncController extends Controller
                     'date'               => $attendance->AttendanceDate,
                     'register_column_id' => $c_col->id,    //**
                     'attendance_id'      => 0,
-                    'created_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
-                    'updated_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
+                    'registered_by'      => isset(auth()->user()->id) ? auth()->user()->id : 1,
+                    'noted_by'           => isset(auth()->user()->id) ? auth()->user()->id : 1,
                     'year_group'         => $attendance->YearGroup,
                     'academic_year'      => $attendance->SchoolYear,
                     'notes'              => $attendance->AbsenceTypeSymbol,
@@ -666,8 +666,8 @@ class SyncController extends Controller
                     'date'               => $attendance->AttendanceDate,
                     'register_column_id' => $c_col->id,    //**
                     'attendance_id'      => 0,
-                    'created_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
-                    'updated_by'         => isset(auth()->user()->id) ? auth()->user()->id : 1,
+                    'registered_by'      => isset(auth()->user()->id) ? auth()->user()->id : 1,
+                    'noted_by'           => isset(auth()->user()->id) ? auth()->user()->id : 1,
                     'year_group'         => $attendance->YearGroup,
                     'academic_year'      => $attendance->SchoolYear,
                     'notes'              => $attendance->AbsenceTypeSymbol,
