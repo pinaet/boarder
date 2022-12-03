@@ -113,7 +113,7 @@
                 'pupil_id'           : register.value.pupil_id,
                 'register_column_id' : register.value.register_column_id,
                 'width'              : register.value.width,
-                'registered_by'      : usePage().props.value.auth.user.username
+                'store_type'         : 'register',
             }
 
             //emit to update total attendance type
@@ -238,7 +238,8 @@
     function store_note( event )
     {
         if( event==true ){
-            register.value.notes = notes.value
+            register.value.notes    = notes.value
+            register.value.noted_by = usePage().props.value.auth.user.username
 
             let data = { 
                 'attendance_id'      : register.value.attendance_id,
@@ -247,6 +248,7 @@
                 'date'               : register.value.date,
                 'academic_year'      : register.value.academic_year,
                 'notes'              : register.value.notes,
+                'store_type'         : 'note',
             }
 
             axios.post('/boarder/store/attendance', data )
@@ -283,9 +285,11 @@
                     totals.value[old_reg.attendance_id][old_reg.register_column_id][old_reg.width][old_reg.date]--
                     totals.value[new_reg.attendance_id][new_reg.register_column_id][new_reg.width][new_reg.date]++
                     old_reg.attendance_id = new_reg.attendance_id
+                    old_reg.registered_by = usePage().props.value.auth.user.username
                     
-                    new_reg.pupil_id = boarder.pupil_id
-                    new_reg.notes    = old_reg.notes
+                    new_reg.pupil_id   = boarder.pupil_id
+                    new_reg.notes      = old_reg.notes
+                    new_reg.store_type = 'register'
                     axios.post('/boarder/store/attendance', new_reg )
                         .then((res) => {
                             // console.log(res.data.message)
@@ -641,7 +645,7 @@
                         <textarea class="w-[478px] h-[100px] bg-white border border-stroke-gray-2 rounded-md text-info-gray-3 p-2" v-model="notes" placeholder="Write some notes..."></textarea>
                         <div class="flex justify-between items-center">
                             <div class="text-base pl-2 text-gray-500">
-                                by {{ notes ? register.noted_by : '-' }}
+                                by {{ register.noted_by }}
                             </div>
                             <div>
                                 <button class="w-[81px] h-[29px] rounded-md font-bold text-white mt-2 border border-[#c3c8d2] bg-[#828282]" @click="store_note(false)">Cancel</button>

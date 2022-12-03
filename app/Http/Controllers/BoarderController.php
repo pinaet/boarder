@@ -171,6 +171,8 @@ class BoarderController extends Controller
             year_group
             academic_year
             notes
+
+            store_type = register or note
          */
         $attendance_id      = request()->attendance_id;
         $pupil_id           = request()->pupil_id;
@@ -178,25 +180,48 @@ class BoarderController extends Controller
         $date               = request()->date;
         $academic_year      = request()->academic_year;
         $notes              = request()->notes;
-        
-        $boarder  = Boarder::where('pupil_id',$pupil_id)->first();
 
-        // $register = Registration::where('pupil_id',$pupil_id)->where('register_column_id',$register_column_id)->where('date',$date)->where('date',$date)->get();
-        $register = Registration::updateOrCreate(
-            [   //where
-                'pupil_id'           => $pupil_id,
-                'register_column_id' => $register_column_id,
-                'date'               => $date,
-            ],
-            [
-                'attendance_id' => $attendance_id,
-                'registered_by' => auth()->user()->id,
-                'noted_by'      => auth()->user()->id,
-                'year_group'    => $boarder->year_group,
-                'academic_year' => $academic_year,
-                'notes'         => $notes,
-            ] //what to update
-        );
+        $store_type         = request()->store_type;
+        
+        $boarder            = Boarder::where('pupil_id',$pupil_id)->first();
+
+        $register_old       = Registration::where('pupil_id',$pupil_id)->where('register_column_id',$register_column_id)->where('date',$date)->first();
+        if( $store_type=='register' )
+        {   //register
+            $register = Registration::updateOrCreate(
+                [   //where
+                    'pupil_id'           => $pupil_id,
+                    'register_column_id' => $register_column_id,
+                    'date'               => $date,
+                ],
+                [
+                    'attendance_id' => $attendance_id,
+                    'year_group'    => $boarder->year_group,
+                    'academic_year' => $academic_year,
+                    'notes'         => $notes,
+                    'noted_by'      => isset($register_old) ? $register_old->noted_by : 0,
+                    'registered_by' => auth()->user()->id,
+                ] //what to update
+            );
+        }
+        else
+        {   //note
+            $register = Registration::updateOrCreate(
+                [   //where
+                    'pupil_id'           => $pupil_id,
+                    'register_column_id' => $register_column_id,
+                    'date'               => $date,
+                ],
+                [
+                    'attendance_id' => $attendance_id,
+                    'year_group'    => $boarder->year_group,
+                    'academic_year' => $academic_year,
+                    'notes'         => $notes,
+                    'noted_by'      => auth()->user()->id,
+                    'registered_by' => isset($register_old) ? $register_old->registered_by : 0,
+                ] //what to update
+            );
+        }
 
         $data = [
             'register'=> $register,
@@ -262,7 +287,8 @@ class BoarderController extends Controller
                                 'date'               => $reg->date,
                                 'academic_year'      => $term->academic_year,
                                 'status'             => $header['status'],
-                                'noted_by'           => $reg->noted_by_user->username,
+                                'registered_by'      => $reg->registered_by_user ? $reg->registered_by_user->username : '-',
+                                'noted_by'           => $reg->noted_by_user      ? $reg->noted_by_user->username      : '-',
                             ];
 
                             $registrations->forget($key);
@@ -283,7 +309,8 @@ class BoarderController extends Controller
                                 'date'               => $header['date'],
                                 'academic_year'      => $term->academic_year,
                                 'status'             => $header['status'],
-                                'noted_by'           => '-'
+                                'registered_by'      => '-',
+                                'noted_by'           => '-',
                             ];
                         }
                         else
@@ -299,7 +326,8 @@ class BoarderController extends Controller
                                 'date'               => $header['date'],
                                 'academic_year'      => $term->academic_year,
                                 'status'             => $header['status'],
-                                'noted_by'           => '-'
+                                'registered_by'      => '-',
+                                'noted_by'           => '-',
                             ];
                         }
                     }
