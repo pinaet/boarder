@@ -101,6 +101,9 @@ class BoarderController extends Controller
         if( !$seed_date ){
             $seed_date = $dates[0]['formatted'];
         }
+        if( !$weekly ){
+            $seed_date = date('Y-m-d');
+        }
 
         $boarders = (new Boarder)->get_boarders_by_building( $building_name );
 
@@ -109,11 +112,13 @@ class BoarderController extends Controller
         $boarders = $temp[ 'boarders' ];
         $totals   = $temp[ 'totals'   ];
         $dates    = $temp[ 'dates'    ];
+        $term     = $temp[ 'term'     ];
         $headers  = $temp[ 'headers'  ];
 
         $data = [
             'boarders' => json_decode(json_encode($boarders)),
             'dates'    => $dates,
+            'term'     => $term,
             'headers'  => $headers,
             'totals'   => $totals,
             'message'  => 'OK 200 - change_building',

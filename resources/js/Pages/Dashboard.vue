@@ -150,11 +150,11 @@
             'dates'         : dates.value,
             'weekly'        : !on_weekly.value, 
         }
-        console.log(headers.value)
 
         axios.post('/boarder/change/building', data )
             .then((res) => {
                 console.log( res.data.message )
+                term.value = res.data.term
 
                 // remove all Element in array
                 re_assign_boarders( res.data.boarders )
