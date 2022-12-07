@@ -119,10 +119,16 @@ return new class extends Migration
             Role::create($attributes);
 
             // 2. add permission_contents 'The Grove'
+            if( env('DB_CONNECTION')=='sqlsrv' ){
+                DB::unprepared('SET IDENTITY_INSERT permission_contents ON');
+            }
             $attributes                            = [];
             $attributes['id']                      = 3;
             $attributes['permission_content_name'] = $building_to_insert;    
             $permission_content = PermissionContent::create($attributes);
+            if( env('DB_CONNECTION')=='sqlsrv' ){
+                DB::unprepared('SET IDENTITY_INSERT permission_contents OFF');
+            }
 
             // 3. add role_permissions 'The Grove' to roles: SuperAdmin, BoardingStaff, The Grove
             $roles = Role::whereIn('role_name',['SuperAdmin','BoardingStaff',$building_to_insert])->get();
@@ -146,7 +152,10 @@ return new class extends Migration
             $role->role_name = $building_to_be_new;
             $role->save();
 
-            // 6. add building 'The Grove' and member_year_group to '11,12,13'         
+            // 6. add building 'The Grove' and member_year_group to '11,12,13'
+            if( env('DB_CONNECTION')=='sqlsrv' ){
+                DB::unprepared('SET IDENTITY_INSERT buildings ON');
+            }
             $attributes                      = []; 
             $attributes['id']                = 3;       
             $attributes['building_name']     = $building_to_insert;       
@@ -154,6 +163,9 @@ return new class extends Migration
             $attributes['member_gender']     = 'M';       
             $attributes['member_year_group'] = '11,12,13';
             Building::create($attributes);
+            if( env('DB_CONNECTION')=='sqlsrv' ){
+                DB::unprepared('SET IDENTITY_INSERT buildings OFF');
+            }
 
             // 7. update building 'Bradbys/The Grove' to 'Bradbys' and member_year_group to 'Y4,Y5,Y6,Y7,Y8,Y9,10'
             $building = Building::where( 'building_name', $building_to_update )->first(); 
@@ -180,6 +192,11 @@ return new class extends Migration
         catch ( Exception $e ) 
         {
             DB::rollBack();
+
+            if( env('DB_CONNECTION')=='sqlsrv' ){
+                DB::unprepared('SET IDENTITY_INSERT permission_contents OFF');
+                DB::unprepared('SET IDENTITY_INSERT buildings OFF');
+            }
             dd( $e );
         }
     }

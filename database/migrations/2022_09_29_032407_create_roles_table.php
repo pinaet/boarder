@@ -55,5 +55,25 @@ return new class extends Migration
         $attributes['created_by'] = 1;       
         $attributes['updated_by'] = 1;
         Role::create($attributes);
+
+        $attributes['role_name']  = 'Bradbys';   
+        $attributes['created_by'] = 1;       
+        $attributes['updated_by'] = 1;
+        Role::create($attributes);
+
+        $attributes['role_name']  = 'Junior Girls';   
+        $attributes['created_by'] = 1;       
+        $attributes['updated_by'] = 1;
+        Role::create($attributes);
+
+        $attributes['role_name']  = 'The Grove';   
+        $attributes['created_by'] = 1;       
+        $attributes['updated_by'] = 1;
+        Role::create($attributes);
+
+        $attributes['role_name']  = 'West Acre';   
+        $attributes['created_by'] = 1;       
+        $attributes['updated_by'] = 1;
+        Role::create($attributes);
     }
 };
