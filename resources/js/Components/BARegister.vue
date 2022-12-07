@@ -9,6 +9,7 @@
 
     const register = props.register
 
+    /* computed ช่วยแก้ปัญหา re-render แล้วข้อมูลใน component ไม่ update */
     const attendance_color = computed(()=>{
         let data = ''
         props.attendances.forEach( attenance => {
@@ -34,6 +35,10 @@
     
     const notes = computed(()=>{
         return props.register.notes        
+    })
+
+    const registered_by = computed(()=>{
+        return props.register.registered_by        
     })
 
     function note(value){
@@ -62,7 +67,7 @@
             </button>
         </div>
         <p class="text-xs text-gray-300 pb-1 px-1 text-center w-full truncate">
-            {{register.registered_by}}
+            {{registered_by}}
         </p>
     </td>
 </template>

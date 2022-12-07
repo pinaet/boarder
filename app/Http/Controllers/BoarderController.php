@@ -45,7 +45,7 @@ class BoarderController extends Controller
         $building_name    = $building_permits[0]=='All'? $building_permits[1] : $building_permits[0];
         $boarders         = (new Boarder)->get_boarders_by_building( $building_name );
         
-        $data             = $this->prepare_boarders( $boarders );
+        $data             = $this->prepare_boarders( $boarders, '' );
         $boarders         = $data[ 'boarders' ];
         $totals           = $data[ 'totals'   ];
         $dates            = $data[ 'dates'    ];
@@ -90,7 +90,8 @@ class BoarderController extends Controller
     {
         $building_name  = request()->building_name;
         $dates          = request()->dates;
-        $seed_date      = '';
+        $weekly         = request()->weekly;
+        $seed_date      = '';//dd($building_name,$dates,$weekly);
         foreach( $dates as $date ){
             if( $date['status']=='current' ){
                 $seed_date = $date['formatted'];
@@ -104,12 +105,16 @@ class BoarderController extends Controller
         $boarders = (new Boarder)->get_boarders_by_building( $building_name );
 
         //'boarders','dates','term','headers','totals' --> boarders, registers, totals
-        $temp     = $this->prepare_boarders( $boarders, $seed_date );
-        $boarders = $temp['boarders'];//dd(json_encode($boarders));
-        $totals   = $temp['totals'];
+        $temp     = $this->prepare_boarders( $boarders, $seed_date, $weekly );
+        $boarders = $temp[ 'boarders' ];
+        $totals   = $temp[ 'totals'   ];
+        $dates    = $temp[ 'dates'    ];
+        $headers  = $temp[ 'headers'  ];
 
         $data = [
             'boarders' => json_decode(json_encode($boarders)),
+            'dates'    => $dates,
+            'headers'  => $headers,
             'totals'   => $totals,
             'message'  => 'OK 200 - change_building',
         ];
@@ -230,21 +235,30 @@ class BoarderController extends Controller
         return $data;
     }
 
-    function prepare_boarders( $boarders, $seed_date='' )
+    function prepare_boarders( $boarders, $seed_date='', $weekly=false )
     {
         if( $seed_date=='' ){
             $seed_date = date('Y-m-d');
         }
         
         $attendance  = Attendance::where( 'is_default', 1 )->first();
-        $dates       = $this->generate_dates( $seed_date );
+        $dates       = $this->generate_dates( $seed_date, $weekly );
         $term        = $this->generate_term(  $seed_date );
-        $headers     = $this->generate_cols(  $dates     );
+        $headers     = $this->generate_cols(  $dates    , $weekly );
 
 
         //prepare boarder registrations
-        $start_date    = $dates[0]['formatted'];
-        $end_date      = $dates[6]['formatted'];        
+        if( $weekly ){
+            //weekly
+            $start_date    = $dates[0]['formatted'];
+            $end_date      = $dates[6]['formatted']; 
+        }
+        else{
+            //today
+            $start_date    = $dates[0]['formatted'];
+            $end_date      = $dates[0]['formatted'];  
+        }
+
         $pupil_ids     = [];
         foreach( $boarders as $boarder ){
             array_push( $pupil_ids, $boarder->pupil_id );
@@ -404,7 +418,7 @@ class BoarderController extends Controller
         return $data;
     }
 
-    function generate_dates( $seed_date='' )
+    function generate_dates( $seed_date='', $weekly=false )
     {
         // N = 1-7
         // L = 1:LeapYear 0:notLeapYear
@@ -428,56 +442,94 @@ class BoarderController extends Controller
 
         $date = array();
 
-        //get current date
-        if( $seed_date ){
-            $order = date( 'N', strtotime( $seed_date ) ) - 1;
-        }
-        else{
-            $order = date( 'N' ) - 1;
-        }
-
-        foreach( $week_days as $index => $value )
+        if( $weekly )
         {
-            $temp     = '';
-            $key_word = '';
-            if( $index > $order ){
-                $key_word = "next $value $seed_date";
-            }
-            if( $index < $order ){
-                $key_word = "last $value $seed_date";
-            }
-
-            $status = '';
-            if( $key_word ){
-                $temp   = date( 'Y-m-d', strtotime( $key_word ) );
-                $status = '';
+            /*
+                weekly
+            */
+            //get current date
+            if( $seed_date ){
+                $order = date( 'N', strtotime( $seed_date ) ) - 1;
             }
             else{
-                if( $seed_date ){
-                    $temp   = date( 'Y-m-d', strtotime( $seed_date ) );
+                $order = date( 'N' ) - 1;
+            }
+    
+            foreach( $week_days as $index => $value )
+            {
+                $temp     = '';
+                $key_word = '';
+                if( $index > $order ){
+                    $key_word = "next $value $seed_date";
+                }
+                if( $index < $order ){
+                    $key_word = "last $value $seed_date";
+                }
+    
+                $status = '';
+                if( $key_word ){
+                    $temp   = date( 'Y-m-d', strtotime( $key_word ) );
+                    $status = '';
                 }
                 else{
-                    $temp   = date( 'Y-m-d' );
+                    if( $seed_date ){
+                        $temp   = date( 'Y-m-d', strtotime( $seed_date ) );
+                    }
+                    else{
+                        $temp   = date( 'Y-m-d' );
+                    }
+                    if( $temp==date( 'Y-m-d' ) ){
+                        $status = 'current';
+                    }
                 }
-                if( $temp==date( 'Y-m-d' ) ){
+                
+                // if( $index>0 ) dd($index,$value,$order,$key_word,$temp);
+    
+                $date = array(
+                    'date_long'  => date( 'j F Y', strtotime( $temp ) ),
+                    'date_short' => date( 'j M Y', strtotime( $temp ) ),
+                    'formatted'  => $temp,
+                    'day'        => date( 'l', strtotime( $temp ) ),
+                    'day_short'  => date( 'D', strtotime( $temp ) ),
+                    'order'      => $index, //== date( 'N', strtotime( $temp ) ) - 1,
+                    'status'     => $status,
+                    'color'      => $day_colors[ $index ]
+                );
+    
+                array_push( $dates, $date );
+            }
+        }
+        else
+        {
+            /*
+                today
+            */
+            //current date
+            $order = date( 'N' ) - 1;
+            $day   = date( 'l' );
+
+            foreach( $week_days as $index => $value )
+            {
+                if( $value==$day )
+                {
+                    $temp   = date( 'Y-m-d' );
                     $status = 'current';
+        
+                    $date = array(
+                        'date_long'  => date( 'j F Y', strtotime( $temp ) ),
+                        'date_short' => date( 'j M Y', strtotime( $temp ) ),
+                        'formatted'  => $temp,
+                        'day'        => date( 'l', strtotime( $temp ) ),
+                        'day_short'  => date( 'D', strtotime( $temp ) ),
+                        'order'      => $index, //== date( 'N', strtotime( $temp ) ) - 1,
+                        'status'     => $status,
+                        'color'      => $day_colors[ $index ]
+                    );
+        
+                    array_push( $dates, $date );
+                    break;
                 }
             }
-            
-            // if( $index>0 ) dd($index,$value,$order,$key_word,$temp);
-
-            $date = array(
-                'date_long'  => date( 'j F Y', strtotime( $temp ) ),
-                'date_short' => date( 'j M Y', strtotime( $temp ) ),
-                'formatted'  => $temp,
-                'day'        => date( 'l', strtotime( $temp ) ),
-                'day_short'  => date( 'D', strtotime( $temp ) ),
-                'order'      => $index, //== date( 'N', strtotime( $temp ) ) - 1,
-                'status'     => $status,
-                'color'      => $day_colors[ $index ]
-            );
-
-            array_push( $dates, $date );
         }
         
         return $dates;
@@ -524,61 +576,103 @@ class BoarderController extends Controller
         return $term;
     }
 
-    function generate_cols( $dates )
+    function generate_cols( $dates, $weekly=false )
     {
-        $reg_cols   = RegisterColumn::all();
-        $min_w      = 0;
-        $max_w      = 0;
-        $group      = 1;
-        $colspan    = 0;
-        $cols       = [];
-        $temp_cols  = [];
-        $sub_max_w  = 0;
-        $sub_min_w  = 0;
-        foreach( $reg_cols as $i => $reg_col )
-        {
-            if( $reg_col->day_of_week==$group ){
-                array_push( $temp_cols, $reg_col );
-            }
-            
-            if( $reg_col->day_of_week!=$group || count($reg_cols)==$i+1 ){
-                // dd($i,$sub_min_w,$sub_max_w,$temp_cols);
-                if( count($reg_cols)==$i+1 ){
-                    $sub_max_w  += $reg_col->width;
-                    if( $reg_col->width==82 ){
-                        $sub_min_w  += $reg_col->width;
-                    }
+        if( $weekly ){
+            //weekly
+            $reg_cols   = RegisterColumn::all();
+            $min_w      = 0;
+            $max_w      = 0;
+            $group      = 1;
+            $colspan    = 0;
+            $cols       = [];
+            $temp_cols  = [];
+            $sub_max_w  = 0;
+            $sub_min_w  = 0;
+            foreach( $reg_cols as $i => $reg_col )
+            {
+                if( $reg_col->day_of_week==$group ){
+                    array_push( $temp_cols, $reg_col );
                 }
-                $temp = [
-                    'id'        => $group,
-                    'col_name'  => $dates[$group-1]['day'] .' ( '. $dates[$group-1]['date_short'] .' )',
-                    'colspan'   => $colspan,
-                    'cols'      => $temp_cols,
-                    'max_w'     => $sub_max_w,
-                    'min_w'     => $sub_min_w,
-                    'status'    => $dates[$group-1]['status'],
-                    'color'     => $dates[$group-1]['color'],
-                    'date'      => $dates[$group-1]['formatted']
-                ];
-                array_push( $cols, $temp );
-
-                $group      = $reg_col->day_of_week;
-                $colspan    = 0;
-                $sub_max_w  = 0;
-                $sub_min_w  = 0;
-                $temp_cols  = [];
-
-                array_push( $temp_cols, $reg_col );
+                
+                if( $reg_col->day_of_week!=$group || count($reg_cols)==$i+1 ){
+                    // dd($i,$sub_min_w,$sub_max_w,$temp_cols);
+                    if( count($reg_cols)==$i+1 ){
+                        $sub_max_w  += $reg_col->width;
+                        if( $reg_col->width==82 ){
+                            $sub_min_w  += $reg_col->width;
+                        }
+                    }
+                    $temp = [
+                        'id'        => $group,
+                        'col_name'  => $dates[$group-1]['day'] .' ( '. $dates[$group-1]['date_short'] .' )',
+                        'colspan'   => $colspan,
+                        'cols'      => $temp_cols,
+                        'max_w'     => $sub_max_w,
+                        'min_w'     => $sub_min_w,
+                        'status'    => $dates[$group-1]['status'],
+                        'color'     => $dates[$group-1]['color'],
+                        'date'      => $dates[$group-1]['formatted']
+                    ];
+                    array_push( $cols, $temp );
+    
+                    $group      = $reg_col->day_of_week;
+                    $colspan    = 0;
+                    $sub_max_w  = 0;
+                    $sub_min_w  = 0;
+                    $temp_cols  = [];
+    
+                    array_push( $temp_cols, $reg_col );
+                }
+    
+                $max_w      += $reg_col->width;
+                $sub_max_w  += $reg_col->width;
+                if( $reg_col->width==82 ){
+                    $min_w      += $reg_col->width;
+                    $sub_min_w  += $reg_col->width;
+                }
+                
+                $colspan++;
             }
-
-            $max_w      += $reg_col->width;
-            $sub_max_w  += $reg_col->width;
-            if( $reg_col->width==82 ){
-                $min_w      += $reg_col->width;
-                $sub_min_w  += $reg_col->width;
+        }
+        else{
+            //today
+            $reg_cols   = RegisterColumn::where('day_of_week', date('N'))->get();
+            $min_w      = 0;
+            $max_w      = 0;
+            $group      = date('N');
+            $colspan    = 0;
+            $cols       = [];
+            $temp_cols  = [];
+            $sub_max_w  = 0;
+            $sub_min_w  = 0;
+            foreach( $reg_cols as $i => $reg_col )
+            {
+                if( $reg_col->day_of_week==$group ){
+                    array_push( $temp_cols, $reg_col );
+                }
+    
+                $max_w      += $reg_col->width;
+                $sub_max_w  += $reg_col->width;
+                if( $reg_col->width==82 ){
+                    $min_w      += $reg_col->width;
+                    $sub_min_w  += $reg_col->width;
+                }
+                
+                $colspan++;
             }
-            
-            $colspan++;
+            $temp = [
+                'id'        => $group,
+                'col_name'  => $dates[0]['day'] .' ( '. $dates[0]['date_short'] .' )',
+                'colspan'   => $colspan,
+                'cols'      => $temp_cols,
+                'max_w'     => $sub_max_w,
+                'min_w'     => $sub_min_w,
+                'status'    => $dates[0]['status'],
+                'color'     => $dates[0]['color'],
+                'date'      => $dates[0]['formatted']
+            ];
+            array_push( $cols, $temp );
         }
 
         $headers = [
