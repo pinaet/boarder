@@ -22,7 +22,9 @@ return new class extends Migration
                 $table->renameColumn('created_by', 'registered_by');
                 $table->renameColumn('updated_by', 'noted_by'     );
             });
+            DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             dd( $e );
         }
     }
@@ -42,7 +44,9 @@ return new class extends Migration
                 $table->foreign('created_by')->references('id')->on('users')->change();
                 $table->foreign('updated_by')->references('id')->on('users')->change();
             });
+            DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             dd( $e );
         }
     }

@@ -19,7 +19,9 @@ return new class extends Migration
                 $table->string('relationship')->nullable()->change();
                 $table->string('contact_name')->nullable()->change();
             });
+            DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             dd( $e );
         }
     }
@@ -37,7 +39,9 @@ return new class extends Migration
                 $table->string('relationship')->change();
                 $table->string('contact_name')->change();
             });
+            DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             dd( $e );
         }
     }
