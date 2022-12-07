@@ -466,7 +466,6 @@ class SyncController extends Controller
             ORDER BY PupilID, AttendanceDate
         ";
         $session_attendances = DB::connection( 'mis' )->select( $sql );
-
         /*
             Registration
             --------------
@@ -505,12 +504,12 @@ class SyncController extends Controller
         */
 
         $cols  = RegisterColumn::all();
-        foreach( $session_attendances as $attendance ){
+        foreach( $session_attendances as $i => $attendance ){
             $c_date = '';
             $c_col  = '';
 
             //get days of the week by seed_date
-            $dates = (new BoarderController)->generate_dates( $attendance->AttendanceDate );
+            $dates = (new BoarderController)->generate_dates( $attendance->AttendanceDate, true );
 
             //filter date - array
             $temp  = Arr::where( $dates, function($date) use ($attendance){
@@ -524,7 +523,7 @@ class SyncController extends Controller
             $temp  = $cols->filter( function( $col ) use( $c_date, $attendance ){
                 return ((strtolower($col->column_name)=='morning'&&strtolower($attendance->SessionID)=='am') ||
                         (strtolower($col->column_name)=='afternoon'&&strtolower($attendance->SessionID)=='pm')) &&
-                       ($col->day_of_week==($c_date['order']+1) ) ? true : false;
+                        ($col->day_of_week==($c_date['order']+1) ) ? true : false;
             });
             foreach( $temp as $value ){
                 $c_col  = $value;
@@ -624,7 +623,7 @@ class SyncController extends Controller
             $c_col  = '';
 
             //get days of the week by seed_date
-            $dates = (new BoarderController())->generate_dates($attendance->AttendanceDate);
+            $dates = (new BoarderController())->generate_dates( $attendance->AttendanceDate, true );
 
             //filter date - array
             $temp  = Arr::where($dates, function ($date) use ($attendance) {

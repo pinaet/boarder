@@ -18,6 +18,20 @@ class TestsController extends Controller
 {
     public function index()
     {
+
+
+
+        /**
+         * generate columns
+         */
+        $start_date = date('Y-m-d', strtotime( '- 3 days' ) );
+        (new SyncController)->syncSchoolAttendance( $start_date );//'2022-10-24'
+        dd('syncSchoolAttendance: done');
+
+
+
+
+
         /**
          * join query
          */
@@ -28,6 +42,10 @@ class TestsController extends Controller
                                      ->where(  'buildings.gender', 'M')
                                      ->get();
         dd('join query');
+
+
+
+        
 
         /**
          * update boarder 'status' and 'boarder_type'
@@ -64,14 +82,6 @@ class TestsController extends Controller
          * date
          */
         dd(date('Y-m-d H:i:s'));
-
-
-
-        /**
-         * generate columns
-         */
-        (new SyncController)->syncSchoolAttendance('');//'2022-10-24'
-        dd('syncSchoolAttendance: done');
 
 
 
