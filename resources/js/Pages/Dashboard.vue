@@ -233,7 +233,8 @@
         let data = { 
             'term'          : term.value,
             'building_name' : building.value,
-            'direction'     : direction
+            'direction'     : direction,
+            'weekly'        : on_weekly.value 
         }
 
         axios.post('/boarder/change/week', data )

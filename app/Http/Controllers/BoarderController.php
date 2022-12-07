@@ -127,6 +127,7 @@ class BoarderController extends Controller
         $term          = request()->term;
         $direction     = request()->direction;
         $building_name = request()->building_name;
+        $weekly        = request()->weekly;
 
         $word          = '';
 
@@ -143,7 +144,7 @@ class BoarderController extends Controller
         $seed_date  = date( 'Y-m-d', strtotime( $word . ' ' . $term['date'] ) );
         
         $boarders   = (new Boarder)->get_boarders_by_building( $building_name );
-        $temp       = $this->prepare_boarders( $boarders, $seed_date );
+        $temp       = $this->prepare_boarders( $boarders, $seed_date, $weekly );
         $boarders   = $temp[ 'boarders' ];
         $totals     = $temp[ 'totals'   ];
         $dates      = $temp[ 'dates'    ];
