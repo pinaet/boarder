@@ -557,7 +557,7 @@ class BoarderController extends Controller
             $sql = "
                 select * from
                 (
-                    select academic_year, '-' term, min(start_date) start_date, max(end_date) end_date from chirper.school_terms group by academic_year
+                    select academic_year, '-' term, min(start_date) start_date, max(end_date) end_date from school_terms group by academic_year
                 ) a where '$date' between start_date and end_date;
             ";
             $term = DB::select( $sql );
