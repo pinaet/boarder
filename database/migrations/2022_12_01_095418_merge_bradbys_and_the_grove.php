@@ -5,6 +5,7 @@ use App\Models\Boarder;
 use App\Models\Building;
 use App\Models\RolePermission;
 use App\Models\PermissionContent;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -186,7 +187,6 @@ return new class extends Migration
                 $boarder->building_id = $building->id;
                 $boarder->save();
             }
-
             DB::commit();
         } 
         catch ( Exception $e ) 
