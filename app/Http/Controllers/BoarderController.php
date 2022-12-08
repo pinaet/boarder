@@ -42,7 +42,16 @@ class BoarderController extends Controller
         /*
         * assign building_name for the user with the least boarders num
         */
-        $building_name    = $building_permits[0]=='All'? $building_permits[1] : $building_permits[0];
+        $building_name    = '';
+        //take last visit building for the current user - login as?
+        if(!auth()->user()->last_visit){
+            $building_name= $building_permits[0]=='All'? $building_permits[1] : $building_permits[0];
+            auth()->user()->last_visit = $building_name;
+            auth()->user()->save();
+        }
+        else{
+            $building_name= auth()->user()->last_visit;
+        }
         $boarders         = (new Boarder)->get_boarders_by_building( $building_name );
         
         $data             = $this->prepare_boarders( $boarders, '' );
@@ -92,6 +101,7 @@ class BoarderController extends Controller
         $dates          = request()->dates;
         $weekly         = request()->weekly;
         $seed_date      = '';//dd($building_name,$dates,$weekly);
+
         foreach( $dates as $date ){
             if( $date['status']=='current' ){
                 $seed_date = $date['formatted'];
@@ -123,6 +133,10 @@ class BoarderController extends Controller
             'totals'   => $totals,
             'message'  => 'OK 200 - change_building',
         ];
+
+        /* remember last visit building for the current user */
+        auth()->user()->last_visit = $building_name;
+        auth()->user()->save();
         
         return $data;
     }
