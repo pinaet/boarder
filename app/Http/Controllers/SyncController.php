@@ -221,10 +221,18 @@ class SyncController extends Controller
         foreach( $boarders as $boarder )
         {
             $student  = $all_students->where('PupilID',$boarder->pupil_id)->first();
-            if( $student && ( $boarder->boarder_type != $student->BoarderStatus || $boarder->status != $student->StudentStatus ) )
+            if( $student )
             {
-                $boarder->boarder_type  = $student->BoarderStatus;
-                $boarder->status        = $student->StudentStatus;
+                if( $boarder->boarder_type != $student->BoarderStatus || $boarder->status != $student->StudentStatus )
+                {
+                    $boarder->boarder_type  = $student->BoarderStatus;
+                    $boarder->status        = $student->StudentStatus;
+                    $boarder->save();
+                }
+            }
+            else
+            {
+                $boarder->status        = 'Leaver';
                 $boarder->save();
             }
         }
