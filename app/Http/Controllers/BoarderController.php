@@ -284,7 +284,7 @@ class BoarderController extends Controller
             array_push( $pupil_ids, $boarder->pupil_id );
         }
         $registrations = Registration::whereIn( 'pupil_id', $pupil_ids )->where('date','>=',$start_date)->where('date','<=',$end_date)->get();
-
+        
 
         $boarder_time = '';
         $start_time = microtime(TRUE);
@@ -302,12 +302,13 @@ class BoarderController extends Controller
             * boarder: registers
             */  
             $registers     = [];
+            $regs          = $registrations->where( 'pupil_id', $boarder->pupil_id );
             foreach( $headers['cols'] as $header )
             {
                 foreach( $header['cols'] as $col )
                 {
                     $register = [];
-                    foreach( $registrations as $key => $reg )
+                    foreach( $regs as $key => $reg )
                     {
                         if( $col->id==$reg->register_column_id && $reg->date==$header['date'] && $reg->pupil_id==$boarder->pupil_id ){
                             //assign register value
@@ -325,6 +326,7 @@ class BoarderController extends Controller
                                 'noted_by'           => $reg->noted_by_user      ? $reg->noted_by_user->username      : '-',
                             ];
 
+                            $regs->forget($key);
                             $registrations->forget($key);
 
                             break;
@@ -371,7 +373,6 @@ class BoarderController extends Controller
                 // dd( $registrations);
             }
             $boarder->{'registers'}     = $registers;
-
 
             /*
             * boarder: absence_request_url
@@ -425,7 +426,7 @@ class BoarderController extends Controller
         }
         $end_time = microtime(TRUE);
         $totals_time = $end_time - $start_time;
-        // dd( $boarder_time, $totals_time);
+        // dd( '$boarder_time:'.$boarder_time, '$totals_time:'.$totals_time, '$registrations:'.$registrations->count());
 
         $data = [
             'boarders'  => $boarders,
