@@ -588,10 +588,13 @@ class BoarderController extends Controller
             $term->{'date'}  = $date;
         }
         else{
-            $term = [
-                'name' => '(Not available)',
-                'date' => $date
-            ];
+            $term = collect([
+                (object) [
+                    'name' => '(Not available)',
+                    'date' => $date,
+                    'academic_year' => 0
+                ]
+            ])[0];
         }
         
         return $term;
@@ -599,9 +602,12 @@ class BoarderController extends Controller
 
     function generate_cols( $dates, $weekly=false )
     {
+        //get register column start date
+        $start_date = (new RegisterColumn)->get_start_date( $dates, $weekly );
+
         if( $weekly ){
             //weekly
-            $reg_cols   = RegisterColumn::all();
+            $reg_cols   = RegisterColumn::where('start_date',$start_date)->get();
             $min_w      = 0;
             $max_w      = 0;
             $group      = 1;
@@ -658,7 +664,7 @@ class BoarderController extends Controller
         }
         else{
             //today
-            $reg_cols   = RegisterColumn::where('day_of_week', date('N'))->get();
+            $reg_cols   = RegisterColumn::where('start_date',$start_date)->where('day_of_week', date('N'))->get();
             $min_w      = 0;
             $max_w      = 0;
             $group      = date('N');
