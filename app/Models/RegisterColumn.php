@@ -944,7 +944,7 @@ class RegisterColumn extends Model
 
         $this->generate_2022();
 
-        $start_date = '2023-06-19';
+        $start_date = '2023-06-26';
 
         //Monday
         $attributes['day_of_week']   = 1;       
