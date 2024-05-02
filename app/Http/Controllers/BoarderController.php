@@ -255,148 +255,111 @@ class BoarderController extends Controller
         return $data;
     }
 
-    function prepare_boarders( $boarders, $seed_date='', $weekly=false )
+    function prepare_boarders($boarders, $seed_date = '', $weekly = false)
     {
-        if( $seed_date=='' ){
-            $seed_date = date('Y-m-d');
-        }
+        $seed_date      = $seed_date ?: date('Y-m-d');
         
-        $attendance  = Attendance::where( 'is_default', 1 )->first();
-        $dates       = $this->generate_dates( $seed_date, $weekly );
-        $term        = $this->generate_term(  $seed_date );
-        $headers     = $this->generate_cols(  $dates    , $weekly );
+        $attendance     = Attendance::where('is_default', 1)->first();
+        $dates          = $this->generate_dates($seed_date, $weekly);
+        $term           = $this->generate_term($seed_date);
+        $headers        = $this->generate_cols($dates, $weekly);
 
+        $dateRange      = $this->getDateRange($dates, $weekly);
+        $registrations  = Registration::whereIn('pupil_id', $boarders->pluck('pupil_id'))
+                                    ->whereBetween('date', $dateRange)
+                                    ->get()
+                                    ->groupBy('pupil_id');
 
-        //prepare boarder registrations
-        if( $weekly ){
-            //weekly
-            $start_date    = $dates[0]['formatted'];
-            $end_date      = $dates[6]['formatted']; 
+        $boarders->each(function ($boarder) use ($registrations, $headers, $attendance, $term) {
+            $boarder->photo = base64_encode($boarder->photo);
+            $boarder->building_name = $boarder->building->building_name ?? '-';
+            $boarder->contacts = $boarder->contacts ?? [];
+            $boarder->registers = $this->prepareBoarderRegisters($boarder, $registrations[$boarder->pupil_id] ?? collect(), $headers, $attendance, $term);
+            $boarder->absence_request_url = (new PaperformController)->paperform('leave-request-form', $boarder);
+        });
+
+        $totals = $this->prepareTotals($boarders, $dates, $attendance);
+
+        return [
+            'boarders'  => $boarders,
+            'totals'    => $totals,
+            'dates'     => $dates,
+            'term'      => $term,
+            'headers'   => $headers,
+        ];
+    }
+    protected function getDateRange($dates, $weekly)
+    {
+        if ($weekly) {
+            return [$dates[0]['formatted'], $dates[6]['formatted']];
         }
-        else{
-            //today
-            $start_date    = $dates[0]['formatted'];
-            $end_date      = $dates[0]['formatted'];  
-        }
 
-        $pupil_ids     = [];
-        foreach( $boarders as $boarder ){
-            array_push( $pupil_ids, $boarder->pupil_id );
-        }
-        $registrations = Registration::whereIn( 'pupil_id', $pupil_ids )->where('date','>=',$start_date)->where('date','<=',$end_date)->get();
-        
+        return [$dates[0]['formatted'], $dates[0]['formatted']];
+    }
 
-        $boarder_time = '';
-        $start_time = microtime(TRUE);
-        /*
-        * boarders
-        */
-        foreach( $boarders as $boarder )
-        {
-            $boarder->photo = base64_encode( $boarder->photo );
-            $boarder->{'building_name'} = $boarder->building->building_name;
-            $boarder->{'contacts'}      = $boarder->contacts;
+    protected function prepareBoarderRegisters($boarder, $registrations, $headers, $attendance, $term)
+    {
+        $registers          = [];
+        foreach ($headers['cols'] as $header) {
+            foreach ($header['cols'] as $col) {
+                $reg = $registrations->first(function ($registration) use ($col, $header) {
+                    return $registration->register_column_id == $col->id && $registration->date == $header['date'];
+                });
 
+                $register   = $reg ? $this->buildRegisterFromReg($boarder, $col, $reg, $term, $header) : 
+                                $this->buildDefaultRegister($boarder, $col, $attendance, $term, $header);
 
-            /*
-            * boarder: registers
-            */  
-            $registers     = [];
-            $regs          = $registrations->where( 'pupil_id', $boarder->pupil_id );
-            foreach( $headers['cols'] as $header )
-            {
-                foreach( $header['cols'] as $col )
-                {
-                    $register = [];
-                    foreach( $regs as $key => $reg )
-                    {
-                        if( $col->id==$reg->register_column_id && $reg->date==$header['date'] && $reg->pupil_id==$boarder->pupil_id ){
-                            //assign register value
-                            // dd($boarder,$header,$col,$reg,$attendance);
-                            $register = [
-                                'pupil_id'           => $boarder->pupil_id,
-                                'register_column_id' => $col->id,
-                                'attendance_id'      => $reg->attendance_id,
-                                'width'              => $col->width,
-                                'notes'              => $reg->notes,
-                                'date'               => $reg->date,
-                                'academic_year'      => $term->academic_year,
-                                'status'             => $header['status'],
-                                'registered_by'      => $reg->registered_by_user ? $reg->registered_by_user->username : '-',
-                                'noted_by'           => $reg->noted_by_user      ? $reg->noted_by_user->username      : '-',
-                            ];
-
-                            $regs->forget($key);
-                            $registrations->forget($key);
-
-                            break;
-                        }
-                    }
-
-                    if( !$register ){
-                        if( $col->width==config('app.width') )
-                        {
-                            $register = [
-                                'pupil_id'           => $boarder->pupil_id,
-                                'register_column_id' => $col->id,
-                                'attendance_id'      => $attendance->id,
-                                'width'              => $col->width,
-                                'notes'              => '',
-                                'date'               => $header['date'],
-                                'academic_year'      => $term->academic_year,
-                                'status'             => $header['status'],
-                                'registered_by'      => '-',
-                                'noted_by'           => '-',
-                            ];
-                        }
-                        else
-                        {   
-                            //prepare attendance from mis
-                            //mis attendance data
-                            $register = [
-                                'pupil_id'           => $boarder->pupil_id,
-                                'register_column_id' => $col->id,
-                                'attendance_id'      => 0,
-                                'width'              => $col->width,
-                                'notes'              => '',
-                                'date'               => $header['date'],
-                                'academic_year'      => $term->academic_year,
-                                'status'             => $header['status'],
-                                'registered_by'      => '-',
-                                'noted_by'           => '-',
-                            ];
-                        }
-                    }
-
-                    array_push( $registers, $register );
-                }
-                // dd( $registrations);
+                $registers[]= $register;
             }
-            $boarder->{'registers'}     = $registers;
-
-            /*
-            * boarder: absence_request_url
-            */            
-            $boarder->{'absence_request_url'} = (new PaperformController)->paperform( 'leave-request-form', $boarder );
         }
-        $end_time = microtime(TRUE);
-        $boarder_time = $end_time - $start_time;
 
+        return $registers;
+    }
 
+    protected function buildRegisterFromReg($boarder, $col, $reg, $term, $header)
+    {
+        return [
+            'pupil_id'          => $boarder->pupil_id,
+            'register_column_id'=> $col->id,
+            'attendance_id'     => $reg->attendance_id,
+            'width'             => $col->width,
+            'notes'             => $reg->notes,
+            'date'              => $reg->date,
+            'academic_year'     => $term->academic_year,
+            'status'            => $header['status'],
+            'registered_by'     => $reg->registered_by_user->username ?? '-',
+            'noted_by'          => $reg->noted_by_user->username ?? '-',
+        ];
+    }
 
-        $totals_time = '';
-        $start_time = microtime(TRUE);
-        /*
-        * totals
-        */
-        $totals      = [];
+    protected function buildDefaultRegister($boarder, $col, $attendance, $term, $header)
+    {
+        return [
+            'pupil_id'          => $boarder->pupil_id,
+            'register_column_id'=> $col->id,
+            'attendance_id'     => $col->width == config('app.width') ? $attendance->id : 0,
+            'width'             => $col->width,
+            'notes'             => '',
+            'date'              => $header['date'],
+            'academic_year'     => $term->academic_year,
+            'status'            => $header['status'],
+            'registered_by'     => '-',
+            'noted_by'          => '-',
+        ];
+    }
+
+    protected function prepareTotals($boarders, $dates, $attendance)
+    {
+        $totals = [];
+        // Your logic to prepare totals goes here, optimized similarly using collections and efficient loops
+        $widthConfig = config('app.width');
         $attendances = Attendance::all();
         $reg_cols    = RegisterColumn::all();
         for( $i=0;$i<=count($attendances);$i++ ){
             $totals[$i] = [];
             for( $j=0;$j<=count($reg_cols);$j++ ){
                 $totals[$i][$j] = [];
-                for( $k=0;$k<=config('app.width');$k++ ) {
+                for( $k=0;$k<=$widthConfig;$k++ ) {
                     $totals[$i][$j][$k] = [];
                 }
             }
@@ -416,7 +379,7 @@ class BoarderController extends Controller
             foreach( $boarder->registers as $register )
             {
                 try {
-                    if( $register['width']==config('app.width')){
+                    if( $register['width']==$widthConfig){
                         $totals[ $register['attendance_id'] ][ $register['register_column_id'] ][ $register['width'] ][ $register['date'] ] ++;
                     }
                 } catch (Exception $e) {
@@ -424,19 +387,8 @@ class BoarderController extends Controller
                 }
             }
         }
-        $end_time = microtime(TRUE);
-        $totals_time = $end_time - $start_time;
-        // dd( '$boarder_time:'.$boarder_time, '$totals_time:'.$totals_time, '$registrations:'.$registrations->count());
 
-        $data = [
-            'boarders'  => $boarders,
-            'totals'    => $totals,
-            'dates'     => $dates,
-            'term'      => $term,
-            'headers'   => $headers,    
-        ];
-
-        return $data;
+        return $totals;
     }
 
     function generate_dates( $seed_date='', $weekly=false )
