@@ -36,7 +36,7 @@ class Boarder extends Model
     }
 
 
-    
+
 
     function get_boarders_by_building( $building_name )
     {

@@ -294,8 +294,6 @@ class SyncController extends Controller
 
         foreach($contacts as $contact)
         {
-            //find contact
-            $current_contact = Contact::where('contact_id',$contact->ContactID);
             $attributes = array(
                 'contact_id'   => $contact->ContactID,
                 'pupil_id'     => $contact->PupilID,
@@ -304,29 +302,15 @@ class SyncController extends Controller
                 'email'        => $contact->EmailID,
                 'contact_no'   => $contact->TelephoneNumber,
             );
-            if( $current_contact->count()==0 )
-            {
-                //create
-                DB::beginTransaction();
-                try {
-                    Contact::create($attributes);
-                    DB::commit ();
-                } catch (Exception $e) {
-                    DB::rollBack ();
-                    dd($attributes,$e);
-                }
-            }
-            else{
-                //update
-                DB::beginTransaction ();
-                try {
-                    $current_contact->update($attributes);
-                    DB::commit ();
-                } catch (Exception $e) {
-                    DB::rollBack ();
-                    dd($attributes,$e);
-                }
-            }
+
+            // Specify the attributes to check for uniqueness
+            $uniqueAttributes = ['contact_id','pupil_id'];
+
+            // Extract the unique attributes from the input data
+            $uniqueData = array_intersect_key($attributes, array_flip($uniqueAttributes));
+
+            // Use updateOrCreate() to update or create the record
+            Contact::updateOrCreate($uniqueData, $attributes);
         }
     }
 
