@@ -265,20 +265,22 @@ class BoarderController extends Controller
         $headers        = $this->generate_cols($dates, $weekly);
 
         $dateRange      = $this->getDateRange($dates, $weekly);
-        $registrations  = Registration::whereIn('pupil_id', $boarders->pluck('pupil_id'))
+        $pupilIds       = $boarders->pluck('pupil_id');
+        $registrations  = Registration::whereIn('pupil_id', $pupilIds)
                                     ->whereBetween('date', $dateRange)
                                     ->get()
                                     ->groupBy('pupil_id');
 
-        $boarders->each(function ($boarder) use ($registrations, $headers, $attendance, $term) {
-            $boarder->photo = base64_encode($boarder->photo);
-            $boarder->building_name = $boarder->building->building_name ?? '-';
-            $boarder->contacts = $boarder->contacts ?? [];
-            $boarder->registers = $this->prepareBoarderRegisters($boarder, $registrations[$boarder->pupil_id] ?? collect(), $headers, $attendance, $term);
+        $boarders->map(function ($boarder) use ($registrations, $headers, $attendance, $term) {
+            $boarder->photo               = base64_encode($boarder->photo);
+            $boarder->building_name       = $boarder->building->building_name ?? '-';
+            $boarder->contacts            = $boarder->contacts ?? [];
+            $boarder->registers           = $this->prepareBoarderRegisters($boarder, $registrations[$boarder->pupil_id] ?? collect(), $headers, $attendance, $term);
             $boarder->absence_request_url = (new PaperformController)->paperform('leave-request-form', $boarder);
+            return $boarder;
         });
 
-        $totals = $this->prepareTotals($boarders, $dates, $attendance);
+        $totals         = $this->prepareTotals($boarders, $dates, $attendance);
 
         return [
             'boarders'  => $boarders,
@@ -288,6 +290,7 @@ class BoarderController extends Controller
             'headers'   => $headers,
         ];
     }
+
     protected function getDateRange($dates, $weekly)
     {
         if ($weekly) {

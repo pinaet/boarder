@@ -16,8 +16,19 @@ createInertiaApp({
         return createApp({ render: () => h(app, props) })
             .use(plugin)
             .use(ZiggyVue, Ziggy)
+            .mixin({
+                methods: {
+                    route,
+                },
+            })
             .mount(el);
     },
 });
 
 InertiaProgress.init({ color: '#a39163' });
+
+window.addEventListener('error', (event) => {
+    if (event.message.includes('419')) {
+        window.location.href = route('login');
+    }
+});
